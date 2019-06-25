@@ -38,6 +38,7 @@ $r = \set{(e_i, t_i, v_i)}_{i \in I}$ expressed in that text.
 We refer to the set of facts $r$ as a knowledge base (KB),
 and each fact $r_i$ is referred to as a record.
 Each record $r_i$ consists of an entity, type, and value triple. 
+Let $e,t,v$ be the entities, types, and values from the KB $r$ in aggregate.
 
 We assume supervision only at the proposition level of a KB.
 We know what the relationship is between entities and values
@@ -62,7 +63,6 @@ $v$ & $\triangleq$ & The list of all values in a KB by index.\\
 \end{tabular}
 \label{tab:TableOfNotationForMyResearch}
 \end{table}
-
 
 We are primarily concerned with the scenario where we have an overcomplete KB schema with
 respect to a specific passage of text.
@@ -97,14 +97,22 @@ Our word level model is given by the following:
 For each word $y_t$, we have
 \begin{enumerate}
 \item Value mention detector $q(c_t \mid y)$: We classify whether word $y_t$
-   is a value mention. 
+   is a value mention. Each $c_t \sim \Bern(f(y))$, where a value of 1 indicates
+   that $y_t$ is a value mention.
 \item Translation $q(v_t \mid y)$: We translate the word $y_t$ into a value $v_t$.
-\item Alignment $q(a_t \mid y)$: We align the word $y_t$ by classifying who (entity) and what (relation type)
-are being talked about.
+    The $v_t \sim \Cat(g(y))$ is the canonical value from the KB schema 
+    associated with $y_t$.
+\item Alignment $q(a_t \mid y)$: We align the word $y_t$ by classifying who (the entity)
+    and what (the relation type) are being talked about.
+    In particular, $a_t\sim\Cat(h(y))$ denotes the alignment to the record $r_{a_t}$
+    given by the index $i = a_t$. 
+\end{enumerate}
+Finally, we aggregate the word level information at the sequence level:
+\begin{enumerate}
 \item Aggregation $q(r_i \mid a,v,c)$:
-In order to parameterize a distribution over the KB $r$,
-we must then aggregate all of the word-level information into a distribution over
-facts at the KB level.
+    In order to parameterize a distribution over the KB $r$,
+    we must then aggregate all of the word-level information into a distribution over
+    facts at the sequence level.
 \end{enumerate}
 
 
@@ -177,7 +185,29 @@ facts at the KB level.
 
 \section{Three perspectives on training}
 We can either train $q$ directly on the conditional task
-or train it to mimic the posterior of the generative model.
+or train it to mimic the posterior of a suitable generative model.
+
+Axes of objectives:
+\begin{enumerate}
+\item Proposal distribution: Learned or uniform
+\item Probabilistic interpretation: Marginal likelihood or KL
+\item Probabilistic interpretation 2: Approximate posterior
+    of generative model or learn directly.
+\end{enumerate}
+
+\subsection{Marginal loss}
+
+\subsection{KL}
+
+\subsection{Approximating the posterior of a generative model}
+Why would we do this? The main motivation is semi-supervised information extraction,
+where values are missing.
+\begin{align}
+\arg\max_p \sum_{y'}\sum_{x'} p^*(y',x')\log \frac{p(y',x')}{p^*(y',x')}
+&= \arg\max_p \sum_{y'}\sum_{x'} p^*(y',x')\log \sum_z p(y',z,x')\\
+&= \arg\max_p \sum_{y'}\sum_{x'} p^*(y',x')\log \sum_z p(y',z,x')\\
+&\geq 
+\end{align}
 
 \bibliography{bib}
 \bibliographystyle{acl_natbib}
