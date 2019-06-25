@@ -107,18 +107,18 @@ information.
 \begin{center}
 \resizebox {.3\columnwidth} {!} {
 \begin{tikzpicture}
-\node[obs] (Yp) {$y_{<i}$};
-\node[obs, right=of Yp] (Yi) {$y_i$};
-\node[latent, below=of Yp](A) {$a_i$};
-\node[latent, left=of A](C) {$c_i$};
-\node[latent, below=of Yi](Vi) {$v_i$};
+\node[obs] (Yp) {$y_{<t}$};
+\node[obs, right=of Yp] (Yi) {$y_t$};
+\node[latent, below=of Yp](A) {$a_t$};
+\node[latent, left=of A](C) {$c_t$};
+\node[latent, below=of Yi](Vi) {$v_t$};
 
-\node[obs, below=of C] (E) {$e_j$};
-\node[obs, below=of A] (T) {$t_j$};
-\node[obs, below=of Vi] (V) {$v_j$};
+\node[obs, below=of C] (E) {$e_i$};
+\node[obs, below=of A] (T) {$t_i$};
+\node[obs, below=of Vi] (V) {$v_i$};
 
-\plate {i} {(Yp)(Yi)(C)(A)(Vi)} {$I$};
-\plate  {j} {(E)(T)(V)} {$J$};
+\plate {i} {(Yp)(Yi)(C)(A)(Vi)} {$T$};
+\plate  {j} {(E)(T)(V)} {$I$};
 
 \draw[->] (Yp) -- (Yi);
 \draw[->] (Yp) -- (C);
@@ -141,16 +141,16 @@ information.
 \resizebox {.3\columnwidth} {!} {
 \begin{tikzpicture}
 \node[obs] (Y) {$y$};
-\node[latent, below=of Y](A) {$a_i$};
-\node[latent, left=of A](C) {$c_i$};
-\node[latent, right=of A](Vi) {$v_i$};
+\node[latent, below=of Y](A) {$a_t$};
+\node[latent, left=of A](C) {$c_t$};
+\node[latent, right=of A](Vi) {$v_t$};
 
-\node[obs, below=of C] (E) {$e_j$};
-\node[obs, below=of A] (T) {$t_j$};
-\node[obs, below=of Vi] (V) {$v_j$};
+\node[obs, below=of C] (E) {$e_i$};
+\node[obs, below=of A] (T) {$t_i$};
+\node[obs, below=of Vi] (V) {$v_i$};
 
-\plate {i} {(C)(A)(Vi)} {$I$};
-\plate  {j} {(E)(T)(V)} {$J$};
+\plate {i} {(C)(A)(Vi)} {$T$};
+\plate  {j} {(E)(T)(V)} {$I$};
 
 \draw[->] (Y) -- (C);
 \draw[->] (Y) -- (A);
