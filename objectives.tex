@@ -63,13 +63,6 @@ $v$ & $\triangleq$ & The list of all values in a KB by index.\\
 \label{tab:TableOfNotationForMyResearch}
 \end{table}
 
-Our goal is to produce a set of record triples given text.
-As we assume that only the KB and text are observed,
-we can either produce this set directly from the text or identify realizations of
-records at a more granular level and then aggregate our choices.
-We choose to pursue the latter since identifying facts at a granular level
-presents a step towards compositional language understanding,
-i.e. shallow parsing.
 
 We are primarily concerned with the scenario where we have an overcomplete KB schema with
 respect to a specific passage of text.
@@ -80,16 +73,26 @@ but the particular document we wish to analyze only discusses tens of entities,
 only a few of which are present in our KB.
 
 \section{Model}
-We choose to identify realizations of records at the word level.
+Our goal is to produce a set of record triples given text.
+As we assume that only the KB and text are observed,
+we can either produce this set directly from the text or identify realizations of
+records at a more granular level and then aggregate our choices.
+We choose to pursue the latter since identifying facts at a granular level
+presents a step towards compositional language understanding,
+i.e. shallow parsing.
 Although entity or value mentions may be multi-word expressions,
 identifying realizations at the word level is no less expressive as
-we can aggregate our word level predictions into sequence level ones.
+we can aggregate our word level choices into sequence level ones.
 
-Our information extraction model is denoted $q(r \mid y)$.
+Inspired by work in language grounding \cite{liang2009},
+we focus on identifying value mentions in text.
 Our model first identifies words that are value mentions,
+translates the mention into a canonical value,
 then aligns those words to a record in the KB by predicting what
 entity and the relation type associated with the value mention.
 
+Our information extraction model is denoted $q(r \mid y)$,
+a distribution over a KB $r$ given some text $y$.
 Our word level model is given by the following:
 For each word $y_t$, we have
 \begin{enumerate}
@@ -98,10 +101,13 @@ For each word $y_t$, we have
 \item Translation $q(v_t \mid y)$: We translate the word $y_t$ into a value $v_t$.
 \item Alignment $q(a_t \mid y)$: We align the word $y_t$ by classifying who (entity) and what (relation type)
 are being talked about.
+\item Aggregation $q(r_i \mid a,v,c)$:
+In order to parameterize a distribution over the KB $r$,
+we must then aggregate all of the word-level information.
+
 \end{enumerate}
 
-In order to parameterize a distribution over KB $r$, we must then aggregate all of the word-level
-information.
+
 
 \begin{figure}[t]
 \begin{center}
