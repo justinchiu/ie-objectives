@@ -90,11 +90,84 @@ Our model first identifies words that are value mentions,
 then aligns those words to a record in the KB by predicting what
 entity and the relation type associated with the value mention.
 
+Our word level model is given by the following:
+For each word $y_t$, we have
 \begin{enumerate}
-\item Mention detector $q(c_t \mid y)$: 
-\item Translation $q(v_t \mid y)$: 
-\item Alignment $q(a_t \mid y)$: 
+\item Value mention detector $q(c_t \mid y)$: We classify whether word $y_t$
+   is a value mention. 
+\item Translation $q(v_t \mid y)$: We translate the word $y_t$ into a value $v_t$.
+\item Alignment $q(a_t \mid y)$: We align the word $y_t$ by classifying who (entity) and what (relation type)
+are being talked about.
 \end{enumerate}
+
+In order to parameterize a distribution over KB $r$, we must then aggregate all of the word-level
+information.
+
+\begin{figure}[t]
+\begin{center}
+\resizebox {.3\columnwidth} {!} {
+\begin{tikzpicture}
+\node[obs] (Yp) {$y_{<i}$};
+\node[obs, right=of Yp] (Yi) {$y_i$};
+\node[latent, below=of Yp](A) {$a_i$};
+\node[latent, left=of A](C) {$c_i$};
+\node[latent, below=of Yi](Vi) {$v_i$};
+
+\node[obs, below=of C] (E) {$e_j$};
+\node[obs, below=of A] (T) {$t_j$};
+\node[obs, below=of Vi] (V) {$v_j$};
+
+\plate {i} {(Yp)(Yi)(C)(A)(Vi)} {$I$};
+\plate  {j} {(E)(T)(V)} {$J$};
+
+\draw[->] (Yp) -- (Yi);
+\draw[->] (Yp) -- (C);
+\draw[->] (Yp) -- (A);
+\draw[->] (A) -- (Vi);
+\draw[->] (E) -- (A);
+\draw[->] (T) -- (A);
+\draw[->] (V) -- (Vi);
+\draw[->] (Vi) -- (Yi);
+\draw[->] (C) -- (Yi);
+\end{tikzpicture}
+} %% end resize
+\end{center}
+\caption{The generative model which produces words given a knowledge base.}
+\label{fig:genmodel}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+\resizebox {.3\columnwidth} {!} {
+\begin{tikzpicture}
+\node[obs] (Y) {$y$};
+\node[latent, below=of Y](A) {$a_i$};
+\node[latent, left=of A](C) {$c_i$};
+\node[latent, right=of A](Vi) {$v_i$};
+
+\node[obs, below=of C] (E) {$e_j$};
+\node[obs, below=of A] (T) {$t_j$};
+\node[obs, below=of Vi] (V) {$v_j$};
+
+\plate {i} {(C)(A)(Vi)} {$I$};
+\plate  {j} {(E)(T)(V)} {$J$};
+
+\draw[->] (Y) -- (C);
+\draw[->] (Y) -- (A);
+\draw[->] (Y) -- (Vi);
+%\draw[->] (A) -- (Vi);
+\draw[->] (E) -- (A);
+\draw[->] (T) -- (A);
+\draw[-] (Vi) -- (V);
+\draw[-] (A) -- (V);
+\draw[-] (C) -- (V);
+
+\end{tikzpicture}
+} %% end resize
+\end{center}
+\caption{The inference network which predicts word-level values and alignments.}
+\label{fig:infmodel}
+\end{figure}
 
 \section{Three perspectives on training}
 We can either train $q$ directly on the conditional task
