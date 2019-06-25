@@ -13,8 +13,7 @@ Justin T. Chiu
 \maketitle
 
 \begin{abstract}
-Information extraction systems have historically operated above the word level.
-Systems predict the relationship between an entity and value given
+Many recent information extraction systems predict the relationship between an entity and value given
 their locations in the text.
 This requires observed locations of mentions, which requires annotations at the word level.
 Any form of annotation at the word level does not scale as the size of the text
@@ -27,11 +26,81 @@ or chooses to explain nothing.
 
 \section{Introduction}
 
+In relation extraction we extract facts from a passage of text.
+The length of the text varies: depending on the dataset we may be interested extracting
+all facts expressed in a sentence or paragraph.
+The datasets we use do not consider the case where all facts from a large corpus are to be extracted,
+as supervision would be very expensive.
+All sequences of text are bounded in length.
 
-\section{Notation}
-Our information extraction model is denoted $q(\bv \mid \by)$.
+Given a text $y = [y_0, \ldots, y_T]$ the goal is to predict all facts
+$r = \set{(e_i, t_i, v_i)}_{i \in I}$ expressed in that text.
+We refer to the set of facts $r$ as a knowledge base (KB),
+and each fact $r_i$ is referred to as a record.
+Each record $r_i$ consists of an entity, type, and value triple. 
+
+We assume supervision only at the proposition level of a KB.
+We know what the relationship is between entities and values
+(although this assumption can be relaxed),
+but we do not know where in text records are realized.
+Except for \citet{zeng2018copy}, prior work has either assumed that the locations of
+entities and values are given as input features or that the locations of entities and values
+are observed at training time.
+We relax this assumption and do not use any annotations at the level of text.
+
+\begin{table}[htbp]\caption{Notation}
+\centering % to have the caption near the table
+\begin{tabular}{r c p{10cm} }
+\toprule
+$y$ & $\triangleq$ & A vector of words $y_t$\\
+$r$ & $\triangleq$ & The knowledge base,
+    an indexed set of records each consisting of entities, types, and values.\\
+$e$ & $\triangleq$ & The list of all entities in a KB by index.\\
+$t$ & $\triangleq$ & The list of all types in a KB by index.\\
+$v$ & $\triangleq$ & The list of all values in a KB by index.\\
+\bottomrule
+\end{tabular}
+\label{tab:TableOfNotationForMyResearch}
+\end{table}
+
+Our goal is to produce a set of record triples given text.
+As we assume that only the KB and text are observed,
+we can either produce this set directly from the text or identify realizations of
+records at a more granular level and then aggregate our choices.
+We choose to pursue the latter since identifying facts at a granular level
+presents a step towards compositional language understanding,
+i.e. shallow parsing.
+
+We are primarily concerned with the scenario where we have an overcomplete KB schema with
+respect to a specific passage of text.
+This fits many scenarios in real world applications:
+we may have thousands of entities of interest if our KB was pulled from an 
+external source such as Freebase,
+but the particular document we wish to analyze only discusses tens of entities,
+only a few of which are present in our KB.
+
+\section{Model}
+We choose to identify realizations of records at the word level.
+Although entity or value mentions may be multi-word expressions,
+identifying realizations at the word level is no less expressive as
+we can aggregate our predictions regardless.
+
+Our information extraction model is denoted $q(r \mid y)$.
+Our model first identifies words that are value mentions,
+then aligns those words to a record in the KB by predicting what
+entity and the relation type associated with the value mention.
+
+\begin{enumerate}
+\item Mention detector $q(c_t \mid y)$: 
+\item Translation $q(v_t \mid y)$: 
+\item Alignment $q(a_t \mid y)$: 
+\end{enumerate}
 
 \section{Two Perspectives}
+We can either train $q$ directly on the conditional task
+or train it to mimic the posterior of the generative model.
 
+\bibliography{bib}
+\bibliographystyle{acl_natbib}
 
 \end{document}
