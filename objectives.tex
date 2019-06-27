@@ -126,6 +126,7 @@ We introduce the following random variables for each index $i \in [I]$:
 
 We propose the following factorization of the relation extraction system:
 \begin{equation}
+\label{eqn:prob}
 \begin{aligned}
 p(v \mid x,e,t) &= \sum_{z,a,c} p(v,z,a,c\mid x,e,t)\\
 &= \sum_{z,a,c} p(v\mid z,a,c,x,e,t) \prod_i p(z_i, a_i, c_i\mid x,e,t)\\
