@@ -102,7 +102,8 @@ Each record $r_j$ consists of an entity, type, and value triple.
 Let $e,t,v$ be the projection of the entities, types, and values
 from the KB $r$ in aggregate.
 
-We reduce the construction of $r$ instead to predicting, for every $j\in \mcJ$,
+Given all entities $e$ and types $t$,
+we reduce the construction of $r$ to predicting, for every $j\in \mcJ$,
 the value $v_j$ corresponding to the entity $e_j$ and type $t_j$.
 We propose to model $p(v \mid x, e, t)$,
 the distribution over values of corresponding entities and types given the text.
