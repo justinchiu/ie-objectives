@@ -117,11 +117,11 @@ then aggregates its predictions at the KB level.
 We introduce the following random variables for each index $i \in [I]$:
 \begin{enumerate}
 \item $c_i$ indicates whether a word is is a value mention.
-    We have $c_t \in \set{0,1}$.
-\item $a_i$ indicates the index of the record aligned to word $x_t$.
-    We have $a_t \in J$.
-\item $z_i$ indicates the canonical value word $x_t$ is a mention of,
-    such that $z_t \in \mcV$.
+    We have $c_i \in \set{0,1}$.
+\item $a_i$ indicates the index of the record aligned to word $x_i$.
+    We have $a_i \in J$.
+\item $z_i$ indicates the canonical value word $x_i$ is a mention of,
+    such that $z_i \in \mcV$.
 \end{enumerate}
 
 We propose the following factorization of the relation extraction system:
