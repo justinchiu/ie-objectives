@@ -241,7 +241,7 @@ We then optimize the following lower bound on the marginal likelihood:
 We propose to parameterize $q(z,a,c\mid v,x,e,t)$ as follows.
 We decompose 
 \begin{equation}
-q(z,a,c,\mid v,x,e,t) = q(z \mid v,x,e,t)
+q(z,a,c\mid v,x,e,t) = q(z \mid a,v,x)q(a\mid v,x,e,t)q(c \mid v,x)
 \end{equation}
 
 \subsection{Approximate the posterior of a generative model}
