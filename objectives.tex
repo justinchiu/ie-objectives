@@ -136,6 +136,8 @@ p(v \mid x,e,t) &= \sum_{z,a,c} p(v,z,a,c\mid x,e,t)\\
 The model $p(v\mid x)$ has the following generative story.
 Let $f_*$ be arbitrary learned functions that maps each $x_i$ in $x$ to
 a point on a simplex.
+In all cases, $f_*$ takes the form of a BLSTM over the sequence of words $x$
+with a transformation applied to the output of each time step $i$.
 The dimensionality of the simplex can be inferred from the domain of the
 distribution parameterized by $f_*$.
 For each index $i \in \mcI$, we have
