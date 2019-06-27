@@ -184,17 +184,17 @@ without the influence of the values in a KB.
 \begin{center}
 \resizebox {.3\columnwidth} {!} {
 \begin{tikzpicture}
-\node[obs] (Y) {$y$};
-\node[latent, below=of Y](A) {$a_t$};
-\node[latent, left=of A](C) {$c_t$};
-\node[latent, right=of A](Vi) {$v_t$};
+\node[obs] (Y) {$x$};
+\node[latent, below=of Y](A) {$a_i$};
+\node[latent, left=of A](C) {$c_i$};
+\node[latent, right=of A](Vi) {$z_i$};
 
-\node[obs, below=of C] (E) {$e_i$};
-\node[obs, below=of A] (T) {$t_i$};
-\node[obs, below=of Vi] (V) {$v_i$};
+\node[obs, below=of C] (E) {$e_j$};
+\node[obs, below=of A] (T) {$t_j$};
+\node[obs, below=of Vi] (V) {$v_j$};
 
-\plate {i} {(C)(A)(Vi)} {$T$};
-\plate  {j} {(E)(T)(V)} {$I$};
+\plate {i} {(C)(A)(Vi)} {$I$};
+\plate  {j} {(E)(T)(V)} {$J$};
 
 \draw[->] (Y) -- (C);
 \draw[->] (Y) -- (A);
