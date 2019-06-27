@@ -24,36 +24,32 @@ that, for each word, either chooses a triple from a knowledge base to explain
 or chooses to explain nothing.
 \end{abstract}
 
-\section{Introduction}
+\section{Problem Setup}
 
-In relation extraction we extract facts from a passage of text.
-The length of the text varies: depending on the dataset we may be interested extracting
-all facts expressed in a sentence or paragraph.
-The datasets we use do not consider the case where all facts from a large corpus are to be extracted,
-as supervision would be very expensive.
-All sequences of text are bounded in length.
+In relation extraction (RE) we extract facts from a passage of text.
+The goal of RE is to convert facts expressed in natural language into a form
+amenable to computation.
+RE focuses on a relational representation: facts are extracted into a form that details
+how values are related to entities.
 
-Given a text $y = [y_0, \ldots, y_T]$ the goal is to predict all facts
-$r = \set{(e_i, t_i, v_i)}_{i \in I}$ expressed in that text.
-We refer to the set of facts $r$ as a knowledge base (KB),
-and each fact $r_i$ is referred to as a record.
-Each record $r_i$ consists of an entity, type, and value triple. 
-Let $e,t,v$ be the entities, types, and values from the KB $r$ in aggregate.
+We assume supervision only at the proposition level of a KB,
+therefore we must locate the expression of a fact in text.
+As sentences may contain many entities and values, and therefore possibly
+a large number of facts, we focus on identifying facts at the word level.
+In particular, we focus on identifying the location of value mentions
+and predicting who (the entity) and what (the relation type) the value mention
+is discussing.
 
-We assume supervision only at the proposition level of a KB.
-We know what the relationship is between entities and values
-(although this assumption can be relaxed),
-but we do not know where in text records are realized.
+Note:
 Except for \citet{zeng2018copy}, prior work has either assumed that the locations of
 entities and values are given as input features or that the locations of entities and values
 are observed at training time.
-We relax this assumption and do not use any annotations at the level of text.
 
 \begin{table}[htbp]\caption{Notation}
 \centering % to have the caption near the table
-\begin{tabular}{r c p{10cm} }
+\begin{tabular}{r c p{10cm}}
 \toprule
-$y$ & $\triangleq$ & A vector of words $y_t$\\
+$x$ & $\triangleq$ & A sequence of words corresponding to a sentence or document.\\
 $r$ & $\triangleq$ & The knowledge base,
     an indexed set of records each consisting of entities, types, and values.\\
 $e$ & $\triangleq$ & The list of all entities in a KB by index.\\
@@ -72,28 +68,28 @@ external source such as Freebase,
 but the particular document we wish to analyze only discusses tens of entities,
 only a few of which are present in our KB.
 
+Given a text $x = [x_0, \ldots, x_I]$ we must model the facts
+$r = \set{(e_j, t_j, v_j)}_{j \in J}$ expressed in that text
+with respect to a schema that details all entities $e_j \in \mcE$,
+relation types $t_j \in \mcT$, and all values $v_j \in \mcV$.
+We assume that the schema of the KB $(\mcE, \mcT, \mcV)$ is known at all times,
+and that the schema covers all facts of interest.
+
+We refer to the set of facts $r$ as a knowledge base (KB),
+and each fact $r_j$ is referred to as a record.
+Each record $r_j$ consists of an entity, type, and value triple. 
+Let $e,t,v$ be the projection of the entities, types, and values
+from the KB $r$ in aggregate.
+
+We wish to model the distribution $p(v \mid x, e, t)$,
+the distribution over values of corresponding entities and types given the text.
+
 \section{Model}
-Our goal is to produce a set of record triples given text.
-As we assume that only the KB and text are observed,
-we can either produce this set directly from the text or identify realizations of
-records at a more granular level and then aggregate our choices.
-We choose to pursue the latter since identifying facts at a granular level
-presents a step towards compositional language understanding.
-This may appear similar to shallow parsing, however we do not expect
-to obtain any interpretable segmentations of the text.
-We are only interested in the extractive capabilities of the model.
-
-Although entity or value mentions may be multi-word expressions,
-identifying realizations at the word level is no less expressive as
-we can aggregate our word level choices into sequence level ones.
-
-Inspired by work in language grounding \cite{liang2009},
-we focus on identifying value mentions in text.
-Our model first identifies words that are value mentions,
-translates the value mention into a canonical value,
-then aligns the mention to a record in the KB by predicting what
-entity and the relation type associated with the value mention.
-
+We omit the conditioning on $e,t$ for brevity.
+We propose the following factorization
+\begin{equation}
+p(v \mid x, e, t) = \sum_{a,c} \prod_j p(v_j\mid x) 
+\end{equation}
 Our information extraction model is denoted $q(r \mid y)$,
 a distribution over a KB $r$ given some text $y$.
 Let $f,g,h$ be arbitrary learned functions.
