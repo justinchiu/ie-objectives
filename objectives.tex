@@ -55,6 +55,13 @@ $r$ & $\triangleq$ & The knowledge base,
 $e$ & $\triangleq$ & The list of all entities in a KB by index.\\
 $t$ & $\triangleq$ & The list of all types in a KB by index.\\
 $v$ & $\triangleq$ & The list of all values in a KB by index.\\
+$f_*(x)$ & $\triangleq$ & A learned function whose output is of shape $T \times D$,
+    where $D$ is the context-dependent.\\
+$c_t \sim \Bern(f_c(x)_t)$ & $\triangleq$ & A word level RV that indicates whether a word is content or not.
+    We have $c_t \in \set{0,1}$.\\
+$a_t \sim \Cat(f_a(x)_t)$ & $\triangleq$ & A word level RV that indicates an the index of the aligned
+    for word $x_t$. We have $a_t \in J$.\\
+$z_t \sim \Cat(f_z(x)_t)$ & $\triangleq$ & The list of all values in a KB by index.\\
 \bottomrule
 \end{tabular}
 \label{tab:TableOfNotationForMyResearch}
@@ -83,12 +90,18 @@ from the KB $r$ in aggregate.
 
 We wish to model the distribution $p(v \mid x, e, t)$,
 the distribution over values of corresponding entities and types given the text.
+We omit the conditioning on $e,t$ for brevity.
 
 \section{Model}
-We omit the conditioning on $e,t$ for brevity.
+We introduce the following random variables:
+\begin{enumerate}
+\item $c_t$
+\item $a_t$
+\item $z_t$
+\end{enumerate}
 We propose the following factorization
 \begin{equation}
-p(v \mid x, e, t) = \sum_{a,c} \prod_j p(v_j\mid x) 
+p(y \mid x) = \sum_{a,c} \prod_j p(v_j\mid x) 
 \end{equation}
 Our information extraction model is denoted $q(r \mid y)$,
 a distribution over a KB $r$ given some text $y$.
