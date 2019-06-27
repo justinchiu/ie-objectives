@@ -208,39 +208,6 @@ then aggregates those choices at the KB level.
 \label{fig:infmodel}
 \end{figure}
 
-\begin{figure}[t]
-\begin{center}
-\resizebox {.3\columnwidth} {!} {
-\begin{tikzpicture}
-\node[obs] (Yp) {$y_{<t}$};
-\node[obs, right=of Yp] (Yi) {$y_t$};
-\node[latent, below=of Yp](A) {$a_t$};
-\node[latent, left=of A](C) {$c_t$};
-\node[latent, below=of Yi](Vi) {$v_t$};
-
-\node[obs, below=of C] (E) {$e_i$};
-\node[obs, below=of A] (T) {$t_i$};
-\node[obs, below=of Vi] (V) {$v_i$};
-
-\plate {i} {(Yp)(Yi)(C)(A)(Vi)} {$T$};
-\plate  {j} {(E)(T)(V)} {$I$};
-
-\draw[->] (Yp) -- (Yi);
-\draw[->] (Yp) -- (C);
-\draw[->] (Yp) -- (A);
-\draw[->] (A) -- (Vi);
-\draw[->] (E) -- (A);
-\draw[->] (T) -- (A);
-\draw[->] (V) -- (Vi);
-\draw[->] (Vi) -- (Yi);
-\draw[->] (C) -- (Yi);
-\end{tikzpicture}
-} %% end resize
-\end{center}
-\caption{The generative model which produces words given a knowledge base.}
-\label{fig:genmodel}
-\end{figure}
-
 
 \section{Three perspectives on training}
 We can either train $q$ directly on the conditional task
@@ -293,6 +260,40 @@ We then train our model to approximate the posterior $p(v \mid y)$.
 Since this generative model does not use every record during generation,
 the posterior may only explain a subset of all records.
 This fits our hypothesis that the KB contains a superset of records expressed in text.
+
+\begin{figure}[t]
+\begin{center}
+\resizebox {.3\columnwidth} {!} {
+\begin{tikzpicture}
+\node[obs] (Yp) {$y_{<t}$};
+\node[obs, right=of Yp] (Yi) {$y_t$};
+\node[latent, below=of Yp](A) {$a_t$};
+\node[latent, left=of A](C) {$c_t$};
+\node[latent, below=of Yi](Vi) {$v_t$};
+
+\node[obs, below=of C] (E) {$e_i$};
+\node[obs, below=of A] (T) {$t_i$};
+\node[obs, below=of Vi] (V) {$v_i$};
+
+\plate {i} {(Yp)(Yi)(C)(A)(Vi)} {$T$};
+\plate  {j} {(E)(T)(V)} {$I$};
+
+\draw[->] (Yp) -- (Yi);
+\draw[->] (Yp) -- (C);
+\draw[->] (Yp) -- (A);
+\draw[->] (A) -- (Vi);
+\draw[->] (E) -- (A);
+\draw[->] (T) -- (A);
+\draw[->] (V) -- (Vi);
+\draw[->] (Vi) -- (Yi);
+\draw[->] (C) -- (Yi);
+\end{tikzpicture}
+} %% end resize
+\end{center}
+\caption{The generative model which produces words given a knowledge base.}
+\label{fig:genmodel}
+\end{figure}
+
 
 The loss is then given by
 \begin{align*}
