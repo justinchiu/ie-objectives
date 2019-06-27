@@ -256,8 +256,8 @@ b) train $p(v \mid z,a,c,x,e,t)$ using the following lower bound:
 \log p(v\mid x) \geq
 \Es{p(z,a,c\mid x,e,t)}{\log \frac{p(v,z,a,c\mid x,e,t)}{p(z,a,c\mid x,e,t)}}
 \end{equation}
-The bound in Eqn.~\ref{eqn:lowerbound2} should not be looser than the one presented in
-Eqn.~\ref{eqn:lowerbound},
+At convergence the bound in Eqn.~\ref{eqn:lowerbound2}
+should not be looser than the one presented in Eqn.~\ref{eqn:lowerbound},
 as conditioning on the observed values of a KB should not help a good alignment
 model.
 
