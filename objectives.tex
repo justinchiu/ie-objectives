@@ -218,10 +218,11 @@ then aggregates those choices at the KB level.
 \end{figure}
 
 \section{Training}
-Maximizing $\log p(v \mid x)$ directly is very expensive.
+To train a latent variable model, we must marginalize over the unobserved RVs
+and maximize the likelihood of the observed.
+However, for our model maximizing $\log p(v \mid x)$ directly is very expensive.
 The aggregation model alone with $z$ unobserved is a Restricted Boltzmann Machine,
-where exact inference is $O(|\mcV|^{|\mcI|} + |\mcV|^{|\mcJ|})$
-since we must compute the partition function.
+where exact inference is $O(|\mcV|^{|\mcI|} + |\mcV|^{|\mcJ|})$.
 
 \section{Three perspectives on training}
 We can either train $q$ directly on the conditional task
