@@ -111,7 +111,8 @@ the distribution over values of corresponding entities and types given the text.
 \section{Model}
 We define a directed graphical model that jointly models 
 word and KB level extraction. 
-The model first predicts
+The model first predicts the word level information,
+then aggregates its predictions at the KB level.
 
 We introduce the following random variables for each index $i \in [I]$:
 \begin{enumerate}
