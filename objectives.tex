@@ -52,7 +52,7 @@ are observed at training time.
 
 \begin{table}[htbp]\caption{Notation for relation extraction.
 The most important terms are in the top section
-with the less important terms given in at the bottom.}
+with the less important terms given at the bottom.}
 \centering % to have the caption near the table
 \begin{tabular}{r c p{10cm}}
 \toprule
@@ -224,9 +224,12 @@ and maximize the likelihood of the observed.
 However, for our model maximizing $\log p(v \mid x)$ directly is very expensive.
 The aggregation model alone with $z$ unobserved is a Restricted Boltzmann Machine,
 where exact inference is $O(|\mcV|^{|\mcI|} + |\mcV|^{|\mcJ|})$.
+
+
 We therefore resort to amortized variational inference.
 
-
+\subsection{Introduce a powerful inference network}
+Our first approach is to specify an inference network $q(z,a,c\mid v,x,e,t)$.
 
 \begin{comment}
 \section{Three perspectives on training}
