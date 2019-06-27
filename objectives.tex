@@ -56,10 +56,19 @@ are observed at training time.
 \toprule
 $x$ & $\triangleq$ & A sequence of words $x_i, i \in \mcI$
     corresponding to a sentence or document.\\
+$\mcX$ & $\triangleq$ & The vocabulary words come from.\\
+$\mcI$ & $\triangleq$ & The index set for the text:
+    $\mcI = \set{0,1,2,\ldots}\subset \N$.\\
+\midrule
 $r$ & $\triangleq$ & The knowledge base,
     an indexed set of records each consisting of entities, types, and values.
     Each $r_j = (e_j, t_j, v_j)$.\\
+$\mcJ$ & $\triangleq$ & The index set for the KB:
+    $\mcJ = \set{0,1,2,\ldots}\subset \N$.\\
+$e$ & $\triangleq$ & The list of all entities in a KB by index.\\
+$t$ & $\triangleq$ & The list of all types in a KB by index.\\
 $v$ & $\triangleq$ & The list of all values in a KB by index.\\
+\midrule
 $f_*(x)$ & $\triangleq$ & A learned function whose output is of shape $|\mcI| \times D$,
     where $|\mcI|$ is the length of the word sequence and $D$ is the context-dependent.\\
 $c_i$ & $\triangleq$ & A word level RV that indicates whether a word is content or not.
@@ -68,12 +77,6 @@ $a_i$ & $\triangleq$ & A word level RV that indicates an the index of the aligne
     for word $x_t$. We have $a_t \in J$.\\
 $z_i$ & $\triangleq$ & A word level RV that indicates the canonical value 
 word $x_t$ is translated to, such that $z_t \in \mcV$\\
-\midrule
-$e$ & $\triangleq$ & The list of all entities in a KB by index.\\
-$t$ & $\triangleq$ & The list of all types in a KB by index.\\
-$\mcX$ & $\triangleq$ & The vocabulary words come from.\\
-$\mcI,\mcJ$ & $\triangleq$ & The index set the text and KB respectively.
-    Both are sets $\set{0,1,2,\ldots}\subset \N$.\\
 \bottomrule
 \end{tabular}
 \label{tab:TableOfNotationForMyResearch}
