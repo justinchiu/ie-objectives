@@ -252,9 +252,9 @@ In the second stage, we have two choices:
 a) train $p(v \mid z,a,c,x,e,t)$ to approximate the posterior a full generative model of text and KB
 b) train $p(v \mid z,a,c,x,e,t)$ using the following lower bound:
 \begin{equation}
-\label{eqn:lowerbound}
+\label{eqn:lowerbound2}
 \log p(v\mid x) \geq
-\Es{q(z,a,c\mid v,x,e,t)}{\log \frac{p(v,z,a,c\mid x,e,t)}{q(z,a,c\mid v,x,e,t)}}
+\Es{p(z,a,c\mid x,e,t)}{\log \frac{p(v,z,a,c\mid x,e,t)}{p(z,a,c\mid x,e,t)}}
 \end{equation}
 
 \begin{comment}
