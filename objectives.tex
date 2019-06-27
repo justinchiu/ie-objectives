@@ -231,6 +231,11 @@ We therefore resort to amortized variational inference.
 
 \subsection{Introduce a powerful inference network}
 Our first approach is to specify an inference network $q(z,a,c\mid v,x,e,t)$.
+We then optimize the following lower bound on the marginal likelihood:
+\begin{equation}
+\log p(v\mid x) \geq
+\Es{q(z,a,c\mid v,x,e,t)}{\log \frac{p(v,z,a,c\mid x,e,t)}{q(z,a,c\mid v,x,e,t)}}
+\end{equation}
 
 \begin{comment}
 \section{Three perspectives on training}
