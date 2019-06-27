@@ -216,6 +216,10 @@ then aggregates those choices at the KB level.
 \label{fig:infmodel}
 \end{figure}
 
+\section{Training}
+Maximizing $\log p(v \mid x)$ directly is very expensive.
+The aggregation model alone with $z$ unobserved is a Restricted Boltzmann Machine,
+where exact inference would take $O(|\mcX|^{|\mcI|})$
 
 \section{Three perspectives on training}
 We can either train $q$ directly on the conditional task
