@@ -136,10 +136,10 @@ The dimensionality of the simplex can be inferred from the domain of the
 distribution parameterized by $f_*$.
 For each index $i \in \mcI$, we have
 \begin{enumerate}
-\item Value mention $p(c_i \mid x)$: We classify whether word $x_i$
-   is a value mention. Each $c_i \sim \Bern(f_c(x)_i)$, where a value of 1 indicates
+\item Value mention $p(c_i \mid x)$: We choose whether word $x_i$
+   is a value mention or not. Each $c_i \sim \Bern(f_c(x)_i)$, where a value of 1 indicates
    that $x_i$ is a value mention.
-\item Alignment $p(a_i \mid x)$: We align the word $y_i$ by classifying who (the entity)
+\item Alignment $p(a_i \mid x)$: We align the word $y_i$ by choosing who (the entity)
     and what (the relation type) are being talked about.
     In particular, $a_i\sim\Cat(f_a(x)_i)$ denotes the alignment to the record $r_{a_i}$
     given by the index $j = a_i$. 
