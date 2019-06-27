@@ -220,7 +220,7 @@ then aggregates those choices at the KB level.
 \section{Training}
 Maximizing $\log p(v \mid x)$ directly is very expensive.
 The aggregation model alone with $z$ unobserved is a Restricted Boltzmann Machine,
-where exact inference is $O(\min(|\mcX|^{|\mcI|}, |\mcV|^{|\mcJ|}))$
+where exact inference is $O(|\mcX|^{|\mcI|} + |\mcV|^{|\mcJ|})$
 since we must compute the partition function.
 
 \section{Three perspectives on training}
