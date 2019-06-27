@@ -237,6 +237,12 @@ We then optimize the following lower bound on the marginal likelihood:
 \Es{q(z,a,c\mid v,x,e,t)}{\log \frac{p(v,z,a,c\mid x,e,t)}{q(z,a,c\mid v,x,e,t)}}
 \end{equation}
 
+We propose to parameterize $q(z,a,c\mid v,x,e,t)$ as follows.
+We decompose 
+\begin{equation}
+q(z,a,c,\mid v,x,e,t) = q(z \mid v,x,e,t)
+\end{equation}
+
 \begin{comment}
 \section{Three perspectives on training}
 We can either train $q$ directly on the conditional task
