@@ -233,6 +233,7 @@ We therefore resort to amortized variational inference.
 Our first approach is to specify an inference network $q(z,a,c\mid v,x,e,t)$.
 We then optimize the following lower bound on the marginal likelihood:
 \begin{equation}
+\label{eqn:lowerbound}
 \log p(v\mid x) \geq
 \Es{q(z,a,c\mid v,x,e,t)}{\log \frac{p(v,z,a,c\mid x,e,t)}{q(z,a,c\mid v,x,e,t)}}
 \end{equation}
@@ -242,6 +243,12 @@ We decompose
 \begin{equation}
 q(z,a,c,\mid v,x,e,t) = q(z \mid v,x,e,t)
 \end{equation}
+
+\subsection{Approximate the posterior of a generative model}
+Alternatively, we may decompose the training of our extraction system $p$ into two stages:
+1) train $p(z,a,c\mid x,e,t)$ to approximate the posterior of a conditional model of text given a complete KB
+2a) train $p(v \mid z,a,c,x,e,t)$ to approximate the posterior a full generative model of text and KB
+2b) train $p(v \mid z,a,c,x,e,t)$ using the lower bound in Eqn~\ref{eqn:lowerbound}.
 
 \begin{comment}
 \section{Three perspectives on training}
