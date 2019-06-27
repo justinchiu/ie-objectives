@@ -226,6 +226,8 @@ The aggregation model alone with $z$ unobserved is a Restricted Boltzmann Machin
 where exact inference is $O(|\mcV|^{|\mcI|} + |\mcV|^{|\mcJ|})$.
 We therefore resort to amortized variational inference.
 
+
+\begin{comment}
 \section{Three perspectives on training}
 We can either train $q$ directly on the conditional task
 or train it to mimic the posterior of a suitable generative model.
@@ -326,6 +328,7 @@ where values are missing.
 &= \arg\max_p \sum_{y'}\sum_{x'} p^*(y',x')\log \sum_z p(y',z,x')\\
 &\geq 
 \end{align}
+\end{comment}
 
 \bibliography{bib}
 \bibliographystyle{acl_natbib}
