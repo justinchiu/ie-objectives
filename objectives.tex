@@ -97,11 +97,11 @@ We omit the conditioning on $e,t$ for brevity.
 We introduce the following random variables:
 \begin{enumerate}
 \item $c_t \sim \Bern(f_c(x)_t)$: A word level RV that indicates whether a word is content or not.
-    We have $c_t \in \set{0,1}$.\\
+    We have $c_t \in \set{0,1}$.
 \item $a_t \sim \Cat(f_a(x)_t)$:  A word level RV that indicates an the index of the aligned
-    for word $x_t$. We have $a_t \in J$.\\
+    for word $x_t$. We have $a_t \in J$.
 \item $z_t \sim \Cat(f_z(x)_t)$: A word level RV that indicates the canonical value 
-word $x_t$ is translated to, such that $z_t \in \mcV$\\
+word $x_t$ is translated to, such that $z_t \in \mcV$.
 \end{enumerate}
 We propose the following factorization
 \begin{equation}
