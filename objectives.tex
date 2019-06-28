@@ -70,7 +70,8 @@ $t$ & $\triangleq$ & The list of all types in a KB by index. Each $t_j \in \mcT$
 $v$ & $\triangleq$ & The list of all values in a KB by index. Each $v_j \in \mcV$.\\
 \midrule
 $f_*(x)$ & $\triangleq$ & A learned function whose output is of shape $|\mcI| \times D$,
-    where $|\mcI|$ is the length of the word sequence and $D$ is the context-dependent.\\
+    where $|\mcI|$ is the length of the word sequence and $D$ is the size of the discrete 
+    distribution parameterized by this function.\\
 $c_i$ & $\triangleq$ & A word level RV that indicates whether a word is content or not.
     We have $c_i \in \set{0,1}$.\\
 $a_i$ & $\triangleq$ & A word level RV that indicates an the index of the aligned
