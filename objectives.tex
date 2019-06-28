@@ -176,7 +176,7 @@ to vectors in $\R^{d'}$.
 \item Alignment: $p(a_i \mid x) \propto \exp([E(e_{a_i}), E(t_{a_i})]^TW_a \bh_i),
 W_a \in \R^{2d' \times d}$ 
 \item Translation: $p(z_i \mid x) \propto \exp(W_z \bh_i), W_z \in \R^{|\mcV| \times d}$
-\item Aggregation: $p(v_j \mid z,a,m)$:
+\item Aggregation: 
 $$p(v_j \mid z,a,m,e,t) \propto \prod_i \exp(\psi(v_j, z_i, a_i, m_i,e,t)),$$
 with
 $$
