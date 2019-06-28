@@ -265,6 +265,9 @@ At each index $i \in \mcI$, the conditional distributions are given by:
     with the alignments. 
 \end{enumerate}
 
+One concern is that the model may learn to never rely on the text for extraction,
+setting $c_i = 0$ at every index.
+
 \subsection{Approximate the posterior of a generative model}
 Alternatively, we may decompose the training of our extraction system $p(v\mid x)$ into two stages:
 In the first stage we train $p(z,a,c\mid x,e,t)$ to approximate the posterior
