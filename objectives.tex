@@ -168,13 +168,11 @@ Our model has four steps: mention identification, mention alignment,
 mention translation, and aggregation.
 We parameterize the conditional distributions of each step below.
 
-Identification 
-
-Alignment
-
-Translation
-
-Aggregation
+\begin{enumerate}
+\item Identification $p(m_i \mid x)$:  
+\item Alignment $p(a_i \mid x)$: 
+\item Translation $p(z_i \mid x)$:
+\item Aggregation $p(v_j \mid z,a,m)$:
 $$p(v_j \mid z,a,m,e,t) \propto \prod_i \exp(\psi(v_j, z_i, a_i, m_i,e,t)),$$
 with
 $$
@@ -183,6 +181,7 @@ f_v(v_j,e,t), & m_i = 0 \\
 1(v_j = z_i, a_i = j), & m_i = 1.
 \end{cases}
 $$
+\end{enumerate}
 
 \section{Training}
 To train a latent variable model, we must marginalize over the unobserved RVs
