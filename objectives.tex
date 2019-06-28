@@ -96,6 +96,7 @@ given a text $x = [x_0, \ldots, x_{|\mcI|}],x_i \in \mcX,$ we must model the fac
 $r = \set{(e_j, t_j, v_j)}_{j \in \mcJ}$ expressed in that text
 with respect to a schema that details all entities $e_j \in \mcE$,
 relation types $t_j \in \mcT$, and all values $v_j \in \mcV$.
+The index sets $\mcI,\mcJ\subset\N$ give the indices of the words and records respectively. 
 We assume that the schema of the KB $(\mcE, \mcT, \mcV)$ is known at all times,
 and that the schema covers all facts of interest.
 
@@ -294,13 +295,15 @@ a good alignment model.
 
 \section{Evaluation}
 Although we have a model over the values of all records,
-we are not interested in the final distribution over all record values.
+evaluation does not include the final distribution over all record values.
 As we assumed that the KB contained a superset of the facts contained in
-a sequence of text, we are only interested in the subset of facts that 
+a sequence of text, we are evaluate whether the model can discover the subset of facts that 
 are expressed in the text.
-
 We therefore perform extraction by using the marginal distributions
-$q(z),q(a),q(c)$.
+$q(z),q(a),q(c)$ to value mentions as well as entities and types,
+giving us facts.
+
+
 
 \begin{comment}
 \section{Three perspectives on training}
