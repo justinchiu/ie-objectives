@@ -82,13 +82,6 @@ word and KB level extraction.
 The model first extracts information at the word level,
 then aggregates its predictions at the sequence level:
 
-\begin{itemize}
-\item $z_i$ indicates the value word $x_i$ is a mention of,
-    such that $z_i \in \mcV$.
-    Note that the mention of a value may not correspond exactly
-    to the representation in the KB schema.
-\end{itemize}
-
 We specify the relationship between these variables with the following process.
 For each index $i \in 0, \ldots, I$
 \begin{enumerate}
@@ -107,7 +100,7 @@ For each index $i \in 0, \ldots, I$
     We assume that each value mention aligns to a single record.
 \item Value mention translation: All value mentions are translated
     into a representation from the KB schema with
-    $p(z \mid x) = \prod_i p(z_i \mid x)$.
+    $p(z \mid x) = \prod_i p(z_i \mid x)$, with $z \in \mcV$.
 \end{enumerate}
 We choose to locally normalize the word level distributions as our goal is to
 extract information from text, not condition on an existing KB.
