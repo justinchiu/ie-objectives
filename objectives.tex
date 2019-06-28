@@ -103,15 +103,15 @@ The model $p(v\mid x)$ has the following generative story.
 For each index $i \in \mcI$, we have
 \begin{enumerate}
 \item Value mention $p(c \mid x) = \prod_i p(c_i \mid x)$: We choose whether word $x_i$
-   is a value mention or not. Each $c_i \sim \Bern(f_c(x)_i)$, where a value of 1 indicates
+   is a value mention or not. Each $c_i \mid x \sim \Bern(f_c(x)_i)$, where a value of 1 indicates
    that $x_i$ is a value mention.
 \item Alignment $p(a \mid x) = \prod_i p(a_i \mid x,e,t)$: We align the word $y_i$ by choosing who (the entity)
     and what (the relation type) generate the possible value mention at index $i$.
-    In particular, $a_i\sim\Cat(f_a(x,e,t)_i)$ denotes the alignment to the record $r_{a_i}$
+    In particular, $a_i \mid x,e,t \sim\Cat(f_a(x,e,t)_i)$ denotes the alignment to the record $r_{a_i}$
     given by the index $j = a_i$. 
 \item Translation $p(z \mid x) = \prod_i p(z_i \mid x)$:
     We translate the word $x_i$ into a value $z_i$.
-    The $z_i \sim \Cat(f_z(y)_i)$ is the canonical value from the KB schema 
+    The $z_i \mid x \sim \Cat(f_z(y)_i)$ is the canonical value from the KB schema 
     associated with $x_i$.
 \end{enumerate}
 
