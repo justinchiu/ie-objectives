@@ -99,18 +99,17 @@ We introduce the following random variables for each index $i \in 0, \ldots, I$:
 
 We specify the relationship between these variables with the following process:
 \begin{enumerate}
-\item Value mentions identification: Given a sequence of words $x$,
+\item Value mention identification: Given a sequence of words $x$,
     we identify whether each word is a value mention independently with
     $p(c \mid x) = \prod_i p(c_i \mid x)$.
 \item Mention alignment: Each mention is then aligned to a 
-    record in the knowledge base with $p(a \mid x) = \prod_i p(a_i \mid x,e,t)$.
+    record in the knowledge base with $p(a \mid x,c) = \prod_i p(a_i \mid c=1,x,e,t)$.
     We align the word $y_i$ by choosing who (the entity)
     and what (the relation type) generate the possible value mention at index $i$.
     In particular, $a_i = j$ denotes the alignment to the record $r_{j}$.
-\item Translation $p(z \mid x) = \prod_i p(z_i \mid x)$:
-    We translate the word $x_i$ into a value $z_i$.
-    The $z_i \mid x \sim \Cat(f_z(y)_i)$ is the value from the KB schema 
-    associated with $x_i$.
+\item Value mention translation: All value mentions are translated
+    into its representation from the KB schema with
+    $p(z \mid x,c) = \prod_i p(z_i \mid c_i=1,x)$.
 \end{enumerate}
 
 Finally, we aggregate the word level information at the sequence level.
