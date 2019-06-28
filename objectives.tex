@@ -170,12 +170,13 @@ We parameterize the conditional distributions of each step below.
 
 Let $\bh_i \in \R^d$ be a contextual embedding of the word $x_i$,
 and $E$ an embedding function that maps entities and types
-to vectors in $\R^d$.
+to vectors in $\R^{d'}$.
 \begin{enumerate}
-\item Identification $p(m_i \mid x) \propto \exp(W_m\bh_i)$
-\item Alignment $p(a_i \mid x) \propto \exp([E(e_{a_i}), E(t_{a_i})]^TW_a \bh_i)$ 
-\item Translation $p(z_i \mid x) \propto \exp(W_z \bh_i)$
-\item Aggregation $p(v_j \mid z,a,m)$:
+\item Identification: $p(m_i \mid x) \propto \exp(W_m\bh_i), W_m \in \R^{2 \times d}$
+\item Alignment: $p(a_i \mid x) \propto \exp([E(e_{a_i}), E(t_{a_i})]^TW_a \bh_i),
+W_a \in \R^{2d' \times d}$ 
+\item Translation: $p(z_i \mid x) \propto \exp(W_z \bh_i), W_z \in \R^{|\mcV| \times d}$
+\item Aggregation: $p(v_j \mid z,a,m)$:
 $$p(v_j \mid z,a,m,e,t) \propto \prod_i \exp(\psi(v_j, z_i, a_i, m_i,e,t)),$$
 with
 $$
