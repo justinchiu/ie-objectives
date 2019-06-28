@@ -250,7 +250,7 @@ The conditional distributions of our inference network
 are very similar to the relation extraction model,
 but they condition on the values $v$.
 Let $g_*(\cdot)$ be a function that maps its arguments to a $|\mcI| \times D$
-dimension tensor, where $g_*(\cdot)_i$ is a point on the $D$ dimensional simplex.
+dimension tensor, where $g_*(\cdot)_i$ returns a point on the $D$ dimensional simplex.
 At each index $i \in \mcI$, the conditional distributions are given by:
 \begin{enumerate}
 \item The value mention model $q(c_i \mid v,x) = \Bern(g_{c}(v,x)_i)$ 
