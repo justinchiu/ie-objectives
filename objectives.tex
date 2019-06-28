@@ -100,7 +100,6 @@ with a linear transformation applied to the output at each time step $i$.
 The dimensionality of the simplex can be inferred from the domain of the
 distribution parameterized by $f_*$.
 The model $p(v\mid x)$ has the following generative story.
-For each index $i \in \mcI$, we have
 \begin{enumerate}
 \item Value mention $p(c \mid x) = \prod_i p(c_i \mid x)$: We choose whether word $x_i$
    is a value mention or not. Each $c_i \mid x \sim \Bern(f_c(x)_i)$, where a value of 1 indicates
