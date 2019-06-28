@@ -118,8 +118,6 @@ Finally, we aggregate the word level information at the sequence level.
 \item Aggregation $p(v \mid z,a,c) = \prod_j p(v_j \mid z,a,c)$:
     Given the word level values $z$,alignments $a$, value mention decisions$c$,
     we choose the KB level value $v_j$ from a conditional random field.
-    This choice is made independently from the other values in the KB
-    given the word level choices.
     We parameterize
     $$p(v_j \mid z,a,c,e,t) \propto \prod_i \exp(\psi(v_j, z_i, a_i, c_i,e,t)),$$
     with
