@@ -288,9 +288,13 @@ a good alignment model.
 
 \section{Evaluation}
 Although we have a model over the values of all records,
-we are not interested in explaining every record.
+we are not interested in the final distribution over all record values.
 As we assumed that the KB contained a superset of the facts contained in
-a sequence of text, we are only interested in a subset of the records.
+a sequence of text, we are only interested in the subset of facts that 
+are expressed in the text.
+
+We therefore perform extraction by using the marginal distributions
+$q(z),q(a),q(c)$.
 
 \begin{comment}
 \section{Three perspectives on training}
