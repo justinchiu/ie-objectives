@@ -38,9 +38,9 @@ that discuss subsets of the information in the KB.
 
 In order to perform extraction, we must first identify where facts are mentioned
 then aggregate those decisions to construct a knowledge base.
-As sentences may contain many entity and value mentions, and therefore possibly
+As sentences may contain many entity and value mentions, and therefore 
 a large number of facts, we focus on identifying facts at a scale that minimizes ambiguity
-by casting the identification problem as an unsupervised word level classification task.
+by casting the mention identification problem as an unsupervised word level classification task.
 We first identify the position of value mentions,
 predict who (the entity) and what (the relation type) the value mention
 is discussing, then aggregate those decisions.
