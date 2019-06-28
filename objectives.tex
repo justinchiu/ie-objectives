@@ -268,7 +268,8 @@ At each index $i \in \mcI$, the conditional distributions are given by:
 One concern is that the model may learn to never rely on the text for extraction,
 setting $c_i = 0$ at every index.
 We can avoid this by initializing $q(z)$ to ensure that for words $x \in \mcV$ 
-we have $q(z = x)$ is high.
+we have $q(z = x)$ is high, biasing the translation model towards transliteration
+at the start of training.
 
 \subsection{Approximate the posterior of a generative model}
 Alternatively, we may decompose the training of our extraction system $p(v\mid x)$ into two stages:
