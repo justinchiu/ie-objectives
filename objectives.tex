@@ -124,8 +124,12 @@ We introduce the following random variables for each index $i \in [I]$:
     We have $c_i \in \set{0,1}$.
 \item $a_i$ indicates the index of the record aligned to word $x_i$.
     We have $a_i \in J$.
+    We make the assumption that each value mention aligns to a single record.
 \item $z_i$ indicates the canonical value word $x_i$ is a mention of,
     such that $z_i \in \mcV$.
+    This is necessary as the mention of a value may not correspond exactly
+    to the representation in the KB schema.
+    An example is the numerical and alphabetical representation of numbers.
 \end{enumerate}
 
 Let $f_*$ be arbitrary learned functions that maps each $x_i$ in $x$ to
@@ -144,7 +148,6 @@ For each index $i \in \mcI$, we have
     and what (the relation type) generate the possible value mention at index $i$.
     In particular, $a_i\sim\Cat(f_a(x,e,t)_i)$ denotes the alignment to the record $r_{a_i}$
     given by the index $j = a_i$. 
-    We make the assumption that each value mention aligns to a single record.
 \item Translation $p(z \mid x) = \prod_i p(z_i \mid x)$:
     We translate the word $x_i$ into a value $z_i$.
     The $z_i \sim \Cat(f_z(y)_i)$ is the canonical value from the KB schema 
