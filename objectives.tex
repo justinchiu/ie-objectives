@@ -91,14 +91,14 @@ For each index $i \in 0, \ldots, I$
     Each $m_i \in \set{0,1}$.
     Not every word in a mention must be identified; it suffices to find
     at least 1 word in a value mention.
-\item Mention alignment: Each mention is then aligned to a 
+\item Alignment: Each value mention is then aligned to a 
     record in the knowledge base with $p(a \mid x) = \prod_i p(a_i \mid x,e,t)$,
     We align the word $y_i$ by choosing who (the entity)
     and what (the relation type) generate the possible value mention at index $i$.
     In particular, $a_i = j$ denotes the alignment to the record $r_{j}$
     with $a_i \in 0, \ldots, J$.
     We assume that each value mention aligns to a single record.
-\item Value mention translation: All value mentions are translated
+\item Translation: All value mentions are translated
     into a representation from the KB schema with
     $p(z \mid x) = \prod_i p(z_i \mid x)$, with $z \in \mcV$.
 \end{enumerate}
