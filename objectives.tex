@@ -47,39 +47,6 @@ Except for \citet{zeng2018copy}, prior work has either assumed that the location
 entities and values are given as input features or that the locations of entities and values
 are observed at training time.
 
-\begin{table}[htbp]\caption{Notation for relation extraction.}
-\centering % to have the caption near the table
-\begin{tabular}{r c p{10cm}}
-\toprule
-$x$ & $\triangleq$ & A sequence of words $x_i, i \in \mcI$
-    corresponding to a sentence or document.\\
-$\mcX$ & $\triangleq$ & The vocabulary.\\
-$\mcI$ & $\triangleq$ & The index set for the text:
-    $\mcI = \set{0,1,2,\ldots}\subset \N$.\\
-\midrule
-$r$ & $\triangleq$ & The knowledge base,
-    an indexed set of records each consisting of entities, types, and values.
-    Each $r_j = (e_j, t_j, v_j)$.\\
-$\mcJ$ & $\triangleq$ & The index set for the KB:
-    $\mcJ = \set{0,1,2,\ldots}\subset \N$.\\
-$e$ & $\triangleq$ & The list of all entities in a KB by index. Each $e_j \in \mcE$.\\
-$t$ & $\triangleq$ & The list of all types in a KB by index. Each $t_j \in \mcT$.\\
-$v$ & $\triangleq$ & The list of all values in a KB by index. Each $v_j \in \mcV$.\\
-\midrule
-$f_*(x)$ & $\triangleq$ & A learned function whose output is of shape $|\mcI| \times D$,
-    where $|\mcI|$ is the length of the word sequence and $D$ is the size of the discrete 
-    distribution parameterized by this function.\\
-$c_i$ & $\triangleq$ & A word level RV that indicates whether a word is content or not.
-    We have $c_i \in \set{0,1}$.\\
-$a_i$ & $\triangleq$ & A word level RV that indicates an the index of the aligned
-    for word $x_i$. We have $a_i \in J$.\\
-$z_i$ & $\triangleq$ & A word level RV that indicates the canonical value 
-    word $x_i$ is translated to, such that $z_i \in \mcV$\\
-\bottomrule
-\end{tabular}
-\label{tab:TableOfNotationForMyResearch}
-\end{table}
-
 We are primarily concerned with the scenario where we have an overcomplete KB schema with
 respect to a specific passage of text.
 This fits many scenarios in real world applications:
