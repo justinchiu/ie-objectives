@@ -13,8 +13,8 @@ Justin T. Chiu
 \maketitle
 
 \begin{abstract}
-Many recent information extraction systems predict the relationship between an entity and value given
-their locations in the text.
+Many recent information extraction systems predict the relationship between
+an entity and value given their locations in the text.
 This requires observed locations of mentions, which requires annotations at the word level.
 Any form of annotation at the word level does not scale as the size of the text
 and the number of labels increases, and even more so if there is ambiguity.
@@ -144,6 +144,7 @@ For each index $i \in \mcI$, we have
     and what (the relation type) generate the possible value mention at index $i$.
     In particular, $a_i\sim\Cat(f_a(x,e,t)_i)$ denotes the alignment to the record $r_{a_i}$
     given by the index $j = a_i$. 
+    We make the assumption that each value mention aligns to a single record.
 \item Translation $p(z \mid x) = \prod_i p(z_i \mid x)$: We translate the word $x_i$ into a value $z_i$.
     The $z_i \sim \Cat(f_z(y)_i)$ is the canonical value from the KB schema 
     associated with $x_i$.
