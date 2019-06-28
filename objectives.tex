@@ -79,35 +79,32 @@ the distribution over values of corresponding entities and types given the text.
 \section{Model}
 We define a graphical model that jointly models 
 word and KB level extraction. 
-The model first predicts the word level information,
-then aggregates its predictions at the KB level.
+The model first extracts information at the word level,
+then aggregates its predictions at the sequence level:
 
-We introduce the following random variables (RVs) for each index $i \in 0, \ldots, I$,
-and refer to them as word level RVs:
 \begin{itemize}
-\item $m_i$ indicates whether a word is a value mention.
-    We have $m_i \in \set{0,1}$.
-    The word $x_i$ is a mention if $x_i$ is part of a possibly multi-word
-    expression that refers to a value from the KB schema.
-\item $a_i$ indicates the index of the record aligned to word $x_i$.
-    We have $a_i \in 0, \ldots, J$.
-    We make the assumption that each value mention aligns to a single record.
 \item $z_i$ indicates the value word $x_i$ is a mention of,
     such that $z_i \in \mcV$.
     Note that the mention of a value may not correspond exactly
     to the representation in the KB schema.
 \end{itemize}
 
-We specify the relationship between these variables with the following process:
+We specify the relationship between these variables with the following process.
+For each index $i \in 0, \ldots, I$
 \begin{enumerate}
 \item Value mention identification: Given a sequence of words $x$,
-    we identify whether each word is a value mention independently with
+    we identify whether each word is a value mention with
     $p(m \mid x) = \prod_i p(m_i \mid x)$.
+    Each $m_i \in \set{0,1}$.
+    Not every word in a mention must be identified; it suffices to find
+    at least 1 word in a value mention.
 \item Mention alignment: Each mention is then aligned to a 
-    record in the knowledge base with $p(a \mid x) = \prod_i p(a_i \mid x,e,t)$.
+    record in the knowledge base with $p(a \mid x) = \prod_i p(a_i \mid x,e,t)$,
     We align the word $y_i$ by choosing who (the entity)
     and what (the relation type) generate the possible value mention at index $i$.
-    In particular, $a_i = j$ denotes the alignment to the record $r_{j}$.
+    In particular, $a_i = j$ denotes the alignment to the record $r_{j}$
+    with $a_i \in 0, \ldots, J$.
+    We assume that each value mention aligns to a single record.
 \item Value mention translation: All value mentions are translated
     into a representation from the KB schema with
     $p(z \mid x) = \prod_i p(z_i \mid x)$.
@@ -124,8 +121,6 @@ to give a single distribution over the record values for $x$.
     Given the word level values $z$, alignments $a$, value mention decisions $m$,
     we choose the sequence level value $v_j$.
 \end{enumerate}
-
-
 
 \begin{figure}[h]
 \begin{center}
