@@ -190,8 +190,8 @@ $$
 To train a latent variable model, we must marginalize over the unobserved RVs
 and maximize the likelihood of the observed.
 However, maximizing $\log p(v \mid x)$ directly is very expensive for this model.
-The aggregation model alone with $z$ unobserved is a Restricted Boltzmann Machine,
-where exact inference is $O(|\mcV|^{I} + |\mcV|^{J})$.
+Exact inference in the the aggregation model alone with $z$ unobserved
+would be $O(|\mcV|^{I} + |\mcV|^{J})$.
 
 We therefore resort to approximate inference,
 specifically amortized variational inference.
