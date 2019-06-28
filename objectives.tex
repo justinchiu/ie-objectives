@@ -65,18 +65,18 @@ $r$ & $\triangleq$ & The knowledge base,
     Each $r_j = (e_j, t_j, v_j)$.\\
 $\mcJ$ & $\triangleq$ & The index set for the KB:
     $\mcJ = \set{0,1,2,\ldots}\subset \N$.\\
-$e$ & $\triangleq$ & The list of all entities in a KB by index.\\
-$t$ & $\triangleq$ & The list of all types in a KB by index.\\
-$v$ & $\triangleq$ & The list of all values in a KB by index.\\
+$e$ & $\triangleq$ & The list of all entities in a KB by index. Each $e_j \in \mcE$.\\
+$t$ & $\triangleq$ & The list of all types in a KB by index. Each $t_j \in \mcT$.\\
+$v$ & $\triangleq$ & The list of all values in a KB by index. Each $v_j \in \mcV$.\\
 \midrule
 $f_*(x)$ & $\triangleq$ & A learned function whose output is of shape $|\mcI| \times D$,
     where $|\mcI|$ is the length of the word sequence and $D$ is the context-dependent.\\
 $c_i$ & $\triangleq$ & A word level RV that indicates whether a word is content or not.
-    We have $c_t \in \set{0,1}$.\\
+    We have $c_i \in \set{0,1}$.\\
 $a_i$ & $\triangleq$ & A word level RV that indicates an the index of the aligned
-    for word $x_t$. We have $a_t \in J$.\\
+    for word $x_i$. We have $a_i \in J$.\\
 $z_i$ & $\triangleq$ & A word level RV that indicates the canonical value 
-word $x_t$ is translated to, such that $z_t \in \mcV$\\
+word $x_i$ is translated to, such that $z_i \in \mcV$\\
 \bottomrule
 \end{tabular}
 \label{tab:TableOfNotationForMyResearch}
@@ -286,6 +286,10 @@ as conditioning on the observed values of a KB should not reduce the entropy of
 a good alignment model.
 
 \section{Evaluation}
+Although we have a model over the values of all records,
+we are not interested in explaining every record.
+As we assumed that the KB contained a superset of the facts contained in
+a sequence of text, we are only interested in a subset of the records.
 
 \begin{comment}
 \section{Three perspectives on training}
