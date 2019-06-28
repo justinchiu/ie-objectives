@@ -38,9 +38,9 @@ In order to perform extraction, we must first identify where facts are mentioned
 As sentences may contain many entity and value mentions, and therefore possibly
 a large number of facts, we focus on identifying facts at a scale
 that balances introducing ambiguity and computation complexity.
-In particular, we focus on identifying the position of value mentions
+In particular, we focus on first identifying the position of value mentions
 and predicting who (the entity) and what (the relation type) the value mention
-is discussing.
+is discussing, then aggregating those decisions.
 
 Note on related work:
 Except for \citet{zeng2018copy}, prior work has either assumed that the locations of
