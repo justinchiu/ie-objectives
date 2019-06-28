@@ -56,18 +56,14 @@ but the particular document we wish to analyze only discusses tens of entities,
 only a few of which are present in our KB.
 
 The problem description is as follows:
-given a text $x = [x_0, \ldots, x_{I}]$ we must model the facts
+given a text $x = x_0, \ldots, x_{I}$ we model the facts
 $r = \set{(e_j, t_j, v_j)}_{j=0}^J$ expressed in that text
 with respect to a schema that details all entities $e_j \in \mcE$,
 relation types $t_j \in \mcT$, and all values $v_j \in \mcV$.
 We assume that the schema of the KB $(\mcE, \mcT, \mcV)$ is known at all times,
 and that the schema covers all facts of interest.
-
-We refer to the set of facts $r$ as a knowledge base (KB),
-and each fact $r_j$ is referred to as a record.
-Each record $r_j$ consists of an entity, type, and value triple. 
-Let $e,t,v$ be the projection of the entities, types, and values
-from the KB $r$ in aggregate.
+The set of facts $r$ is our knowledge base (KB),
+and each individual fact $r_j$ is a record.
 
 Given all entities $e$ and types $t$,
 we reduce the construction of $r$ to predicting, for every $j\in \mcJ$,
