@@ -126,23 +126,23 @@ We introduce the following random variables for each index $i \in [I]$:
     such that $z_i \in \mcV$.
 \end{enumerate}
 
-The model $p(v\mid x)$ has the following generative story.
 Let $f_*$ be arbitrary learned functions that maps each $x_i$ in $x$ to
 a point on a simplex.
 In all cases, $f_*$ takes the form of a BLSTM over the sequence of words $x$
 with a linear transformation applied to the output at each time step $i$.
 The dimensionality of the simplex can be inferred from the domain of the
 distribution parameterized by $f_*$.
+The model $p(v\mid x)$ has the following generative story.
 For each index $i \in \mcI$, we have
 \begin{enumerate}
-\item Value mention $p(c_i \mid x)$: We choose whether word $x_i$
+\item Value mention $p(c \mid x) = \prod_i p(c_i \mid x)$: We choose whether word $x_i$
    is a value mention or not. Each $c_i \sim \Bern(f_c(x)_i)$, where a value of 1 indicates
    that $x_i$ is a value mention.
-\item Alignment $p(a_i \mid x,e,t)$: We align the word $y_i$ by choosing who (the entity)
+\item Alignment $p(a \mid x) = \prod_i p(a_i \mid x,e,t)$: We align the word $y_i$ by choosing who (the entity)
     and what (the relation type) are being talked about.
     In particular, $a_i\sim\Cat(f_a(x,e,t)_i)$ denotes the alignment to the record $r_{a_i}$
     given by the index $j = a_i$. 
-\item Translation $p(z_i \mid x)$: We translate the word $x_i$ into a value $z_i$.
+\item Translation $p(z \mid x) = \prod_i p(z_i \mid x)$: We translate the word $x_i$ into a value $z_i$.
     The $z_i \sim \Cat(f_z(y)_i)$ is the canonical value from the KB schema 
     associated with $x_i$.
 \end{enumerate}
@@ -152,7 +152,7 @@ Finally, we aggregate the word level information at the sequence level:
 \setcounter{enumi}{3}
 \item Aggregation $p(v \mid z,a,c) = \prod_j p(v_j \mid z,a,c)$:
     Given the word level values $z$,alignments $a$, value mention decisions$c$,
-    we choose the KB level value $v_j$ from a CRF.
+    we choose the KB level value $v_j$ from a conditional random field.
     This choice is made independently from the other values in the KB
     given the word level choices.
     We parameterize
@@ -204,7 +204,7 @@ without the influence of the values in a KB.
 \end{center}
 \caption{Our model predicts word-level values and alignments
 then aggregates those choices over all indices $i$ to
-make a choice at the KB level.
+predict a value at the KB level.
 }
 \label{fig:infmodel}
 \end{figure}
@@ -241,22 +241,25 @@ with respect to the parameters of both $p$ and $q$:
 We propose to parameterize $q(z,a,c\mid v,x,e,t)$ as follows.
 We decompose 
 \begin{equation}
-q(z,a,c\mid v,x,e,t) = q(z \mid a,v,x)q(a\mid v,x,e,t)q(c \mid v,x)
+\begin{aligned}
+q(z,a,c\mid v,x,e,t) &= q(z \mid a,v,x)q(a\mid v,x,e,t)q(c \mid v,x)\\
+&= \prod_i q(z_i \mid a,v,x)q(a_i \mid v,x,e,t)q(c_i \mid v,x)
+\end{aligned}
 \end{equation}
 The conditional distributions of our inference network
 are very similar to the relation extraction model,
 but they condition on the values $v$.
 Let $g_*(\cdot)$ be a function that maps its arguments to a $|\mcI| \times D$
 dimension tensor, where $g_*(\cdot)_i$ is a point on the $D$ dimensional simplex.
-The conditional distributions are given by:
+At each index $i \in \mcI$, the conditional distributions are given by:
 \begin{enumerate}
-\item The value mention model $q(c \mid v,x) = g_{c}(v,x)$ 
+\item The value mention model $q(c_i \mid v,x) = \Bern(g_{c}(v,x)_i)$ 
     has access to the values $v$ from the KB, which it conditions on
     when detecting value mentions. 
-\item The alignment model $q(a \mid v,x,e,t) = g_{a}(v,x,e,t)$
+\item The alignment model $q(a_i \mid v,x,e,t) = \Cat(g_{a}(v,x,e,t))$
     uses a contextual representation of each $x_i$ and chooses a record.
     In contrast to $p(a\mid x,e,t)$, this model has access to values as well.
-\item The translation model $q(z \mid a,v,x) = \prod_i 1(z_i = v_{a_i})$
+\item The translation model $q(z_i \mid a,v,x) = 1(z_i = v_{a_i})$
     conditions on the alignments $a$ and ensures the chosen $z$ is consistent
     with the alignments. 
 \end{enumerate}
@@ -264,19 +267,25 @@ The conditional distributions are given by:
 \subsection{Approximate the posterior of a generative model}
 Alternatively, we may decompose the training of our extraction system $p(v\mid x)$ into two stages:
 In the first stage we train $p(z,a,c\mid x,e,t)$ to approximate the posterior
-of a conditional model of text given a complete KB.
+of a conditional model of text given a complete KB $q(x,z,a,c \mid e,t,v)$.
+This has the benefit of biasing $c_t=1$ at the beginning of a value mention,
+if the value mention spans multiple words.
+
 In the second stage, we have two choices:
-a) train $p(v \mid z,a,c,x,e,t)$ to approximate the posterior a full generative model of text and KB
+a) train $p(v \mid z,a,c,x,e,t)$ to approximate the posterior of a full generative model of text and
+the values of KB $q(x,v\mid e,t)$.
 b) train $p(v \mid z,a,c,x,e,t)$ using the following lower bound:
 \begin{equation}
 \label{eqn:lowerbound2}
 \log p(v\mid x) \geq
-\Es{p(z,a,c\mid x,e,t)}{\log \frac{p(v,z,a,c\mid x,e,t)}{p(z,a,c\mid x,e,t)}}
+\Es{p(z,a,c\mid x,e,t)}{\log p(v\mid z,a,c, x,e,t)}
 \end{equation}
 Ideally the bound in Eqn.~\ref{eqn:lowerbound2}
 should not be looser than the one presented in Eqn.~\ref{eqn:lowerbound},
 as conditioning on the observed values of a KB should not reduce the entropy of
 a good alignment model.
+
+
 
 \begin{comment}
 \section{Three perspectives on training}
