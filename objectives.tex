@@ -79,12 +79,12 @@ word and KB level extraction.
 The model first predicts the word level information,
 then aggregates its predictions at the KB level.
 
-We introduce the following random variables for each index $i \in [0, \ldots, I]$:
+We introduce the following random variables for each index $i \in 0, \ldots, I]$:
 \begin{enumerate}
 \item $c_i$ indicates whether a word is a value mention.
     We have $c_i \in \set{0,1}$.
 \item $a_i$ indicates the index of the record aligned to word $x_i$.
-    We have $a_i \in [0, \ldots, J]$.
+    We have $a_i \in 0, \ldots, J$.
     We make the assumption that each value mention aligns to a single record.
 \item $z_i$ indicates the canonical value word $x_i$ is a mention of,
     such that $z_i \in \mcV$.
