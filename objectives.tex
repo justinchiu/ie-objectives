@@ -28,16 +28,19 @@ either chooses a triple from a knowledge base to explain or chooses to explain n
 In relation extraction (RE) we extract facts from a passage of text.
 The goal of RE is to convert facts expressed in natural language into a form
 amenable to computation.
-RE focuses on a relational representation: facts are extracted into a form that details
+RE uses a relational representation: facts detail
 how values are related to entities.
-
+The challenge of RE is to not only extract facts from text, but also
+localize where those facts are mentioned.
 In this work we build a relation extraction system with minimal supervision.
 We assume access to a knowledge base (KB) that is aligned to sequences of text
 that discuss subsets of the information in the KB.
+
+
 In order to perform extraction, we must first identify where facts are mentioned.
 As sentences may contain many entity and value mentions, and therefore possibly
 a large number of facts, we focus on identifying facts at a scale
-that balances introducing ambiguity and computation complexity.
+that balances introducing ambiguity and computational complexity.
 In particular, we focus on first identifying the position of value mentions
 and predicting who (the entity) and what (the relation type) the value mention
 is discussing, then aggregating those decisions.
