@@ -83,7 +83,7 @@ The model first predicts the word level information,
 then aggregates its predictions at the KB level.
 
 We introduce the following random variables for each index $i \in 0, \ldots, I$:
-\begin{enumerate}
+\begin{itemize}
 \item $c_i$ indicates whether a word is a value mention.
     We have $c_i \in \set{0,1}$.
     The word $x_i$ is a mention if $x_i$ is part of a possibly multi-word
@@ -95,7 +95,7 @@ We introduce the following random variables for each index $i \in 0, \ldots, I$:
     such that $z_i \in \mcV$.
     Note that the mention of a value may not correspond exactly
     to the representation in the KB schema.
-\end{enumerate}
+\end{itemize}
 
 We specify the relationship between these variables with the following process:
 \begin{enumerate}
