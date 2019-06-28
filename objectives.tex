@@ -85,8 +85,8 @@ then aggregates its predictions at the KB level.
 We introduce the following random variables (RVs) for each index $i \in 0, \ldots, I$,
 and refer to them as word level RVs:
 \begin{itemize}
-\item $c_i$ indicates whether a word is a value mention.
-    We have $c_i \in \set{0,1}$.
+\item $m_i$ indicates whether a word is a value mention.
+    We have $m_i \in \set{0,1}$.
     The word $x_i$ is a mention if $x_i$ is part of a possibly multi-word
     expression that refers to a value from the KB schema.
 \item $a_i$ indicates the index of the record aligned to word $x_i$.
@@ -102,7 +102,7 @@ We specify the relationship between these variables with the following process:
 \begin{enumerate}
 \item Value mention identification: Given a sequence of words $x$,
     we identify whether each word is a value mention independently with
-    $p(c \mid x) = \prod_i p(c_i \mid x)$.
+    $p(m \mid x) = \prod_i p(m_i \mid x)$.
 \item Mention alignment: Each mention is then aligned to a 
     record in the knowledge base with $p(a \mid x) = \prod_i p(a_i \mid x,e,t)$.
     We align the word $y_i$ by choosing who (the entity)
@@ -120,8 +120,8 @@ we aggregate the word level information at the sequence level in order
 to give a single distribution over values for each record.
 \begin{enumerate}
 \setcounter{enumi}{3}
-\item Aggregation $p(v \mid z,a,c) = \prod_j p(v_j \mid z,a,c)$:
-    Given the word level values $z$, alignments $a$, value mention decisions$c$,
+\item Aggregation $p(v \mid z,a,m) = \prod_j p(v_j \mid z,a,m)$:
+    Given the word level values $z$, alignments $a$, value mention decisions $m$,
     we choose the KB level value $v_j$ from a conditional random field.
 \end{enumerate}
 
@@ -133,7 +133,7 @@ to give a single distribution over values for each record.
 \begin{tikzpicture}
 \node[obs] (Y) {$x$};
 \node[latent, below=of Y](A) {$a_i$};
-\node[latent, left=of A](C) {$c_i$};
+\node[latent, left=of A](C) {$m_i$};
 \node[latent, right=of A](Vi) {$z_i$};
 
 \node[obs, below=of C] (E) {$e_j$};
@@ -169,21 +169,21 @@ This gives us the following factorization of the relation extraction system:
 \begin{equation}
 \label{eqn:prob}
 \begin{aligned}
-p(v \mid x,e,t) &= \sum_{z,a,c} p(v,z,a,c\mid x,e,t)\\
-&= \sum_{z,a,c} p(v\mid z,a,c,x,e,t) \prod_i p(z_i, a_i, c_i\mid x,e,t)\\
-&= \sum_{z,a,c} \prod_j p(v_j\mid z,a,c,x,e,t) \prod_i p(z_i\mid x)p(a_i\mid x,e,t)p(c_i\mid x)\\
+p(v \mid x,e,t) &= \sum_{z,a,m} p(v,z,a,c\mid x,e,t)\\
+&= \sum_{z,a,m} p(v\mid z,a,m,x,e,t) \prod_i p(z_i, a_i, m_i\mid x,e,t)\\
+&= \sum_{z,a,m} \prod_j p(v_j\mid z,a,m,x,e,t) \prod_i p(z_i\mid x)p(a_i\mid x,e,t)p(m_i\mid x)\\
 \end{aligned}
 \end{equation}
 
 \subsection{Parameterization}
 
 We parameterize
-$$p(v_j \mid z,a,c,e,t) \propto \prod_i \exp(\psi(v_j, z_i, a_i, c_i,e,t)),$$
+$$p(v_j \mid z,a,m,e,t) \propto \prod_i \exp(\psi(v_j, z_i, a_i, m_i,e,t)),$$
 with
 $$
-\psi(v_j, z_i, a_i, c_i,e,t) = \begin{cases}
-f_v(v_j,e,t), & c_i = 0 \\
-1(v_j = z_i, a_i = j), & c_i = 1.
+\psi(v_j, z_i, a_i, m_i,e,t) = \begin{cases}
+f_v(v_j,e,t), & m_i = 0 \\
+1(v_j = z_i, a_i = j), & m_i = 1.
 \end{cases}
 $$
 
