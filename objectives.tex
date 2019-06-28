@@ -93,13 +93,7 @@ We introduce the following random variables for each index $i \in 0, \ldots, I]$
     An example is the numerical and alphabetical representation of numbers.
 \end{enumerate}
 
-Let $f_*$ be arbitrary learned functions that maps each $x_i$ in $x$ to
-a point on a simplex.
-In all cases, $f_*$ takes the form of a BLSTM over the sequence of words $x$
-with a linear transformation applied to the output at each time step $i$.
-The dimensionality of the simplex can be inferred from the domain of the
-distribution parameterized by $f_*$.
-The model $p(v\mid x)$ has the following generative story.
+We specify the relationship between these variables with the following generative story.
 \begin{enumerate}
 \item Value mention $p(c \mid x) = \prod_i p(c_i \mid x)$: We choose whether word $x_i$
    is a value mention or not. Each $c_i \mid x \sim \Bern(f_c(x)_i)$, where a value of 1 indicates
