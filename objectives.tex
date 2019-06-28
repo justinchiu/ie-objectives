@@ -111,7 +111,7 @@ We propose to model $p(v \mid x, e, t)$,
 the distribution over values of corresponding entities and types given the text.
 
 \section{Model}
-We define a directed graphical model that jointly models 
+We define a (mixed) directed graphical model that jointly models 
 word and KB level extraction. 
 The model first predicts the word level information,
 then aggregates its predictions at the KB level.
@@ -126,12 +126,11 @@ We introduce the following random variables for each index $i \in [I]$:
     such that $z_i \in \mcV$.
 \end{enumerate}
 
-
 The model $p(v\mid x)$ has the following generative story.
 Let $f_*$ be arbitrary learned functions that maps each $x_i$ in $x$ to
 a point on a simplex.
 In all cases, $f_*$ takes the form of a BLSTM over the sequence of words $x$
-with a transformation applied to the output at each time step $i$.
+with a linear transformation applied to the output at each time step $i$.
 The dimensionality of the simplex can be inferred from the domain of the
 distribution parameterized by $f_*$.
 For each index $i \in \mcI$, we have
@@ -222,16 +221,17 @@ p(v \mid x,e,t) &= \sum_{z,a,c} p(v,z,a,c\mid x,e,t)\\
 \section{Training}
 To train a latent variable model, we must marginalize over the unobserved RVs
 and maximize the likelihood of the observed.
-However, for our model maximizing $\log p(v \mid x)$ directly is very expensive.
+However, maximizing $\log p(v \mid x)$ directly is very expensive for this model.
 The aggregation model alone with $z$ unobserved is a Restricted Boltzmann Machine,
 where exact inference is $O(|\mcV|^{|\mcI|} + |\mcV|^{|\mcJ|})$.
 
+We therefore resort to approximate inference,
+specifically amortized variational inference.
 
-We therefore resort to amortized variational inference.
-
-\subsection{Introduce a powerful inference network}
+\subsection{Inference network}
 Our first approach is to specify an inference network $q(z,a,c\mid v,x,e,t)$.
-We then optimize the following lower bound on the marginal likelihood:
+We then optimize the following lower bound on the marginal likelihood
+with respect to the parameters of both $p$ and $q$:
 \begin{equation}
 \label{eqn:lowerbound}
 \log p(v\mid x) \geq
@@ -243,9 +243,26 @@ We decompose
 \begin{equation}
 q(z,a,c\mid v,x,e,t) = q(z \mid a,v,x)q(a\mid v,x,e,t)q(c \mid v,x)
 \end{equation}
+The conditional distributions of our inference network
+are very similar to the relation extraction model,
+but they condition on the values $v$.
+Let $g_*(\cdot)$ be a function that maps its arguments to a $|\mcI| \times D$
+dimension tensor, where $g_*(\cdot)_i$ is a point on the $D$ dimensional simplex.
+The conditional distributions are given by:
+\begin{enumerate}
+\item The value mention model $q(c \mid v,x) = g_{c}(v,x)$ 
+    has access to the values $v$ from the KB, which it conditions on
+    when detecting value mentions. 
+\item The alignment model $q(a \mid v,x,e,t) = g_{a}(v,x,e,t)$
+    uses a contextual representation of each $x_i$ and chooses a record.
+    In contrast to $p(a\mid x,e,t)$, this model has access to values as well.
+\item The translation model $q(z \mid a,v,x) = \prod_i 1(z_i = v_{a_i})$
+    conditions on the alignments $a$ and ensures the chosen $z$ is consistent
+    with the alignments. 
+\end{enumerate}
 
 \subsection{Approximate the posterior of a generative model}
-Alternatively, we may decompose the training of our extraction system $p$ into two stages:
+Alternatively, we may decompose the training of our extraction system $p(v\mid x)$ into two stages:
 In the first stage we train $p(z,a,c\mid x,e,t)$ to approximate the posterior
 of a conditional model of text given a complete KB.
 In the second stage, we have two choices:
@@ -256,10 +273,10 @@ b) train $p(v \mid z,a,c,x,e,t)$ using the following lower bound:
 \log p(v\mid x) \geq
 \Es{p(z,a,c\mid x,e,t)}{\log \frac{p(v,z,a,c\mid x,e,t)}{p(z,a,c\mid x,e,t)}}
 \end{equation}
-At convergence the bound in Eqn.~\ref{eqn:lowerbound2}
+Ideally the bound in Eqn.~\ref{eqn:lowerbound2}
 should not be looser than the one presented in Eqn.~\ref{eqn:lowerbound},
-as conditioning on the observed values of a KB should not help a good alignment
-model.
+as conditioning on the observed values of a KB should not reduce the entropy of
+a good alignment model.
 
 \begin{comment}
 \section{Three perspectives on training}
@@ -293,7 +310,7 @@ Derive from generative model.
 \subsection{KL}
 The second loss, a lower bound on the marginal likelihood, is the following
 $$\mcL_{\textrm{KL}} = \sum_t \sum_{a_t} \sum_{c_t} q(a_t,c_t)\log q(v_{a_t})$$
-The benefit of this loss is that we can approximate it via Monte Carlo sampling.
+The benefit of this loss is that we can approximate its gradient via Monte Carlo sampling.
 Under a uniform $q(a,c)$, we must maximize the probabilities of all values.
 With a learned $q$, the lower bound can be made much tighter so there is
 less of a difference.
