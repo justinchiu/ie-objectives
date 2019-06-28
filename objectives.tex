@@ -14,34 +14,31 @@ Justin T. Chiu
 
 \begin{abstract}
 Many recent information extraction systems predict the relationship between
-an entity and value given their locations in the text.
+an entity and value given the positions of their mentions in the text.
 This requires observed locations of mentions, which requires annotations at the word level.
 Any form of annotation at the word level does not scale as the size of the text
 and the number of labels increases, and even more so if there is ambiguity.
-In order to train a probabilistic information extraction model without any
-supervision at the level of text, we specify a model 
-that, for each word, either chooses a triple from a knowledge base to explain
-or chooses to explain nothing.
+In order to train a probabilistic information extraction model without mention
+position annotations, we specify a model that, for each word,
+either chooses a triple from a knowledge base to explain or chooses to explain nothing.
 \end{abstract}
 
-\section{Problem Setup}
+\section{Problem Statement}
 
 In relation extraction (RE) we extract facts from a passage of text.
 The goal of RE is to convert facts expressed in natural language into a form
 amenable to computation.
 RE focuses on a relational representation: facts are extracted into a form that details
 how values are related to entities.
-This relational representation is useful for performing computation.
-Rather than dealing with noisy text, we may perform automatic deduction by composing facts 
-in relational form.
 
 In this work we build a relation extraction system with minimal supervision.
-We assume supervision only at the proposition level of a KB,
-with no annotation given at the level of text.
-In order to perform extraction, we must first identify where facts are.
-As sentences may contain many entities and values, and therefore possibly
-a large number of facts, we focus on identifying facts at the word level.
-In particular, we focus on identifying the location of value mentions
+We assume access to a knowledge base (KB) that is aligned to sequences of text
+that discuss subsets of the information in the KB.
+In order to perform extraction, we must first identify where facts are mentioned.
+As sentences may contain many entity and value mentions, and therefore possibly
+a large number of facts, we focus on identifying facts at a scale
+that balances introducing ambiguity and computation complexity.
+In particular, we focus on identifying the position of value mentions
 and predicting who (the entity) and what (the relation type) the value mention
 is discussing.
 
@@ -92,11 +89,10 @@ but the particular document we wish to analyze only discusses tens of entities,
 only a few of which are present in our KB.
 
 The problem description is as follows:
-given a text $x = [x_0, \ldots, x_{|\mcI|}],x_i \in \mcX,$ we must model the facts
-$r = \set{(e_j, t_j, v_j)}_{j \in \mcJ}$ expressed in that text
+given a text $x = [x_0, \ldots, x_{I}]$ we must model the facts
+$r = \set{(e_j, t_j, v_j)}_{j=0}^J$ expressed in that text
 with respect to a schema that details all entities $e_j \in \mcE$,
 relation types $t_j \in \mcT$, and all values $v_j \in \mcV$.
-The index sets $\mcI,\mcJ\subset\N$ give the indices of the words and records respectively. 
 We assume that the schema of the KB $(\mcE, \mcT, \mcV)$ is known at all times,
 and that the schema covers all facts of interest.
 
@@ -112,7 +108,7 @@ the value $v_j$ corresponding to the entity $e_j$ and type $t_j$.
 We propose to model $p(v \mid x, e, t)$,
 the distribution over values of corresponding entities and types given the text.
 
-\section{Model}
+\section{Approach}
 We define a graphical model that jointly models 
 word and KB level extraction. 
 The model first predicts the word level information,
