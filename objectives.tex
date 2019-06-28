@@ -103,7 +103,7 @@ We specify the relationship between these variables with the following process:
     we identify whether each word is a value mention independently with
     $p(c \mid x) = \prod_i p(c_i \mid x)$.
 \item Mention alignment: Each mention is then aligned to a 
-    record in the knowledge base with $p(a \mid x,c) = \prod_i p(a_i \mid c=1,x,e,t)$.
+    record in the knowledge base with $p(a \mid x,c) = \prod_i p(a_i \mid c_i=1,x,e,t)$.
     We align the word $y_i$ by choosing who (the entity)
     and what (the relation type) generate the possible value mention at index $i$.
     In particular, $a_i = j$ denotes the alignment to the record $r_{j}$.
