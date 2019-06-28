@@ -198,31 +198,28 @@ We therefore resort to approximate inference,
 specifically amortized variational inference.
 
 \subsection{Inference network}
-Our first approach is to specify an inference network $q(z,a,c\mid v,x,e,t)$.
+Our first approach is to specify an inference network $q(z,a,m\mid v,x,e,t)$.
 We then optimize the following lower bound on the marginal likelihood
 with respect to the parameters of both $p$ and $q$:
 \begin{equation}
 \label{eqn:lowerbound}
 \log p(v\mid x) \geq
-\Es{q(z,a,c\mid v,x,e,t)}{\log \frac{p(v,z,a,c\mid x,e,t)}{q(z,a,c\mid v,x,e,t)}}
+\Es{q(z,a,m\mid v,x,e,t)}{\log \frac{p(v,z,a,m\mid x,e,t)}{q(z,a,m\mid v,x,e,t)}}
 \end{equation}
 
-We propose to parameterize $q(z,a,c\mid v,x,e,t)$ as follows.
+We propose to parameterize $q(z,a,m\mid v,x,e,t)$ as follows.
 We decompose 
 \begin{equation}
 \begin{aligned}
-q(z,a,c\mid v,x,e,t) &= q(z \mid a,v,x)q(a\mid v,x,e,t)q(c \mid v,x)\\
-&= \prod_i q(z_i \mid a,v,x)q(a_i \mid v,x,e,t)q(c_i \mid v,x)
+q(z,a,m\mid v,x,e,t) &= q(z \mid a,v,x)q(a\mid v,x,e,t)q(m \mid v,x)\\
+&= \prod_i q(z_i \mid a,v,x)q(a_i \mid v,x,e,t)q(m_i \mid v,x)
 \end{aligned}
 \end{equation}
 The conditional distributions of our inference network
 are very similar to the relation extraction model,
 but they condition on the values $v$.
-Let $g_*(\cdot)$ be a function that maps its arguments to a $|\mcI| \times D$
-dimension tensor, where $g_*(\cdot)_i$ returns a point on the $D$ dimensional simplex.
-At each index $i \in \mcI$, the conditional distributions are given by:
 \begin{enumerate}
-\item The value mention model $q(c_i \mid v,x) = \Bern(g_{c}(v,x)_i)$ 
+\item The value mention model $q(m_i \mid v,x) = \Bern(g_{m}(v,x)_i)$ 
     has access to the values $v$ from the KB, which it conditions on
     when detecting value mentions. 
 \item The alignment model $q(a_i \mid v,x,e,t) = \Cat(g_{a}(v,x,e,t))$
@@ -234,26 +231,26 @@ At each index $i \in \mcI$, the conditional distributions are given by:
 \end{enumerate}
 
 One concern is that the model may learn to never rely on the text for extraction,
-setting $c_i = 0$ at every index.
+setting $m_i = 0$ at every index.
 We can avoid this by initializing $q(z)$ to ensure that for words $x \in \mcV$ 
 we have $q(z = x)$ is high, biasing the translation model towards transliteration
 at the start of training.
 
 \subsection{Approximate the posterior of a generative model}
 Alternatively, we may decompose the training of our extraction system $p(v\mid x)$ into two stages:
-In the first stage we train $p(z,a,c\mid x,e,t)$ to approximate the posterior
-of a conditional model of text given a complete KB $q(x,z,a,c \mid e,t,v)$.
+In the first stage we train $p(z,a,m\mid x,e,t)$ to approximate the posterior
+of a conditional model of text given a complete KB $q(x,z,a,m \mid e,t,v)$.
 This has the benefit of allowing us to exert control over where value mentions are detected
 through our design of the text model $q$.
 
 In the second stage, we have two choices:
-a) train $p(v \mid z,a,c,x,e,t)$ to approximate the posterior of a full generative model of text and
+a) train $p(v \mid z,a,m,x,e,t)$ to approximate the posterior of a full generative model of text and
 the values of KB $q(x,v\mid e,t)$.
-b) train $p(v \mid z,a,c,x,e,t)$ using the following lower bound:
+b) train $p(v \mid z,a,m,x,e,t)$ using the following lower bound:
 \begin{equation}
 \label{eqn:lowerbound2}
 \log p(v\mid x) \geq
-\Es{p(z,a,c\mid x,e,t)}{\log p(v\mid z,a,c, x,e,t)}
+\Es{p(z,a,m\mid x,e,t)}{\log p(v\mid z,a,m, x,e,t)}
 \end{equation}
 Ideally the bound in Eqn.~\ref{eqn:lowerbound2}
 should not be looser than the one presented in Eqn.~\ref{eqn:lowerbound},
