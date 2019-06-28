@@ -86,25 +86,26 @@ We introduce the following random variables for each index $i \in 0, \ldots, I]$
 \item $a_i$ indicates the index of the record aligned to word $x_i$.
     We have $a_i \in 0, \ldots, J$.
     We make the assumption that each value mention aligns to a single record.
-\item $z_i$ indicates the canonical value word $x_i$ is a mention of,
+\item $z_i$ indicates the value word $x_i$ is a mention of,
     such that $z_i \in \mcV$.
     This is necessary as the mention of a value may not correspond exactly
     to the representation in the KB schema.
     An example is the numerical and alphabetical representation of numbers.
 \end{enumerate}
 
-We specify the relationship between these variables with the following generative story.
+We specify the relationship between these variables with the following process:
 \begin{enumerate}
-\item Value mention $p(c \mid x) = \prod_i p(c_i \mid x)$: We choose whether word $x_i$
-   is a value mention or not. Each $c_i \mid x \sim \Bern(f_c(x)_i)$, where a value of 1 indicates
-   that $x_i$ is a value mention.
+\item Identify value mentions:
+    $p(c \mid x) = \prod_i p(c_i \mid x)$: We choose whether word $x_i$
+    is a value mention or not. Each $c_i \mid x \sim \Bern(f_c(x)_i)$,
+    where a value of 1 indicates that $x_i$ is a value mention.
 \item Alignment $p(a \mid x) = \prod_i p(a_i \mid x,e,t)$: We align the word $y_i$ by choosing who (the entity)
     and what (the relation type) generate the possible value mention at index $i$.
     In particular, $a_i \mid x,e,t \sim\Cat(f_a(x,e,t)_i)$ denotes the alignment to the record $r_{a_i}$
     given by the index $j = a_i$. 
 \item Translation $p(z \mid x) = \prod_i p(z_i \mid x)$:
     We translate the word $x_i$ into a value $z_i$.
-    The $z_i \mid x \sim \Cat(f_z(y)_i)$ is the canonical value from the KB schema 
+    The $z_i \mid x \sim \Cat(f_z(y)_i)$ is the value from the KB schema 
     associated with $x_i$.
 \end{enumerate}
 
@@ -179,6 +180,7 @@ p(v \mid x,e,t) &= \sum_{z,a,c} p(v,z,a,c\mid x,e,t)\\
 &= \sum_{z,a,c} \prod_j p(v_j\mid z,a,c,x,e,t) \prod_i p(z_i\mid x)p(a_i\mid x,e,t)p(c_i\mid x)\\
 \end{aligned}
 \end{equation}
+
 \section{Training}
 To train a latent variable model, we must marginalize over the unobserved RVs
 and maximize the likelihood of the observed.
