@@ -269,7 +269,7 @@ Alternatively, we may decompose the training of our extraction system $p(v\mid x
 In the first stage we train $p(z,a,c\mid x,e,t)$ to approximate the posterior
 of a conditional model of text given a complete KB $q(x,z,a,c \mid e,t,v)$.
 This has the benefit of allowing us to exert some control over the location of $c_t=1$
-through our design of the generative model $q$.
+through our design of the text model $q$.
 
 In the second stage, we have two choices:
 a) train $p(v \mid z,a,c,x,e,t)$ to approximate the posterior of a full generative model of text and
