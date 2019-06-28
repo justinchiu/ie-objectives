@@ -180,7 +180,7 @@ $$p(v_j \mid z,a,m,e,t) \propto \prod_i \exp(\psi(v_j, z_i, a_i, m_i,e,t)),$$
 with
 $$
 \psi(v_j, z_i, a_i, m_i,e,t) = \begin{cases}
-f_v(v_j,e,t), & m_i = 0 \\
+E(v_j)^TW_v [E(e),E(t)], & m_i = 0 \\
 1(v_j = z_i, a_i = j), & m_i = 1.
 \end{cases}
 $$
