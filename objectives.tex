@@ -185,21 +185,30 @@ E(v_j)^TW_v [E(e),E(t)], & m_i = 0 \\
 1(v_j = z_i, a_i = j), & m_i = 1.
 \end{cases}
 $$
+\item Aggregation: 
+$$p(v_j \mid z,a,m,e,t) \propto \prod_i \exp(\psi(v_j, z_i, a_i, m_i,e,t)),$$
+with
+$$
+\psi(v_j, z_i, a_i, m_i,e,t) = \begin{cases}
+E(v_j)^TW_v [E(e),E(t)], & m_i = 0 \\
+1(v_j = z_i, a_i = j), & m_i = 1.
+\end{cases}
+$$
 \end{enumerate}
 
 \section{Training}
 To train a latent variable model, we must marginalize over the unobserved RVs
 and maximize the likelihood of the observed.
 However, maximizing $\log p(v \mid x)$ directly is very expensive for this model.
-Marginalizing over just $z$ would be $O(|\mcV|^{I})$, which is exponential in
+Marginalizing over just $z$ has computational complexity $O(|\mcV|^{I})$, which is exponential in
 the length of the text.
 
 We therefore resort to approximate inference,
 specifically amortized variational inference.
 
 \subsection{Inference network}
-Our first approach is to specify an inference network $q(z,a,m\mid v,x,e,t)$.
-We then optimize the following lower bound on the marginal likelihood
+Our first approach is to introduce an inference network $q(z,a,m\mid v,x,e,t)$
+and optimize the following lower bound on the marginal likelihood
 with respect to the parameters of both $p$ and $q$:
 \begin{equation}
 \label{eqn:lowerbound}
@@ -266,111 +275,6 @@ are expressed in the text.
 We therefore perform extraction by using the marginal distributions
 $q(z),q(a),q(c)$ to value mentions as well as entities and types,
 giving us facts.
-
-
-
-\begin{comment}
-\section{Three perspectives on training}
-We can either train $q$ directly on the conditional task
-or train it to mimic the posterior of a suitable generative model.
-
-Axes of objectives:
-\begin{enumerate}
-\item Proposal distribution: Learned or uniform (or some prior)
-\item Probabilistic interpretation: Marginal likelihood or KL
-\item Probabilistic interpretation 2: Approximate posterior
-    of a generative model or learn directly.
-\end{enumerate}
-
-\subsection{Marginal loss}
-Our first loss, the marginal likelihood, takes the form of
-$$\mcL_{\textrm{ML}} = \sum_t \log \sum_{a_t} \sum_{c_t} q(a_t,c_t,v_{a_t})$$
-where the unobserved alignments and latent copy are marginalized over.
-This has the interpretation of maximizing the `softmax' of the 
-log probabilities, where softmax is from the physics usage
-as a smooth approximation to the max.
-However, the sharpness of is limited by the choice of $q$.
-With a uniform $q(a,c)$, $\mcL = \sum_t \sum_{a_t}q(v_{a_t}) + C$,
-where $C$ is the normalization term which we can assume to be constant here.
-The gradient of this term wrt the log probabilities is weighted by the posterior,
-so a high entropy $q$ will result in a smaller gradient.
-
-WRONG! The inference network is a mixture model consisting of $q(v\mid y)$ and $p(v)$!
-Derive from generative model.
-
-\subsection{KL}
-The second loss, a lower bound on the marginal likelihood, is the following
-$$\mcL_{\textrm{KL}} = \sum_t \sum_{a_t} \sum_{c_t} q(a_t,c_t)\log q(v_{a_t})$$
-The benefit of this loss is that we can approximate its gradient via Monte Carlo sampling.
-Under a uniform $q(a,c)$, we must maximize the probabilities of all values.
-With a learned $q$, the lower bound can be made much tighter so there is
-less of a difference.
-
-\subsection{Approximating the posterior of a generative model}
-The information extraction model itself was inspired by the following generative process:
-For every word $y_t$
-\begin{enumerate}
-\item Generate the values of the KB $v \sim p(v)$ assuming the schema is fixed.
-\item Choose $c_t \sim \Bern(f(y_{<t})$, which determines whether to generate 
-    word $y_t$ from a language model or the KB.
-\item If $c_t = 0$, generate $y_t \sim \Cat(g(y_{<t}))$.
-\item Otherwise pick an alignment to the KB $a_t \sim \Cat(h(y_{<t}))$
-    then generate $y_t \sim \Cat(f'(v_{a_t}))$.
-\end{enumerate}
-We then train our model to approximate the posterior $p(v \mid y)$.
-Since this generative model does not use every record during generation,
-the posterior may only explain a subset of all records.
-This fits our hypothesis that the KB contains a superset of records expressed in text.
-
-\begin{figure}[t]
-\begin{center}
-\resizebox {.3\columnwidth} {!} {
-\begin{tikzpicture}
-\node[obs] (Yp) {$y_{<t}$};
-\node[obs, right=of Yp] (Yi) {$y_t$};
-\node[latent, below=of Yp](A) {$a_t$};
-\node[latent, left=of A](C) {$c_t$};
-\node[latent, below=of Yi](Vi) {$v_t$};
-
-\node[obs, below=of C] (E) {$e_i$};
-\node[obs, below=of A] (T) {$t_i$};
-\node[obs, below=of Vi] (V) {$v_i$};
-
-\plate {i} {(Yp)(Yi)(C)(A)(Vi)} {$T$};
-\plate  {j} {(E)(T)(V)} {$I$};
-
-\draw[->] (Yp) -- (Yi);
-\draw[->] (Yp) -- (C);
-\draw[->] (Yp) -- (A);
-\draw[->] (A) -- (Vi);
-\draw[->] (E) -- (A);
-\draw[->] (T) -- (A);
-\draw[->] (V) -- (Vi);
-\draw[->] (Vi) -- (Yi);
-\draw[->] (C) -- (Yi);
-\end{tikzpicture}
-} %% end resize
-\end{center}
-\caption{The generative model which produces words given a knowledge base.}
-\label{fig:genmodel}
-\end{figure}
-
-
-The loss is then given by
-\begin{align*}
-\mcL_{\textrm{VI}}
-\end{align*}
-
-The primary benefit of this over a purely conditional approach is semi-supervised information extraction,
-where values are missing.
-
-\begin{align}
-\arg\max_p \sum_{y'}\sum_{x'} p^*(y',x')\log \frac{p(y',x')}{p^*(y',x')}
-&= \arg\max_p \sum_{y'}\sum_{x'} p^*(y',x')\log \sum_z p(y',z,x')\\
-&= \arg\max_p \sum_{y'}\sum_{x'} p^*(y',x')\log \sum_z p(y',z,x')\\
-&\geq 
-\end{align}
-\end{comment}
 
 \bibliography{bib}
 \bibliographystyle{acl_natbib}
