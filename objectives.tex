@@ -185,8 +185,12 @@ E(v_j)^TW_v [E(e),E(t)], & m_i = 0 \\
 1(v_j = z_i, a_i = j), & m_i = 1.
 \end{cases}
 $$
-\item Aggregation: 
-$$p(v_j \mid z,a,m,e,t) \propto \prod_i \exp(\psi(v_j, z_i, a_i, m_i,e,t)),$$
+\item Aggregation v2: 
+$$p(v_j \mid z,a,m,e,t) \propto \begin{cases}
+\prod_i \exp(\psi(v_j, z_i, a_i, m_i,e,t)), & \exists i: m_i = 1\\
+E(v_j)^TW_v [E(e),E(t)], & \mathrm{otherwise}
+\end{cases}
+$$
 with
 $$
 \psi(v_j, z_i, a_i, m_i,e,t) = \begin{cases}
