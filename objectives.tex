@@ -15,11 +15,12 @@ Justin T. Chiu
 \begin{abstract}
 Many recent information extraction systems predict the relationship between
 an entity and value given the positions of their mentions in the text.
-This requires observed locations of mentions, which requires annotations at the word level.
+This requires observed locations of mentions, which requires words to be annotated
+as mentions.
 Any form of annotation at the word level does not scale as the size of the text
-and the number of labels increases, and even more so if there is ambiguity.
+and the number of labels increases, as annotators must read every word.
 In order to train a probabilistic information extraction model without mention
-position annotations, we specify a model that, for each word,
+annotations, we specify a model that, for each word,
 either chooses a triple from a knowledge base to explain or chooses to explain nothing.
 \end{abstract}
 
