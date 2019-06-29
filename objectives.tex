@@ -33,7 +33,6 @@ Relation extraction uses a relational representation: facts detail
 how values are related to entities.
 The challenge is to not only extract facts from text, but also
 determine where those facts are mentioned.
-In this work we build a relation extraction system with minimal supervision.
 
 As sentences may contain many entity and value mentions, and therefore 
 a large number of facts, we identify facts at a scale that minimizes ambiguity
@@ -53,6 +52,7 @@ Except for \citet{zeng2018copy}, prior work has either assumed that the location
 entities and values are given as input features or that the locations of entities and values
 are observed at training time.
 
+In this work we build a relation extraction system with minimal supervision.
 We are primarily concerned with the scenario where we have an overcomplete KB schema with
 respect to a specific passage of text.
 This fits many scenarios in real world applications:
