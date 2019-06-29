@@ -188,7 +188,7 @@ $$
 \item Aggregation v2: 
 $$p(v_j \mid z,a,m,e,t) \propto \begin{cases}
 \prod_i \exp(\psi(v_j, z_i, a_i, m_i,e,t)), & \exists i: m_i = 1\\
-E(v_j)^TW_v [E(e),E(t)], & \mathrm{otherwise}
+\exp(E(v_j)^TW_v [E(e),E(t)]), & \mathrm{otherwise}
 \end{cases}
 $$
 with
@@ -198,6 +198,7 @@ $$
 \item Aggregation v3:
 \begin{align*}
 p(v_j \mid z,a,m=0,e,t) &= p(v_j \mid e,t)\\
+p(v_j \mid e,t) & \propto \exp(E(v_j)^TW_v [E(e),E(t)])\\
 p(v_j \mid z,a,m,e,t) &\propto \prod \exp(\psi(v_j, z_i,a_i,m_i,e,t))\\
 \psi(v_j, z_i, a_i, m_i,e,t) &= 1(v_j = z_i, a_i = j, m_i=1)
 \end{align*}
