@@ -189,6 +189,8 @@ with $W_e \in \R^{d' \times d},W_t \in \R^{d' \times d}$.
 into a value.
 $$p(z_i \mid x) \propto \exp(W_z \bh_i), W_z \in \R^{|\mcV| \times d}$$
 \item Aggregation v1: In this version, 
+we have a potential at each index where if an index is a value mention
+it votes for its value translation, otherwise it backs off to a prior.
 $$p(v_j \mid z,a,m,e,t) \propto \prod_i \exp(\psi(v_j, z_i, a_i, m_i,e,t)),$$
 with
 $$
