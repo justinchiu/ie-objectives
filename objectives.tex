@@ -174,9 +174,17 @@ Let $\bh_i \in \R^d$ be a contextual embedding of the word $x_i$,
 and $E$ an embedding function that maps entities and types
 to vectors in $\R^{d'}$.
 \begin{enumerate}
-\item Identification: $p(m_i \mid x) \propto \exp(W_m\bh_i), W_m \in \R^{2 \times d}$
-\item Alignment: $p(a_i \mid x) \propto \exp([E(e_{a_i}), E(t_{a_i})]^TW_a \bh_i),
-W_a \in \R^{2d' \times d}$ 
+\item Identification: We use the contextual embedding to directly predict
+whether a word is part of a value mention.
+$$p(m_i \mid x) \propto \exp(W_m\bh_i), W_m \in \R^{2 \times d}$$
+\item Alignment: We decompose the alignment distribution into a distribution over
+entities $p(\epsilon_i \mid x)$ and types $p(\tau_i \mid x)$.
+\begin{align*}
+p(a_i \mid x) &= p(\epsilon_i \mid x)p(\tau_i \mid x)\\
+p(\epsilon_i \mid x) &\propto \exp(E(e_{\epsilon_i})^T W_e \bh_i)\\
+p(\tau_i \mid x) &\propto \exp(E(\tau_{a_i})^T W_t \bh_i)\\
+W_e \in \R^{d' \times d},W_t \in \R^{d' \times d}
+\end{align*}
 \item Translation: $p(z_i \mid x) \propto \exp(W_z \bh_i), W_z \in \R^{|\mcV| \times d}$
 \item Aggregation v1: In this version, 
 $$p(v_j \mid z,a,m,e,t) \propto \prod_i \exp(\psi(v_j, z_i, a_i, m_i,e,t)),$$
