@@ -182,9 +182,9 @@ entities $p(\epsilon_i \mid x)$ and types $p(\tau_i \mid x)$.
 \begin{align*}
 p(a_i \mid x) &= p(\epsilon_i \mid x)p(\tau_i \mid x)\\
 p(\epsilon_i \mid x) &\propto \exp(E(e_{\epsilon_i})^T W_e \bh_i)\\
-p(\tau_i \mid x) &\propto \exp(E(\tau_{a_i})^T W_t \bh_i)\\
-W_e \in \R^{d' \times d},W_t \in \R^{d' \times d}
+p(\tau_i \mid x) &\propto \exp(E(\tau_{a_i})^T W_t \bh_i)
 \end{align*}
+with $W_e \in \R^{d' \times d},W_t \in \R^{d' \times d}$.
 \item Translation: $p(z_i \mid x) \propto \exp(W_z \bh_i), W_z \in \R^{|\mcV| \times d}$
 \item Aggregation v1: In this version, 
 $$p(v_j \mid z,a,m,e,t) \propto \prod_i \exp(\psi(v_j, z_i, a_i, m_i,e,t)),$$
