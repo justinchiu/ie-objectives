@@ -188,22 +188,9 @@ with $W_e \in \R^{d' \times d},W_t \in \R^{d' \times d}$.
 \item Translation: We use the contextual embedding to translate a word
 into a value.
 $$p(z_i \mid x) \propto \exp(W_z \bh_i), W_z \in \R^{|\mcV| \times d}$$
-\item Aggregation v1: In this version, 
-we have a potential at each index where if an index is a value mention
-it votes for its value translation, otherwise it backs off to a prior.
-$$p(v_j \mid z,a,m,e,t) \propto \prod_i \exp(\psi(v_j, z_i, a_i, m_i,e,t)),$$
-with
-$$
-\psi(v_j, z_i, a_i, m_i,e,t) = \begin{cases}
-E(v_j)^TW_v [E(e),E(t)], & m_i = 0 \\
-1(v_j = z_i, a_i = j), & m_i = 1.
-\end{cases}
-$$
-The main issue with this parameterization is that if a sequence is
-very long, the sum of the priors will outweigh a single mention.
-\item Aggregation v2: 
+\item Aggregation v1: 
 $$p(v_j \mid z,a,m,e,t) \propto \begin{cases}
-\prod_i \exp(\psi(v_j, z_i, a_i, m_i,e,t)), & \exists i: m_i = 1\\
+\prod_i \exp(\psi(v_j, z_i, a_i, m_i,e,t)), & \exists i: m_i = 1\wedge a_i=j\\
 \exp(E(v_j)^TW_v [E(e),E(t)]), & \mathrm{otherwise}
 \end{cases}
 $$
@@ -211,6 +198,7 @@ with
 $$
 \psi(v_j, z_i, a_i, m_i,e,t) = 1(v_j = z_i, a_i = j, m_i=1)
 $$
+We fix the previous problem of having a local prior 
 \item Aggregation v3:
 \begin{align*}
 p(v_j \mid z,a,m=0,e,t) &= p(v_j \mid e,t)\\
