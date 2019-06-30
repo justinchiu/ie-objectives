@@ -188,17 +188,10 @@ with $W_e \in \R^{d' \times d},W_t \in \R^{d' \times d}$.
 \item Translation: We use the contextual embedding to translate a word
 into a value.
 $$p(z_i \mid x) \propto \exp(W_z \bh_i), W_z \in \R^{|\mcV| \times d}$$
-\item Aggregation v1: 
-$$p(v_j \mid z,a,m,e,t) \propto \begin{cases}
-\prod_i \exp(\psi(v_j, z_i, a_i, m_i,e,t)), & \exists i: m_i=1\wedge a_i=j \wedge z_i=v_j \\
-\exp(E(v_j)^TW_v [E(e),E(t)]), & \mathrm{otherwise}
-\end{cases}
-$$
-with
-$$
-\psi(v_j, z_i, a_i, m_i,e,t) = 1(v_j = z_i, a_i = j, m_i=1)
-$$
-\item Aggregation v2:
+\item Aggregation:
+If there exists an index that is a mention that is aligned to $r_j$
+we allow it to vote on the value $v_j$, otherwise we ignore the text
+and use our prior distribution over values.
 \begin{align*}
 p(v_j \mid z,a,m=0,e,t) &= p(v_j \mid e,t)\\
 p(v_j \mid e,t) & \propto \exp(E(v_j)^TW_v [E(e),E(t)])\\
