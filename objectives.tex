@@ -38,8 +38,13 @@ justify the extractions by determining where those facts are mentioned.
 A mention is a surface realization of an abstract object in text.
 In relation extraction we justify extractions by identifying fact mentions.
 As text is noisy, the realization of a fact may be difficult to locate.
-We focus on identifying fact mentions at the word level by identifying
-value mentions, rather than entity or type mentions.
+We focus on locating fact mentions at the word level by identifying
+individual words as value mentions, rather than entity or type mentions.
+(Why? Justify with generative model)
+
+We propose a model that first identifies value mentions at the word level,
+aligns those mentions to an entity and relation type in order to obtain a fact, 
+then aggregates word level decisions to resolve conflicts.
 
 As sentences may contain many entity and value mentions, and therefore 
 a large number of facts, we identify facts at a scale that minimizes ambiguity
