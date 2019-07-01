@@ -45,19 +45,8 @@ individual words as value mentions, rather than entity or type mentions.
 We propose a model that first identifies value mentions at the word level,
 aligns those mentions to an entity and relation type in order to obtain a fact, 
 then aggregates word level decisions to resolve conflicts.
-
-As sentences may contain many entity and value mentions, and therefore 
-a large number of facts, we identify facts at a scale that minimizes ambiguity
-by casting the mention identification problem as classifying whether each word is a mention.
-We first identify the position of value mentions,
-predict who (the entity) and what (the relation type) the value mention
-is discussing, then aggregate those decisions.
-
-Once we have identified where facts are mentioned,
-we must aggregate those decisions to to offer .
-
-We assume access to a knowledge base (KB) that is aligned to sequences of text
-that discuss subsets of the information in the KB.
+We assume access to a set of facts, henceforth referred to as a knowledge base (KB),
+that is aligned to sequences of text that discuss subsets of the information in the KB.
 
 Note on related work:
 Except for \citet{zeng2018copy}, prior work has either assumed that the locations of
