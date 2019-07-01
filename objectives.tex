@@ -30,7 +30,7 @@ In relation extraction the goal is to extract facts from a passage of text.
 Systems must convert facts expressed in natural language into a form
 amenable to computation.
 Facts consist of three components: entities, relation types, and values.
-(Example would be fastest to clear up what a relation type is)
+%(Example would be fastest to clear up what a relation type is)
 The challenge is to not only extract facts from text, but also
 justify the extractions by determining where those facts are mentioned.
 
@@ -39,7 +39,7 @@ In relation extraction we justify extractions by identifying fact mentions.
 As text is noisy, the realization of a fact may be difficult to locate.
 We focus on locating fact mentions at the word level by identifying
 individual words as value mentions, rather than entity or type mentions.
-(Why? Justify with generative model)
+%(Why? Justify with generative model)
 
 We propose a model that first identifies value mentions at the word level,
 aligns those mentions to an entity and relation type in order to obtain a fact, 
@@ -81,7 +81,6 @@ This reduction is inspired by the representation of a KB as a table:
 the rows of the table are given by the entities $e_j \in \mcE$,
 the columns by the types $t_j \in \mcT$,
 and the cells of the table take on values $v_j \in \mcV$.
-
 In the following section we propose a model for the distribution $p(v \mid x, e, t)$.
 
 \section{Model}
