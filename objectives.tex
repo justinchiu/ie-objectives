@@ -193,6 +193,9 @@ If there exists an index that is a mention that is aligned to $r_j$
 we allow it to vote on the value $v_j$, otherwise we ignore the text
 and use a prior distribution over values $p(v_j \mid e_j, t_j)$.
 \begin{align*}
+p(v_j \mid z,a,m,e,t) &= \begin{cases}
+    p(v_j \mid e_j,t_j), & \nexists i, m_i = 1 \wedge a_i = j\\
+\end{cases}\\
 p(v_j \mid z,a,m=0,e,t) &= p(v_j \mid e_j,t_j)\\
 p(v_j \mid e,t) & \propto \exp(E(v_j)^TW_v [E(e),E(t)])\\
 p(v_j \mid z,a,m,e,t) &\propto \prod \exp(\psi(v_j, z_i,a_i,m_i,e,t))\\
