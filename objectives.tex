@@ -26,13 +26,15 @@ either chooses a triple from a knowledge base to explain or chooses to explain n
 
 \section{Problem Statement}
 
-In relation extraction we extract facts from a passage of text.
-The goal of relation extraction is to convert facts expressed in natural language into a form
+In relation extraction the goal is to extract facts from a passage of text.
+Systems must convert facts expressed in natural language into a form
 amenable to computation.
 Relation extraction uses a relational representation: facts detail
 how values are related to entities.
 The challenge is to not only extract facts from text, but also
-determine where those facts are mentioned.
+justify the extractions by determining where those facts are mentioned.
+
+Define mention.
 
 As sentences may contain many entity and value mentions, and therefore 
 a large number of facts, we identify facts at a scale that minimizes ambiguity
@@ -196,7 +198,6 @@ and use a prior distribution over values $p(v_j \mid e_j, t_j)$.
 p(v_j \mid z,a,m,e,t) &= \begin{cases}
     p(v_j \mid e_j,t_j), & \nexists i, m_i = 1 \wedge a_i = j\\
 \end{cases}\\
-p(v_j \mid z,a,m=0,e,t) &= p(v_j \mid e_j,t_j)\\
 p(v_j \mid e,t) & \propto \exp(E(v_j)^TW_v [E(e),E(t)])\\
 p(v_j \mid z,a,m,e,t) &\propto \prod \exp(\psi(v_j, z_i,a_i,m_i,e,t))\\
 \psi(v_j, z_i, a_i, m_i,e,t) &= 1(v_j = z_i, a_i = j, m_i=1)
