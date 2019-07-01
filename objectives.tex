@@ -98,7 +98,7 @@ For each index $i \in 0, \ldots, I$ we perform
     Not every word in a mention must be identified; it suffices to find
     at least one word in a value mention.
 \item Alignment: Each value mention is then aligned to a 
-    record in the knowledge base with $p(a \mid x) = \prod_i p(a_i \mid x,e,t)$,
+    record in the knowledge base with $p(a \mid x,e,t) = \prod_i p(a_i \mid x,e,t)$,
     We align the word $y_i$ by choosing who (the entity)
     and what (the relation type) generate the possible value mention at index $i$.
     In particular, $a_i = j$ denotes the alignment to the record $r_{j}$
@@ -186,9 +186,9 @@ to vectors in $\R^{d'}$.
 whether a word is part of a value mention.
 $$p(m_i \mid x) \propto \exp(W_m\bh_i), W_m \in \R^{2 \times d}$$
 \item Alignment: We decompose the alignment distribution into a distribution over
-entities $p(\epsilon_i \mid x)$ and types $p(\tau_i \mid x)$.
+entities $p(\epsilon_i \mid x,e)$ and types $p(\tau_i \mid x,t)$.
 \begin{align*}
-p(a_i \mid x) &= p(\epsilon_i \mid x)p(\tau_i \mid x)\\
+p(a_i \mid x,e,t) &= p(\epsilon_i \mid x,e)p(\tau_i \mid x,t)\\
 p(\epsilon_i \mid x) &\propto \exp(E(e_{\epsilon_i})^T W_e \bh_i)\\
 p(\tau_i \mid x) &\propto \exp(E(\tau_{a_i})^T W_t \bh_i)
 \end{align*}
@@ -251,12 +251,19 @@ but they condition on the values $v$.
 \item The value mention model $q(m_i \mid v,x)$ 
     has access to the values $v$ from the KB, which it conditions on
     when detecting value mentions. 
+    $$p(m_i \mid x) \propto \exp(W_m\bh_i), W_m \in \R^{2 \times d}$$
 \item The alignment model $q(a_i \mid v,x,e,t)$
     uses a contextual representation of each $x_i$ and chooses a record.
     In contrast to $p(a\mid x,e,t)$, this model has access to values as well.
+    \begin{align*}
+    p(a_i \mid x) &= p(\epsilon_i \mid x)p(\tau_i \mid x)\\
+    p(\epsilon_i \mid x) &\propto \exp(E(e_{\epsilon_i})^T W_e \bh_i)\\
+    p(\tau_i \mid x) &\propto \exp(E(\tau_{a_i})^T W_t \bh_i)
+    \end{align*}
 \item The translation model $q(z_i \mid a,v,x) = 1(z_i = v_{a_i})$
     conditions on the alignments $a$ and ensures the chosen $z$ is consistent
     with the alignments. 
+    $$p(z_i \mid x) \propto \exp(W_z \bh_i), W_z \in \R^{|\mcV| \times d}$$
 \end{enumerate}
 
 One concern is that the model may learn to never rely on the text for extraction,
