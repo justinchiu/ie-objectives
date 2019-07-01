@@ -77,7 +77,11 @@ only a few of which are present in our KB.
 Given all entities $e$ and types $t$,
 we reduce the construction of $r$ to predicting, for every $j\in 0,\ldots,J$,
 the value $v_j$ corresponding to the entity $e_j$ and type $t_j$.
-In the following section we propose a model for this distribution $p(v \mid x, e, t)$.
+This reduction is inspired by the representation of a KB as a data table:
+the rows of the table are given by the entities $e_j \in \mcE$,
+the columns by the types $t_j \in \mcT$,
+and the cells of the table take on values $v_j \in \mcV$.
+In the following section we propose a model for the distribution $p(v \mid x, e, t)$.
 
 \section{Model}
 We define a graphical model that performs extraction with justification. 
