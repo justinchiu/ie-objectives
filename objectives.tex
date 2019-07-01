@@ -48,19 +48,12 @@ then aggregates word level decisions to resolve conflicts.
 We assume access to a set of facts, henceforth referred to as a knowledge base (KB),
 that is aligned to sequences of text that discuss subsets of the information in the KB.
 
+\begin{comment}
 Note on related work:
 Except for \citet{zeng2018copy}, prior work has either assumed that the locations of
 entities and values are given as input features or that the locations of entities and values
 are observed at training time.
-
-In this work we build a relation extraction system with minimal supervision.
-We are primarily concerned with the scenario where we have an overcomplete KB schema with
-respect to a specific passage of text.
-This fits many scenarios in real world applications:
-we may have thousands of entities of interest if our KB was pulled from an 
-external source such as Freebase,
-but the particular document we wish to analyze only discusses tens of entities,
-only a few of which are present in our KB.
+\end{comment}
 
 The problem description is as follows:
 given a text $x = x_0, \ldots, x_{I}$ we model the facts
@@ -73,6 +66,14 @@ The set of facts $r$ is our knowledge base (KB),
 and each individual fact $r_j$ is a record.
 For brevity, let $e = \set{e_j}_{j=0}^J, t = \set{t_j}_{j=0}^J, v = \set{v_j}_{j=0}^J$
 be the list of the entities, types, and values of the records in $r$ respectively.
+
+We are primarily concerned with the scenario where we have an overcomplete KB schema with
+respect to a specific passage of text.
+This fits many scenarios in real world applications:
+we may have thousands of entities of interest if our KB was pulled from an 
+external source such as Freebase,
+but the particular document we wish to analyze only discusses tens of entities,
+only a few of which are present in our KB.
 
 Given all entities $e$ and types $t$,
 we reduce the construction of $r$ to predicting, for every $j\in 0,\ldots,J$,
