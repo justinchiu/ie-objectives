@@ -31,10 +31,15 @@ Systems must convert facts expressed in natural language into a form
 amenable to computation.
 Relation extraction uses a relational representation: facts detail
 how values are related to entities.
+Facts therefore consist of entities, relation types, and values.
 The challenge is to not only extract facts from text, but also
 justify the extractions by determining where those facts are mentioned.
 
-Define mention.
+A mention is a surface realization of an abstract object in text.
+In relation extraction we justify extractions by identifying fact mentions.
+As text is noisy, the realization of a fact may be difficult to locate.
+We focus on identifying fact mentions at the word level by identifying
+value mentions, rather than entity or type mentions.
 
 As sentences may contain many entity and value mentions, and therefore 
 a large number of facts, we identify facts at a scale that minimizes ambiguity
