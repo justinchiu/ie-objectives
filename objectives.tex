@@ -213,6 +213,10 @@ p(v_j \mid z,a,m,e,t) &\propto \prod \exp(\psi(v_j, z_i,a_i,m_i,e,t))\\
 \section{Training}
 To train a latent variable model, we must marginalize over the unobserved RVs
 and maximize the likelihood of the observed.
+Ideally, we wold optimize the following objective
+\begin{equation}
+\log p(r \mid x) = \log \sum_{z,a,m} p(r,z,a,m \mid x)
+\end{equation}
 However, maximizing $\log p(v \mid x)$ directly is very expensive for this model.
 Marginalizing over just $z$ has computational complexity $O(|\mcV|^{I})$, which is exponential in
 the length of the text.
