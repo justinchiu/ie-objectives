@@ -249,19 +249,19 @@ The conditional distributions of our inference network
 are very similar to the relation extraction model,
 but they condition on the values $v$.
 
-Let $\bh'_i \in \R^d$ be a contextual embedding of the word $x_i$.
+Let $\bh_i \in \R^d$ be a contextual embedding of the word $x_i$.
 We use soft attention over records to get a weighted representation
 over the KB at each index $i$:
 \begin{align*}
-\bh_{r_j} &= [E(e_j), E(t_j), E(v_j)]\\
-\alpha_j &\propto \exp(\bh_{r_j}^T W_\alpha \bh_i)
+\bg_{r_j} &= [E(e_j), E(t_j), E(v_j)]\\
+\alpha_j &\propto \exp(\bg_{r_j}^T W_\alpha \bh_i)
 \end{align*}
 The inference network is given by
 \begin{enumerate}
 \item The value mention model $q(m_i \mid v,a,x)$ 
     has access to the values $v$ from the KB, which it conditions on
     when detecting value mentions. 
-    $$p(m_i \mid v,a,x) = W_m' \textrm{MLP}([\sum_j \alpha_j \cdot \bh_{r_j}, \bh_i]), W'_m \in \R^{2 \times d}$$
+    $$p(m_i \mid v,a,x) = W_m' \textrm{MLP}([\sum_j \alpha_j \cdot \bg_{r_j}, \bh_i]), W'_m \in \R^{2 \times d}$$
 \item The alignment model $q(a_i \mid v,x,e,t)$
     uses a contextual representation of each $x_i$ and chooses a record.
     In contrast to $p(a\mid x,e,t)$, this model has access to values as well.
