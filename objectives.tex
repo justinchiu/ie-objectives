@@ -253,7 +253,7 @@ but they condition on the values $v$.
 
 Let $\bh'_i \in \R^d$ be a contextual embedding of the word $x_i$.
 We use soft attention over records to get a weighted representation
-over the KB at each index $i$
+over the KB at each index $i$:
 \begin{align*}
 \bh_{r_j} &= [E(e_j), E(t_j), E(v_j)]\\
 \alpha_j &\propto \exp(\bh_{r_j}^T W_\alpha \bh_i)
