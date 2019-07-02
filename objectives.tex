@@ -260,7 +260,7 @@ The inference network is given by
 \item The value mention model $q(m_i \mid v,a,x)$ 
     has access to the values $v$ from the KB, which it conditions on
     when detecting value mentions. 
-    $$p(m_i \mid v,a,x) = W_m' [\sum_j \alpha_j, \bh_i], W'_m \in \R^{2 \times d+d'}$$
+    $$p(m_i \mid v,a,x) = W_m' [\sum_j \alpha_j \cdot \bh_{r_j}, \bh_i], W'_m \in \R^{2 \times d+d'}$$
 \item The alignment model $q(a_i \mid v,x,e,t)$
     uses a contextual representation of each $x_i$ and chooses a record.
     In contrast to $p(a\mid x,e,t)$, this model has access to values as well.
