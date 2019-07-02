@@ -253,7 +253,7 @@ We use soft attention over records to get a weighted representation
 over the KB at each index $i$
 \begin{align*}
 \bh_{r_j} &= [E(e_j), E(t_j), E(v_j)]\\
-\alpha_j &\propto \bh_{r_j}^T W_\alpha \bh_i\\
+\alpha_j &\propto \exp(\bh_{r_j}^T W_\alpha \bh_i)\\
 \end{align*}
 The inference network is given by
 \begin{enumerate}
