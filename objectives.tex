@@ -202,11 +202,11 @@ we allow it to vote on the value $v_j$, otherwise we ignore the text
 and use a prior distribution over values $p(v_j \mid e_j, t_j)$.
 \begin{align*}
 p(v_j \mid z,a,m,e,t) &\propto \begin{cases}
-    p(v_j \mid e_j,t_j), & \nexists i, m_i = 1 \wedge a_i = j\\
-    \prod \exp(\psi(v_j, z_i,a_i,m_i,e,t)), & \textrm{otherwise}
+    \prod \exp(\psi(v_j, z_i,a_i,m_i,e,t)),  & \exists i, m_i = 1 \wedge a_i = j\\
+    p(v_j \mid e_j,t_j), & \textrm{otherwise}
 \end{cases}\\
-p(v_j \mid e,t) & \propto \exp(E(v_j)^TW_v [E(e),E(t)])\\
 \psi(v_j, z_i, a_i, m_i,e,t) &= 1(v_j = z_i, a_i = j, m_i=1)
+p(v_j \mid e,t) & \propto \exp(E(v_j)^TW_v [E(e),E(t)])\\
 \end{align*}
 \end{enumerate}
 
