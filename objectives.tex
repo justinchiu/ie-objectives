@@ -269,7 +269,6 @@ The inference network is given by
 \item The translation model $q(z_i \mid a,v,x) = 1(z_i = v_{a_i})$
     conditions on the alignments $a$ and ensures the chosen $z$ is consistent
     with the alignments. 
-    $$p(z_i \mid x) \propto \exp(W_z \bh_i), W_z \in \R^{|\mcV| \times d}$$
 \end{enumerate}
 
 One concern is that the model may learn to never rely on the text for extraction,
