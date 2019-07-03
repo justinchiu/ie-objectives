@@ -172,8 +172,9 @@ This gives us the following factorization of the relation extraction system:
 \label{eqn:prob}
 \begin{aligned}
 p(v \mid x,e,t) &= \sum_{z,a,m} p(v,z,a,m\mid x,e,t)\\
-&= \sum_{z,a,m} p(v\mid z,a,m,x,e,t) \prod_i p(z_i, a_i, m_i\mid x,e,t)\\
-&= \sum_{z,a,m} \left(\prod_j p(v_j\mid z,a,m,x,e,t)\right) \prod_i p(z_i\mid x)p(a_i\mid x,e,t)p(m_i\mid x)\\
+&= \sum_{z,a,m} p(v\mid z,a,m,x,e,t) p(z, a, m\mid x,e,t)\\
+&= \sum_{z,a,m} \left(\prod_j p(v_j\mid z,a,m,x,e,t)\right)
+\left(\prod_i p(z_i\mid x)p(a_i\mid x,e,t)p(m_i\mid x)\right)
 \end{aligned}
 \end{equation}
 
