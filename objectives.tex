@@ -200,7 +200,7 @@ with $W_e \in \R^{d' \times d},W_t \in \R^{d' \times d}$.
 into a value.
 $$p(z_i \mid x) \propto \exp(W_z \bh_i), W_z \in \R^{|\mcV| \times d}$$
 \item Aggregation:
-If there exists an index that is a mention that is aligned to $r_j$
+If there exists an index that is a mention and is also aligned to $r_j$
 we allow it to vote on the value $v_j$, otherwise we ignore the text
 and use a prior distribution over values
 $p(v_j \mid e_j, t_j) \propto \exp(E(v_j)^TW_v [E(e_j),E(t_j)])$.
