@@ -284,7 +284,12 @@ we have $q(z = x)$ is high, biasing the translation model towards transliteratio
 at the start of training.
 
 \subsection{Approximate the posterior of a generative model}
-Alternatively, we may decompose the training of our extraction system $p(v\mid x)$ into two stages:
+Alternatively, we may optimize the following objective:
+\begin{equation}
+\log q(x) - KL[p(z,a,m \mid x) || q(z,a,m \mid x)]
+\end{equation}
+
+decompose the training of our extraction system $p(v\mid x)$ into two stages:
 In the first stage we train $p(z,a,m\mid x,e,t)$ to approximate the posterior
 of a conditional model of text given a complete KB $q(x,z,a,m \mid e,t,v)$.
 This has the benefit of allowing us to exert control over where value mentions are detected
