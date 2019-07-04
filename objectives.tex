@@ -56,16 +56,16 @@ are observed at training time.
 \end{comment}
 
 The problem description is as follows:
-given a text $x = x_0, \ldots, x_{I}$ we model the facts
-$\set{(e_j, t_j, v_j)}_{j=0}^J$ expressed in that text
+given a text $x = x_1, \ldots, x_{I}$ we model the facts
+$\set{(e_j, t_j, v_j)}_{j=1}^J$ expressed in that text
 with respect to a schema that details all entities $e_j \in \mcE$,
 relation types $t_j \in \mcT$, and all values $v_j \in \mcV$.
 The schema $(\mcE, \mcT, \mcV)$ gives us the possible entities, types, and values,
 but not necessarily what facts appear in the KB.
 We assume that the schema $(\mcE, \mcT, \mcV)$ of the KB is known at all times,
 and that the schema covers all facts of interest.
-The set of facts $\set{(e_j,t_j,v_j)}_{j=0}^J$ is our knowledge base (KB).
-For brevity, let $e = \set{e_j}_{j=0}^J, t = \set{t_j}_{j=0}^J, v = \set{v_j}_{j=0}^J$
+The set of facts $\set{(e_j,t_j,v_j)}_{j=1}^J$ is our knowledge base (KB).
+For brevity, let $e = \set{e_j}_{j=1}^J, t = \set{t_j}_{j=0}^J, v = \set{v_j}_{j=0}^J$
 be the list of the entities, types, and values of the records in $r$ respectively.
 The entities and types in the KB $\set{e_j, t_j}_{j=0}^J \subseteq \mcE \times \mcT$
 may not contain all possible entity and type pairs.
@@ -79,7 +79,7 @@ but the particular document we wish to analyze only discusses tens of entities,
 only a few of which are present in our KB.
 
 Given all entities $e$ and types $t$,
-we reduce the construction of $r$ to predicting, for every $j\in 0,\ldots,J$,
+we reduce the construction of $r$ to predicting, for every $j\in 1,\ldots,J$,
 the value $v_j$ corresponding to the entity $e_j$ and type $t_j$.
 This reduction is inspired by the representation of a KB as a table:
 the rows of the table are given by the entities $e_j \in \mcE$,
@@ -93,7 +93,7 @@ The model first extracts information at the word level,
 then aggregates its choices for each word into an extraction at the sequence level.
 
 The word level extraction process has three steps.
-For each index $i \in 0, \ldots, I$ we perform
+For each index $i \in 1, \ldots, I$ we perform
 \begin{enumerate}
 \item Value mention identification: Given a sequence of words $x$,
     we identify whether each word is a value mention with
