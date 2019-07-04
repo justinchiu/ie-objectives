@@ -284,7 +284,8 @@ we have $q(z = x)$ is high, biasing the translation model towards transliteratio
 at the start of training.
 
 \subsection{Approximate the posterior of a generative model}
-Alternatively, we may optimize the following objective:
+Alternatively, we may introduce a generative model of text $q(x \mid v)$ 
+that inverts the relation extraction model $p(v \mid x)$ and optimize the following objective:
 \begin{equation}
 \log q(x) - KL[p(z,a,m \mid x) || q(z,a,m \mid x)]
 \end{equation}
