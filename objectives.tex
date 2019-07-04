@@ -65,9 +65,9 @@ but not necessarily what facts appear in the KB.
 We assume that the schema $(\mcE, \mcT, \mcV)$ of the KB is known at all times,
 and that the schema covers all facts of interest.
 The set of facts $\set{(e_j,t_j,v_j)}_{j=1}^J$ is our knowledge base (KB).
-For brevity, let $e = \set{e_j}_{j=1}^J, t = \set{t_j}_{j=0}^J, v = \set{v_j}_{j=0}^J$
+For brevity, let $e = \set{e_j}_{j=1}^J, t = \set{t_j}_{j=1}^J, v = \set{v_j}_{j=0}^J$
 be the list of the entities, types, and values of the records in $r$ respectively.
-The entities and types in the KB $\set{e_j, t_j}_{j=0}^J \subseteq \mcE \times \mcT$
+The entities and types in the KB $\set{e_j, t_j}_{j=1}^J \subseteq \mcE \times \mcT$
 may not contain all possible entity and type pairs.
 
 We are primarily concerned with the scenario where we have an overcomplete KB schema with
