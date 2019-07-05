@@ -86,11 +86,9 @@ but a summary may discuss only a small salient subset of players and statistics.
 
 We reduce the construction of $\delta$ to predicting, for every $j\in 1,\ldots,J$,
 the value $v_j$ corresponding to row and column of our KB given by $s_j$.
-This reduction is inspired by the representation of a KB as a table:
-the rows of the table are given by the entities $e$,
-the columns by the types $t$,
-and the cells of the table take on the values $v$.
-In the following section we propose a model for the distribution $p(v \mid x, e, t)$.
+We cast relation extraction as KB completion, where we fill in the cells of a data table.
+In the following section we propose a model for the distribution over
+values given text and a value-less KB $p(v \mid x, s)$.
 
 \section{Model}
 We define a graphical model that performs extraction with justification. 
