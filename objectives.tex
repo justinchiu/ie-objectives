@@ -57,15 +57,11 @@ are observed at training time.
 
 The problem description is as follows:
 given a text $x = x_1, \ldots, x_{I}$ we model the facts
-$\set{(e_j, t_j, v_j)}_{j=1}^J$ expressed in that text
-with respect to a schema that details all entities $e_j \in \mcE$,
-relation types $t_j \in \mcT$, and all values $v_j \in \mcV$.
-The schema $(\mcE, \mcT, \mcV)$ gives us the possible entities, types, and values,
-but not necessarily what facts appear in the KB.
-We assume that the schema $(\mcE, \mcT, \mcV)$ of the KB is known at all times,
-and that the schema covers all facts of interest.
-The set of facts $\set{(e_j,t_j,v_j)}_{j=1}^J$ is our knowledge base (KB).
-For brevity, let $e = \set{e_j}_{j=1}^J, t = \set{t_j}_{j=1}^J, v = \set{v_j}_{j=0}^J$
+$\Delta = \set{(e_j, t_j, v_j)}_{j=1}^J$ expressed in that text
+with respect to a schema that details all entities $e_j$,
+relation types $t_j$, and all values $v_j$.
+The set of facts $\Delta$ is our knowledge base (KB).
+Let $e = \set{e_j}_{j=1}^J, t = \set{t_j}_{j=1}^J, v = \set{v_j}_{j=0}^J$
 be the list of the entities, types, and values of the records in $r$ respectively.
 The entities and types in the KB $\set{e_j, t_j}_{j=1}^J \subseteq \mcE \times \mcT$
 may not contain all possible entity and type pairs.
