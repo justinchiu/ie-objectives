@@ -41,13 +41,6 @@ We focus on locating fact mentions at the word level by identifying
 individual words as value mentions, rather than entity or type mentions.
 %(Why? Justify with generative model)
 
-%Inspired by ,
-We propose a model that first identifies value mentions at the word level,
-aligns those mentions to an entity and relation type in order to obtain a fact, 
-then aggregates word level decisions to resolve conflicts.
-We assume access to a set of facts, or a knowledge base (KB),
-that is discussed in text.
-
 \begin{comment}
 Note on related work:
 Except for \citet{zeng2018copy}, prior work has either assumed that the locations of
@@ -77,6 +70,9 @@ $
 with 
 $ v = \set{ v_1 = 19, v_2 = 12, \ldots }$ 
 aligned to the brief summary $x = \textrm{John scored 19 points}$.
+Our goal is is to locate and extract facts from $x$.
+We assume that the values $v$ of our KB may be noisy or incomplete,
+and therefore 
 
 We are primarily concerned with the scenario where we have an overcomplete KB schema with
 respect to a specific passage of text.
@@ -86,7 +82,14 @@ but a summary may discuss only a small salient subset of players and statistics.
 
 As our goal is to locate fact mentions, modeling just the KB $\Delta$ given the text $x$
 is not sufficient.
-We must 
+We propose a model that first identifies value mentions at the word level,
+aligns those mentions to an entity and relation type in order to obtain a fact, 
+then aggregates word level decisions to resolve conflicts.
+We introduce a set of latent variables for each index $i \in 1, \ldots, I$
+corresponding to each word $x_i$:
+\begin{enumerate}
+\item $m_i \in \set{0,1}$ indicates whether $x_i$ is part of a value mention
+\end{enumerate}
 (shoot, this is incorrect. we actually care about granular extraction)
 We reduce the construction of $\Delta$ to predicting, for every $j\in 1,\ldots,J$,
 the value $v_j$ corresponding to row and column of our KB given by $s_j$.
