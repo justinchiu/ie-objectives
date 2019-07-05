@@ -287,7 +287,7 @@ at the start of training.
 Alternatively, we may introduce a generative model of text $q(x, v)$ 
 that inverts the relation extraction model $p(v \mid x)$ and optimize the following objective:
 \begin{equation}
-\log q(x,v) - KL[p(v \mid x) || q(v \mid x)]
+\log q(x,v) - KL[p(v,z,a,m \mid x) || q(v,z,a,m \mid x)]
 \end{equation}
 which entails training the generative model of text while approximating its
 posterior with the information extraction system.
