@@ -81,10 +81,8 @@ aligned to the brief summary $x = \textrm{John scored 19 points}$.
 We are primarily concerned with the scenario where we have an overcomplete KB schema with
 respect to a specific passage of text.
 This fits many scenarios in real world applications:
-we may have thousands of entities of interest if our KB was pulled from an 
-external source such as Freebase,
-but the particular document we wish to analyze only discusses tens of entities,
-only a few of which are present in our KB.
+we may have many entity and type pairs in our data table,
+but a summary may discuss only a small salient subset of players and statistics.
 
 Given all entities $e$ and types $t$,
 we reduce the construction of $r$ to predicting, for every $j\in 1,\ldots,J$,
