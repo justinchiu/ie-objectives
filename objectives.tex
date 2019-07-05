@@ -45,7 +45,7 @@ individual words as value mentions, rather than entity or type mentions.
 We propose a model that first identifies value mentions at the word level,
 aligns those mentions to an entity and relation type in order to obtain a fact, 
 then aggregates word level decisions to resolve conflicts.
-We assume access to a set of facts, henceforth referred to as a knowledge base (KB),
+We assume access to a set of facts, or a knowledge base (KB),
 that is discussed in text.
 
 \begin{comment}
@@ -84,8 +84,11 @@ This fits many scenarios in real world applications:
 we may have many entity and type pairs in our data table,
 but a summary may discuss only a small salient subset of players and statistics.
 
+As our goal is to locate fact mentions, modeling just the KB $\Delta$ given the text $x$
+is not sufficient.
+We must 
 (shoot, this is incorrect. we actually care about granular extraction)
-We reduce the construction of $\delta$ to predicting, for every $j\in 1,\ldots,J$,
+We reduce the construction of $\Delta$ to predicting, for every $j\in 1,\ldots,J$,
 the value $v_j$ corresponding to row and column of our KB given by $s_j$.
 We cast relation extraction as KB completion, where we fill in the cells of a data table.
 In the following section we propose a model for the distribution over
