@@ -18,7 +18,8 @@ an entity and value given the positions of their mentions in the text.
 This requires requires words to be annotated as mentions.
 Human annotation at the word level does not scale as the size of the text
 and the number of labels increases, as annotators must read every word.
-Automatic methods allow annotation to scale, but may introduce noise due to incorrect annotations.
+Automatic annotation methods allow the annotation process to scale,
+but may introduce noise due to incorrect annotations.
 In order to train a probabilistic information extraction model without mention
 annotations, we specify a model that, for each word,
 either chooses a triple from a knowledge base to explain or chooses to explain nothing.
