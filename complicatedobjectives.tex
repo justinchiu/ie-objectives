@@ -1,0 +1,342 @@
+\documentclass[12pt]{article}
+
+\usepackage{mystyle}
+
+\title{Objectives for Information Extraction}
+\author{
+Justin T. Chiu
+}
+\date{\today}
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Many recent information extraction systems predict the relationship between
+an entity and value given the positions of their mentions in the text.
+This requires requires words to be annotated as mentions.
+Human annotation at the word level does not scale as the size of the text
+and the number of labels increases, as annotators must read every word.
+Automatic annotation methods allow the annotation process to scale,
+but may introduce noise due to incorrect annotations.
+In order to train a probabilistic information extraction model without mention
+annotations, we specify a model that, for each word,
+either chooses a triple from a knowledge base to explain or chooses to explain nothing.
+\end{abstract}
+
+\section{Problem Statement}
+
+In relation extraction the goal is to extract facts from a passage of text.
+Systems must convert facts expressed in natural language into a form
+amenable to computation.
+Facts consist of three components: entities, relation types, and values.
+%(Example would be fastest to clear up what a relation type is)
+The challenge is to not only extract facts from text, but also
+justify the extractions by determining where those facts are mentioned.
+
+A mention is a surface realization of an abstract object in text.
+In relation extraction we justify extractions by identifying fact mentions.
+As text is noisy, the realization of a fact may be difficult to locate.
+We focus on locating fact mentions at the word level by identifying
+individual words as value mentions, rather than entity or type mentions.
+%(Why? Justify with generative model)
+
+\begin{comment}
+Note on related work:
+Except for \citet{zeng2018copy}, prior work has either assumed that the locations of
+entities and values are given as input features or that the locations of entities and values
+are observed at training time.
+\end{comment}
+
+The problem description is as follows.
+We focus on the domain of basketball summaries:
+given a written summary of a basketball game $x = x_1, \ldots, x_{I}$
+we model the aligned box score $\Delta = \set{(e_j, t_j, v_j)}_{j=1}^J$
+consisting of entities $e_j$,
+relation types $t_j$, and all values $v_j$.
+The set of facts $\Delta$ is our knowledge base (KB).
+Let $s = \set{(e_j, t_j)}_{j=1}^J$, and $v = \set{v_j}_{j=0}^J$.
+The KB $\Delta$ can be viewed as a data table where
+$s$ defines a flattened representation of the rows and columns and
+$v$ gives the values of the cells.
+For example, we may have
+$
+s = \set{
+    (e_1 = \textrm{John}, t_1 = \textrm{Points}),
+    (e_2 = \textrm{John}, t_2 = \textrm{Rebounds}),
+    \ldots
+}
+$
+with 
+$ v = \set{ v_1 = 19, v_2 = 12, \ldots }$ 
+aligned to the brief summary $x = \textrm{John scored 19 points}$.
+Our goal is is to locate and extract facts from $x$.
+We assume that the values $v$ of our KB may be noisy or incomplete,
+and therefore 
+
+(move somewhere else)
+We are primarily concerned with the scenario where we have an overcomplete KB schema with
+respect to a specific passage of text.
+This fits many scenarios in real world applications:
+we may have many entity and type pairs in our data table,
+but a summary may discuss only a small salient subset of players and statistics.
+
+As our goal is to locate fact mentions, modeling just the KB $\Delta$ given the text $x$
+is not sufficient.
+We propose a model that first identifies value mentions at the word level,
+aligns those mentions to an entity and relation type in order to obtain a fact, 
+then aggregates word level decisions to resolve conflicts.
+We introduce a set of latent variables for each index $i \in 1, \ldots, I$
+corresponding to each word $x_i$:
+\begin{enumerate}
+\item $m_i \in \set{0,1}$ indicates whether $x_i$ is part of a value mention
+\end{enumerate}
+(shoot, this is incorrect. we actually care about granular extraction)
+We reduce the construction of $\Delta$ to predicting, for every $j\in 1,\ldots,J$,
+the value $v_j$ corresponding to row and column of our KB given by $s_j$.
+We cast relation extraction as KB completion, where we fill in the cells of a data table.
+In the following section we propose a model for the distribution over
+values given text and a value-less KB $p(v \mid x, s)$.
+
+\section{Model}
+We define a graphical model that performs extraction with justification. 
+The model first extracts information at the word level,
+then aggregates its choices for each word into an extraction at the sequence level.
+
+The word level extraction process has three steps.
+For each index $i \in 1, \ldots, I$ we perform
+\begin{enumerate}
+\item Value mention identification: Given a sequence of words $x$,
+    we identify whether each word is a value mention with
+    $p(m \mid x) = \prod_i p(m_i \mid x)$.
+    Each $m_i \in \set{0,1}$.
+    Not every word in a mention must be identified; it suffices to find
+    at least one word in a value mention.
+\item Alignment: Each value mention is then aligned to a 
+    record in the knowledge base with $p(a \mid x,e,t) = \prod_i p(a_i \mid x,e,t)$,
+    We align the word $x_i$ by choosing who (the entity)
+    and what (the relation type) generate the possible value mention at index $i$.
+    In particular, $a_i = j$ denotes the alignment to the record $r_{j}$
+    with $a_i \in 1, \ldots, J$.
+    We assume that each value mention aligns to a single record.
+\item Translation: All value mentions are translated
+    into a value from the KB schema with
+    $p(z \mid x) = \prod_i p(z_i \mid x)$, with $z_i \in \mcV$.
+\end{enumerate}
+%We choose to locally normalize the word level distributions as our goal is to
+%extract information from text, not condition on an existing KB.
+
+Finally, we aggregate the word level information at the sequence level in order
+to give a single distribution over the record values for $x$.
+\begin{enumerate}
+\setcounter{enumi}{3}
+\item Aggregation $p(v \mid z,a,m) = \prod_j p(v_j \mid z,a,m)$:
+    Given the word level values $z$, alignments $a$, value mention decisions $m$,
+    we choose the sequence level value $v_j$.
+\end{enumerate}
+
+\begin{figure}[h]
+\begin{center}
+\resizebox {.3\columnwidth} {!} {
+\begin{tikzpicture}
+\node[obs] (Y) {$x$};
+\node[latent, below=of Y](A) {$a_i$};
+\node[latent, left=of A](C) {$m_i$};
+\node[latent, right=of A](Vi) {$z_i$};
+
+\node[obs, below=of C] (E) {$e_j$};
+\node[obs, below=of A] (T) {$t_j$};
+\node[obs, below=of Vi] (V) {$v_j$};
+
+\plate {i} {(C)(A)(Vi)} {$I$};
+\plate  {j} {(E)(T)(V)} {$J$};
+
+\draw[->] (Y) -- (C);
+\draw[->] (Y) -- (A);
+\draw[->] (Y) -- (Vi);
+%\draw[->] (A) -- (Vi);
+\draw[->] (E) -- (A);
+\draw[->] (T) -- (A);
+%\draw[-] (Vi) -- (V);
+%\draw[-] (A) -- (V);
+%\draw[-] (C) -- (V);
+%\draw[-] (E) to [bend right = 25] (V);
+%\draw[-] (T) -- (V);
+\draw[->] (Vi) -- (V);
+\draw[->] (A) -- (V);
+\draw[->] (C) -- (V);
+\draw[->] (E) to [bend right = 25] (V);
+\draw[->] (T) -- (V);
+
+\end{tikzpicture}
+} %% end resize
+\end{center}
+\caption{Our model predicts word-level values and alignments
+then aggregates those choices over all indices $i$ to
+predict values at the KB level.
+}
+\label{fig:infmodel}
+\end{figure}
+
+This gives us the following factorization of the relation extraction system:
+\begin{equation}
+\label{eqn:prob}
+\begin{aligned}
+p(v \mid x,e,t) &= \sum_{z,a,m} p(v,z,a,m\mid x,e,t)\\
+&= \sum_{z,a,m} p(v\mid z,a,m,x,e,t) p(z, a, m\mid x,e,t)\\
+&= \sum_{z,a,m} \left(\prod_j p(v_j\mid z,a,m,x,e,t)\right)
+\left(\prod_i p(z_i\mid x)p(a_i\mid x,e,t)p(m_i\mid x)\right)
+\end{aligned}
+\end{equation}
+
+\subsection{Parameterization}
+Our model has four steps: mention identification, mention alignment, 
+mention translation, and aggregation.
+We parameterize the conditional distributions of each step below.
+
+Let $\bh_i \in \R^d$ be a contextual embedding of the word $x_i$,
+and $E$ an embedding function that maps entities and types to vectors in $\R^{d'}$.
+\begin{enumerate}
+\item Identification: We use the contextual embedding to directly predict
+whether a word is part of a value mention.
+$$p(m_i \mid x) \propto \exp(W_m\bh_i), W_m \in \R^{2 \times d}$$
+\item Alignment: We decompose the alignment distribution into a distribution over
+entities $p(\epsilon_i \mid x,e)$ and types $p(\tau_i \mid x,t)$.
+\begin{align*}
+p(a_i \mid x,e,t) &= p(\epsilon_i \mid x,e)p(\tau_i \mid x,t)\\
+p(\epsilon_i \mid x) &\propto \exp(E(e_{\epsilon_i})^T W_e \bh_i)\\
+p(\tau_i \mid x) &\propto \exp(E(\tau_{a_i})^T W_t \bh_i)
+\end{align*}
+with $W_e \in \R^{d' \times d},W_t \in \R^{d' \times d}$.
+\item Translation: We use the contextual embedding to translate a word
+into a value.
+$$p(z_i \mid x) \propto \exp(W_z \bh_i), W_z \in \R^{|\mcV| \times d}$$
+\item Aggregation:
+If there exists an index that is a mention and is also aligned to $r_j$
+we allow it to vote on the value $v_j$, otherwise we ignore the text
+and use a prior distribution over values
+$p(v_j \mid e_j, t_j) \propto \exp(E(v_j)^TW_v [E(e_j),E(t_j)])$.
+\begin{align*}
+p(v_j \mid z,a,m,e,t) &\propto \begin{cases}
+    \prod \exp(\psi(v_j, z_i,a_i,m_i,e,t)),  & \exists i, m_i = 1 \wedge a_i = j\\
+    %p(v_j \mid e_j,t_j), & \textrm{otherwise}
+    \exp(E(v_j)^TW_v [E(e_j),E(t_j)]), & \textrm{otherwise}
+\end{cases}\\
+\psi(v_j, z_i, a_i, m_i,e,t) &= 1(v_j = z_i, a_i = j, m_i=1)%\\
+%p(v_j \mid e,t) & \propto \exp(E(v_j)^TW_v [E(e),E(t)])
+\end{align*}
+\end{enumerate}
+
+\section{Training and Inference}
+To train a latent variable model, we must marginalize over the unobserved RVs
+and maximize the likelihood of the observed.
+Ideally, we would optimize the following objective
+\begin{equation}
+\log p(v \mid x,e,t) = \log \sum_{z,a,m} p(v,z,a,m \mid x,e,t)
+\end{equation}
+However, maximizing $\log p(v \mid x)$ directly is very expensive for this model
+as the summation over $z,a,m$ is intractable.
+The summation over $z,a,m$ has computational complexity $O((|\mcV|\cdot J\cdot 2)^{I})$,
+which is exponential in the length of the text.
+Additionally, the size of the KB $J$ may be large as well.
+
+We therefore resort to approximate inference,
+specifically amortized variational inference.
+
+\subsection{Inference network}
+Our first approach is to introduce an inference network $q(z,a,m\mid v,x,e,t)$
+and optimize the following lower bound on the marginal likelihood
+with respect to the parameters of both $p$ and $q$:
+\begin{equation}
+\label{eqn:lowerbound}
+\log p(v\mid x) \geq
+\Es{q(z,a,m\mid v,x,e,t)}{\log \frac{p(v,z,a,m\mid x,e,t)}{q(z,a,m\mid v,x,e,t)}}
+\end{equation}
+
+We propose to parameterize $q(z,a,m\mid v,x,e,t)$ as follows.
+We decompose 
+\begin{equation}
+\begin{aligned}
+q(z,a,m\mid v,x,e,t) &= q(z \mid a,v,x)q(a\mid v,x,e,t)q(m \mid v,x)\\
+&= \prod_i q(z_i \mid a,v,x)q(a_i \mid v,x,e,t)q(m_i \mid v,x)
+\end{aligned}
+\end{equation}
+The conditional distributions of our inference network
+are very similar to the relation extraction model,
+but they condition on the values $v$.
+
+Let $\bh_i \in \R^d$ be a contextual embedding of the word $x_i$.
+We use attention weights over records to get a weighted representation
+of the records of the KB for each index $i$:
+\begin{align*}
+\bg_{r_j} &= [E(e_j), E(t_j), E(v_j)]\\
+\alpha_j &\propto \exp(\bg_{r_j}^T W_\alpha \bh_i)
+\end{align*}
+The inference network is given by
+\begin{enumerate}
+\item The value mention model $q(m_i \mid v,x)$ 
+    has access to the values $v$ from the KB, which it conditions on
+    when detecting value mentions. 
+    $$p(m_i \mid v,x) = W_m' \textrm{MLP}([\sum_j \alpha_j \cdot \bg_{r_j}, \bh_i]), W'_m \in \R^{2 \times d}$$
+\item The alignment model $q(a_i \mid v,x,e,t)$
+    uses a contextual representation of each $x_i$ and chooses a record.
+    In contrast to $p(a\mid x,e,t)$, this model has access to values as well.
+    We use the attention weights to parameterize the distribution
+    $p(a_i \mid x) = \alpha_{a_i}$.
+\item The translation model $q(z_i \mid a,v,x) = 1(z_i = v_{a_i})$
+    conditions on the alignments $a$ and ensures the chosen $z$ is consistent
+    with the alignments. 
+\end{enumerate}
+
+One concern is that the model may learn to never rely on the text for extraction,
+setting $m_i = 0$ at every index.
+We can avoid this by initializing $q(z)$ to ensure that for words $x \in \mcV$ 
+we have $q(z = x)$ is high, biasing the translation model towards transliteration
+at the start of training.
+
+\subsection{Approximate the posterior of a generative model}
+Alternatively, we may introduce a generative model of text $q(x, v)$ 
+that inverts the relation extraction model $p(v \mid x)$ and optimize the following objective:
+\begin{equation}
+\log q(x,v) - KL[p(v,z,a,m \mid x) || q(v,z,a,m \mid x)]
+\end{equation}
+which entails training the generative model of text while approximating its
+posterior with the information extraction system.
+
+decompose the training of our extraction system $p(v\mid x)$ into two stages:
+In the first stage we train $p(z,a,m\mid x,e,t)$ to approximate the posterior
+of a conditional model of text given a complete KB $q(x,z,a,m \mid e,t,v)$.
+This has the benefit of allowing us to exert control over where value mentions are detected
+through our design of the text model $q$.
+
+In the second stage, we have two choices:
+a) train $p(v \mid z,a,m,x,e,t)$ to approximate the posterior of a full generative model of text and
+the values of KB $q(x,v\mid e,t)$.
+b) train $p(v \mid z,a,m,x,e,t)$ using the following lower bound:
+\begin{equation}
+\label{eqn:lowerbound2}
+\log p(v\mid x) \geq
+\Es{p(z,a,m\mid x,e,t)}{\log p(v\mid z,a,m, x,e,t)}
+\end{equation}
+Ideally the bound in Eqn.~\ref{eqn:lowerbound2}
+should not be looser than the one presented in Eqn.~\ref{eqn:lowerbound},
+as conditioning on the observed values of a KB should not reduce the entropy of
+a good alignment model.
+
+How do we split the gradient over time?
+
+\section{Evaluation}
+Although we have a model over the values of all records,
+evaluation does not include the final distribution over all record values.
+As we assumed that the KB contained a superset of the facts contained in
+a sequence of text, we are evaluate whether the model can discover the subset of facts that 
+are expressed in the text.
+We therefore perform extraction by using the marginal distributions
+$q(z),q(a),q(c)$ to value mentions as well as entities and types,
+giving us facts.
+
+\bibliography{bib}
+\bibliographystyle{acl_natbib}
+
+\end{document}

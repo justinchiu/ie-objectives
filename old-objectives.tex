@@ -1,0 +1,292 @@
+\documentclass[12pt]{article}
+
+\usepackage{mystyle}
+
+\title{Objectives for Relation Extraction}
+\author{
+Justin T. Chiu
+}
+\date{\today}
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Many recent relation extraction systems predict the relationship between an entity and value given
+their locations in the text.
+This requires observed locations of mentions, which requires annotations at the word level.
+Any form of annotation at the word level does not scale as the size of the text
+and the number of labels increases, and even more so if there is ambiguity.
+In order to train a probabilistic information extraction without any
+supervision at the level of text, we specify a model 
+that, for each word, either chooses a triple from a knowledge base to explain
+or does not use the current word.
+\end{abstract}
+
+\section{Introduction}
+
+In relation extraction we extract facts from a passage of text.
+Let's jump straight into a formal description.
+Given a text $y = [y_0, \ldots, y_T]$ the goal is to predict all facts expressed
+in that text with respect to the schema of a Knowledge Base (KB).
+The length of the text $T$ varies: depending on the dataset we may be interested extracting
+all facts expressed in a sentence or paragraph.
+All sequences of text are bounded in length.
+The KB $r = \set{(\epsilon_i, \tau_i, \nu_i)}_{i \in \mcI}$ is an indexed set of records $r_i$.
+Each record $r_i = (\epsilon_i, \tau_i, \nu_i)$ consists of an entity, type, and value triple 
+that is governed by a schema so that $\epsilon_i\in \mcE, \tau_i\in \mcT, \nu_i\in \mcV$.
+Let $\epsilon,\tau,\nu$ be the entities, types, and values from the KB $r$ in aggregate,
+i.e. $\epsilon = \set{\epsilon_i}_{i \in \mcI}$ etc.
+
+We assume supervision only at the proposition level of a KB.
+We know what the relationship is between entities and values
+(although this assumption can be relaxed),
+but we do not know where in text records are realized.
+Except for \citet{zeng2018copy}, prior work has either assumed that the locations of
+entities and values are given as input features or that the locations of entities and values
+are observed at training time.
+We relax this assumption and do not use any annotations at the level of text.
+
+\begin{table}[htbp]\caption{Notation}
+\centering % to have the caption near the table
+\begin{tabular}{r c p{10cm} }
+\toprule
+$y$ & $\triangleq$ & A vector of words $y_t$.\\
+$r$ & $\triangleq$ & The knowledge base,
+    an indexed set of records each consisting of entities, types, and values.\\
+$\epsilon$ & $\triangleq$ & The list of all entities in a KB by index. The same entity may appear
+    in multiple indices.\\
+$\tau$ & $\triangleq$ & The list of all types in a KB by index.\\
+$\nu$ & $\triangleq$ & The list of all values in a KB by index.\\
+$c_t$ & $\triangleq$ & A Bernoulli RV that indicates whether word $y_t$ is content or not.\\
+$a_t$ & $\triangleq$ & A Categorical RV that specifies the index of the record word $y_t$
+    is aligned to.\\
+$v_t$ & $\triangleq$ & A Categorical RV that is the canonical value representation of
+    word $y_t$.\\
+\bottomrule
+\end{tabular}
+\label{tab:TableOfNotationForMyResearch}
+\end{table}
+
+We are primarily concerned with the scenario where we have an overcomplete KB schema with
+respect to a specific passage of text.
+This fits many scenarios in real world applications:
+we may have thousands of entities of interest if our KB was pulled from an 
+external source such as Freebase,
+but the particular document we wish to analyze only discusses tens of entities,
+only a few of which are present in our KB.
+
+
+
+\section{Model}
+Our goal is to produce a set of record triples given text.
+As we assume that only the KB and text are observed,
+we can either produce this set directly from the text or identify realizations of
+records at a more granular level and then aggregate our choices.
+We choose to pursue the latter since identifying facts at a granular level
+is a step towards compositional language understanding.
+This may appear similar to shallow parsing, however we do not expect
+to obtain any interpretable segmentations of the text.
+We are only interested in the extractive capabilities of the model.
+This is more difficult than performing extraction at a higher level
+since we must justify every extraction with a mention.
+
+Although entity or value mentions may be multi-word expressions,
+identifying realizations at the word level is no less expressive as
+we can aggregate our word level choices into sequence level ones.
+
+Loosely inspired by work in language grounding \cite{liang2009},
+we focus on identifying value mentions in text.
+Our model first identifies words that are value mentions,
+translates the value mention into a canonical value,
+then aligns the mention to a record in the KB by predicting what
+entity and the relation type associated with the value mention.
+
+Our information extraction model is denoted $q(r \mid y)$,
+a distribution over a KB $r$ given some text $y$.
+Let $f_{*}$ be arbitrary learned functions.
+Our word level model is given by the following:
+For each word $y_t$, we have
+\begin{enumerate}
+\item Value mention detector $q(c_t \mid y)$: We classify whether word $y_t$
+   is a value mention. Each $c_t \sim \Bern(f_{c}(y))$, where a value of 1 indicates
+   that $y_t$ is a value mention.
+\item Value prior $p(v_t \mid \epsilon, \tau)$: If $c_t = 0$,
+    we generate the value distribution ignoring the text.
+\item Translation $q(v_t \mid y)$: We translate the word $y_t$ into a value $v_t$.
+    The $v_t \sim \Cat(f_{v}(y))$ is the canonical value from the KB schema 
+    associated with $y_t$.
+\item Alignment $q(a_t \mid y, \epsilon, \tau)$:
+    We align the word $y_t$ by classifying who (the entity)
+    and what (the relation type) are being talked about.
+    In particular, $a_t\sim\Cat(f_{a}(y))$ denotes the alignment to the record $r_{a_t}$
+    given by the index $i = a_t$. 
+\end{enumerate}
+
+Finally, we aggregate the word level information at the sequence level:
+\begin{enumerate}
+\item Aggregation $\prod_i q(\nu_i \mid a,v,c)$:
+    In order to parameterize a distribution over the KB $r$,
+    we must then aggregate all of the word-level information into a distribution over
+    facts at the sequence level.
+    We use a deterministic OR potential for each $r_i$ (stuck here, need to read up on this).
+\end{enumerate}
+
+\begin{figure}[t]
+\begin{center}
+\resizebox {.3\columnwidth} {!} {
+\begin{tikzpicture}
+\node[obs] (Yp) {$y_{<t}$};
+\node[obs, right=of Yp] (Yi) {$y_t$};
+\node[latent, below=of Yp](A) {$a_t$};
+\node[latent, left=of A](C) {$c_t$};
+\node[latent, below=of Yi](Vi) {$v_t$};
+
+\node[obs, below=of C] (E) {$\epsilon_i$};
+\node[obs, below=of A] (T) {$\tau_i$};
+\node[obs, below=of Vi] (V) {$\nu_i$};
+
+\plate {i} {(Yp)(Yi)(C)(A)(Vi)} {$T$};
+\plate  {j} {(E)(T)(V)} {$I$};
+
+\draw[->] (Yp) -- (Yi);
+\draw[->] (Yp) -- (C);
+\draw[->] (Yp) -- (A);
+\draw[->] (A) -- (Vi);
+\draw[->] (E) -- (A);
+\draw[->] (T) -- (A);
+\draw[->] (V) -- (Vi);
+\draw[->] (Vi) -- (Yi);
+\draw[->] (C) -- (Yi);
+\end{tikzpicture}
+} %% end resize
+\end{center}
+\caption{The generative model which produces words given a knowledge base.}
+\label{fig:genmodel}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+\resizebox {.3\columnwidth} {!} {
+\begin{tikzpicture}
+\node[obs] (Y) {$y$};
+\node[latent, below=of Y](A) {$a_t$};
+\node[latent, left=of A](C) {$c_t$};
+\node[latent, right=of A](Vi) {$v_t$};
+
+\node[obs, below=of C] (E) {$\epsilon_i$};
+\node[obs, below=of A] (T) {$\tau_i$};
+\node[obs, below=of Vi] (V) {$\nu_i$};
+
+\plate {i} {(C)(A)(Vi)} {$T$};
+\plate  {j} {(E)(T)(V)} {$I$};
+
+\draw[->] (Y) -- (C);
+\draw[->] (Y) -- (A);
+\draw[->] (Y) -- (Vi);
+%\draw[->] (A) -- (Vi);
+\draw[->] (E) -- (A);
+\draw[->] (T) -- (A);
+\draw[-] (Vi) -- (V);
+\draw[-] (A) -- (V);
+\draw[-] (C) -- (V);
+\draw[->] (C) to [bend right = 27] (Vi);
+
+\end{tikzpicture}
+} %% end resize
+\end{center}
+\caption{The inference network which predicts word-level values and alignments.}
+\label{fig:infmodel}
+\end{figure}
+
+\section{Three perspectives on training}
+We can either train $q$ directly on the conditional task
+or train it to mimic the posterior of a suitable generative model.
+
+Axes of objectives:
+\begin{enumerate}
+\item Proposal distribution: Learned or uniform (or some prior)
+\item Probabilistic interpretation: Marginal likelihood or KL
+\item Probabilistic interpretation 2: Approximate posterior
+    of a generative model or learn directly.
+\end{enumerate}
+
+\subsection{Marginal loss}
+Our first loss, the marginal likelihood, takes the form of
+$$\mcL_{\textrm{ML}} = \sum_t \log \sum_{a_t} \sum_{c_t} q(a_t,c_t,v_{a_t})$$
+where the unobserved alignments and binary choice are marginalized over.
+
+This has the interpretation of maximizing the `softmax' of the 
+log probabilities.
+However, the sharpness of is limited by the choice of $q$.
+With a uniform $q(a,c)$, $\mcL = \sum_t \sum_{a_t}q(v_{a_t}) + C$,
+where $C$ is the normalization term which we can assume to be constant here.
+The gradient of this term wrt the log probabilities is weighted by the posterior,
+so a high entropy $q$ will result in a smaller gradient.
+
+One concern is whether the model will learn to align at all.
+Decomposing this lower bound further, we have
+\begin{align*}
+\mcL_{\textrm{ML}} &= \sum_t \log \sum_{a_t} \sum_{c_t} q(v_{a_t},a_t,c_t)\\
+&= \sum_t \log p(v)q(c_t = 0) + \sum_{a_t} \sum_{c_t} q(v_{a_t},a_t\mid c_t=1)q(c_t=1)
+\end{align*}
+Given a reasonable initialization of $q(v_{a_t}\mid a_t)$,
+there is no reason to believe this will not work.
+
+\subsection{KL}
+The second loss, a lower bound on the marginal likelihood, is the following
+$$\mcL_{\textrm{KL}} = \sum_t \sum_{a_t} \sum_{c_t} q(a_t,c_t)\log q(v_{a_t})$$
+The benefit of this loss is that we can approximate it via Monte Carlo sampling.
+Under a uniform $q(a,c)$, we must maximize the probabilities of the values
+associated with each alignment equally.
+This will force the model to explain records that may have nothing to do with the current word,
+resulting in a large difference between $\mcL_{\textrm{ML}}$ and $\mcL_{\textrm{KL}}$.
+With a learned $q(a,c)$, the lower bound can be made much tighter so there is
+less of a difference.
+
+\subsection{Approximating the posterior of a generative model}
+One issue with the above model is that it is highly unconstrained.
+There is no constraint that forces the model to extract a fact from any specific word.
+This may lead to issues seen in other alignment problems where there is an
+off-by-one error.
+Depending on our parameterizations of $f_{*}$, this behaviour may be exacerbated.
+We propose to alleviate this issue by training our $q$ to approximate the posterior of
+a more constrained generative model.
+(Philosophically, I believe the model you care about should have the constraints
+rather than this way.)
+
+The information extraction model itself was inspired by the following generative process:
+For every word $y_t$
+\begin{enumerate}
+\item Generate the values of the KB $v \sim p(v)$ assuming the schema is fixed.
+\item Choose $c_t \sim \Bern(f(y_{<t})$, which determines whether to generate 
+    word $y_t$ from a language model or the KB.
+\item If $c_t = 0$, generate $y_t \sim \Cat(g(y_{<t}))$.
+\item Otherwise pick an alignment to the KB $a_t \sim \Cat(h(y_{<t}))$
+    then generate $y_t \sim \Cat(f'(v_{a_t}))$.
+\end{enumerate}
+We then train our model to approximate the posterior $p(v \mid y)$.
+Since this generative model does not use every record during generation,
+the posterior may only explain a subset of all records.
+This fits our hypothesis that the KB contains a superset of records expressed in text.
+
+The loss is then given by
+\begin{align*}
+\mcL_{\textrm{VI}}
+\end{align*}
+
+The primary benefit of this over a purely conditional approach is semi-supervised information extraction,
+where values are missing.
+
+\begin{align}
+\arg\max_p \sum_{y'}\sum_{x'} p^*(y',x')\log \frac{p(y',x')}{p^*(y',x')}
+&= \arg\max_p \sum_{y'}\sum_{x'} p^*(y',x')\log \sum_z p(y',z,x')\\
+&= \arg\max_p \sum_{y'}\sum_{x'} p^*(y',x')\log \sum_z p(y',z,x')\\
+&\geq 
+\end{align}
+
+\bibliography{bib}
+\bibliographystyle{acl_natbib}
+
+\end{document}
