@@ -55,14 +55,27 @@ entities and values are given as input features or that the locations of entitie
 are observed at training time.
 \end{comment}
 
-The problem description is as follows:
-given a text $x = x_1, \ldots, x_{I}$ we model the facts
-$\Delta = \set{(e_j, t_j, v_j)}_{j=1}^J$ expressed in that text
-with respect to a schema that details all entities $e_j$,
+The problem description is as follows.
+We focus on the domain of basketball summaries:
+given a written summary of a basketball game $x = x_1, \ldots, x_{I}$
+we model the aligned box score $\Delta = \set{(e_j, t_j, v_j)}_{j=1}^J$
+consisting of entities $e_j$,
 relation types $t_j$, and all values $v_j$.
 The set of facts $\Delta$ is our knowledge base (KB).
 Let $s = \set{(e_j, t_j)}_{j=1}^J$, and $v = \set{v_j}_{j=0}^J$.
-
+The set $\Delta$ can be viewed as a data table where
+$s$ defines the rows and columns and $v$ gives the values of the cells.
+For example, we may have
+$
+s = \set{
+    (e_1 = \textrm{John}, t_1 = \textrm{Points}),
+    (e_2 = \textrm{John}, e_2 = \textrm{Rebounds}),
+    \ldots
+}
+$
+with 
+$ v = \set{ v_1 = 19, v_2 = 12 }$ 
+aligned to the brief summary $x = \textrm{John scored 19 points}$.
 
 We are primarily concerned with the scenario where we have an overcomplete KB schema with
 respect to a specific passage of text.
