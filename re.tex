@@ -217,11 +217,11 @@ and $E$ an embedding function that maps entities and types to vectors in $\R^{d'
 whether a word is part of a value mention.
 $$p(m_i \mid x) \propto \exp(W_m\bh_i), W_m \in \R^{2 \times d}$$
 \item Alignment: We decompose the alignment distribution into a distribution over
-entities $p(\epsilon_i \mid x,e)$ and types $p(\tau_i \mid x,t)$.
+entities $p(\epsilon_i \mid x,d)$ and types $p(\tau_i \mid x,d)$.
 \begin{align*}
-p(a_i \mid x,e,t) &= p(\epsilon_i \mid x,e)p(\tau_i \mid x,t)\\
-p(\epsilon_i \mid x) &\propto \exp(E(e_{\epsilon_i})^T W_e \bh_i)\\
-p(\tau_i \mid x) &\propto \exp(E(\tau_{a_i})^T W_t \bh_i)
+p(a_i \mid x,d) &= p(\epsilon_i \mid x,d)p(\tau_i \mid x,d)\\
+p(\epsilon_i \mid x,d) &\propto \exp(E(e_{\epsilon_i})^T W_e \bh_i)\\
+p(\tau_i \mid x,d) &\propto \exp(E(\tau_{a_i})^T W_t \bh_i)
 \end{align*}
 with $W_e \in \R^{d' \times d},W_t \in \R^{d' \times d}$.
 \item Translation: We use the contextual embedding to translate a word
