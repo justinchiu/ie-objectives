@@ -63,13 +63,13 @@ we model the aligned box score $\Delta = \set{(e_j, t_j, v_j)}_{j=1}^J$
 consisting of entities $e_j$,
 relation types $t_j$, and all values $v_j$.
 The set of facts $\Delta$ is our knowledge base (KB).
-Let $s = \set{(e_j, t_j)}_{j=1}^J$, and $v = \set{v_j}_{j=0}^J$.
-The KB $\Delta$ can be viewed as a data table where
-$s$ defines a flattened representation of the rows and columns and
+Let $d = \set{(e_j, t_j)}_{j=1}^J$, and $v = \set{v_j}_{j=0}^J$.
+The complete KB $\Delta$ can be viewed as a data table where
+$d$ defines a flattened representation of the rows and columns and
 $v$ gives the values of the cells.
 For example, we may have
 $
-s = \set{
+d = \set{
     (e_1 = \textrm{John}, t_1 = \textrm{Points}),
     (e_2 = \textrm{John}, t_2 = \textrm{Rebounds}),
     \ldots
@@ -78,9 +78,7 @@ $
 with 
 $ v = \set{ v_1 = 19, v_2 = 12, \ldots }$ 
 aligned to the brief summary $x = \textrm{John scored 19 points}$.
-Our goal is is to locate and extract facts from $x$.
-We assume that the values $v$ of our KB may be noisy or incomplete,
-and therefore 
+Our goal is to locate and extract facts from $x$.
 
 (move somewhere else)
 We are primarily concerned with the scenario where we have an overcomplete KB schema with
