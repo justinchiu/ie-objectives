@@ -294,9 +294,9 @@ The inference network is given by
     has access to the values $v$ from the KB, which it conditions on
     when detecting value mentions. 
     $$p(m_i \mid v,x) = W_m' \textrm{MLP}([\sum_j \alpha_j \cdot \bg_{r_j}, \bh_i]), W'_m \in \R^{2 \times d}$$
-\item The alignment model $q(a_i \mid v,x,e,t)$
+\item The alignment model $q(a_i \mid v,x,d)$
     uses a contextual representation of each $x_i$ and chooses a record.
-    In contrast to $p(a\mid x,e,t)$, this model has access to values as well.
+    In contrast to $p(a\mid x,d)$, this model has access to values as well.
     We use the attention weights to parameterize the distribution
     $p(a_i \mid x) = \alpha_{a_i}$.
 \item The translation model $q(z_i \mid a,v,x) = 1(z_i = v_{a_i})$
