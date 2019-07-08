@@ -69,12 +69,12 @@ are observed at training time.
 The problem description is as follows.
 We focus on the domain of basketball summaries:
 given a written summary of a basketball game $x = x_1, \ldots, x_{I}$
-we model the aligned box score $\Delta = \set{(e_j, t_j, v_j)}_{j=1}^J$
+we model the aligned box score $\set{(e_j, t_j, v_j)}_{j=1}^J$
 consisting of entities $e_j$,
 relation types $t_j$, and all values $v_j$.
-The set of facts $\Delta$ is our knowledge base (KB).
-Let $d = \set{(e_j, t_j)}_{j=1}^J$, and $v = \set{v_j}_{j=0}^J$.
-The complete KB $\Delta$ can be viewed as a data table where
+The set of facts is our knowledge base (KB).
+Let $d = \set{(e_j, t_j)}_{j=1}^J$ and $v = \set{v_j}_{j=0}^J$.
+The KB $(d,v)$ can be viewed as a data table where
 $d$ defines a flattened representation of the rows and columns and
 $v$ gives the values of the cells.
 For example, we may have
