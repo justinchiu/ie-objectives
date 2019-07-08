@@ -108,11 +108,6 @@ then we must be able to answer whether facts are supported in text.
 We propose a model that first identifies value mentions at the word level,
 aligns those mentions to an entity and relation type in order to obtain a fact, 
 then aggregates word level decisions to resolve conflicts.
-We introduce a set of latent variables for each index $i \in 1, \ldots, I$
-corresponding to each word $x_i$:
-\begin{enumerate}
-\item $m_i \in \set{0,1}$ indicates whether $x_i$ is part of a value mention
-\end{enumerate}
 
 (shoot, this is incorrect. we actually care about granular extraction)
 Since we only observe a text and associated KB, we must 
