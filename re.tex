@@ -132,7 +132,7 @@ For each index $i \in 1, \ldots, I$ we perform
     Not every word in a mention must be identified; it suffices to find
     at least one word in a value mention.
 \item Alignment: Each value mention is then aligned to a 
-    record in the knowledge base with $p(a \mid x,e,t) = \prod_i p(a_i \mid x,e,t)$,
+    record in the knowledge base with $p(a \mid x,d) = \prod_i p(a_i \mid x,d)$,
     We align the word $x_i$ by choosing who (the entity)
     and what (the relation type) generate the possible value mention at index $i$.
     In particular, $a_i = j$ denotes the alignment to the record $r_{j}$
@@ -149,9 +149,9 @@ Finally, we aggregate the word level information at the sequence level in order
 to give a single distribution over the record values for $x$.
 \begin{enumerate}
 \setcounter{enumi}{3}
-\item Aggregation $p(v \mid z,a,m) = \prod_j p(v_j \mid z,a,m)$:
+\item Aggregation $p(v \mid z,a,m,d) = \prod_j p(v_j \mid z,a,m,d_j)$:
     Given the word level values $z$, alignments $a$, value mention decisions $m$,
-    we choose the sequence level value $v_j$.
+    and data table $d$ we choose the sequence level value $v_j$.
 \end{enumerate}
 
 \begin{figure}[h]
@@ -163,19 +163,17 @@ to give a single distribution over the record values for $x$.
 \node[latent, left=of A](C) {$m_i$};
 \node[latent, right=of A](Vi) {$z_i$};
 
-\node[obs, below=of C] (E) {$e_j$};
-\node[obs, below=of A] (T) {$t_j$};
+\node[obs, below=of C] (D) {$d_j$};
 \node[obs, below=of Vi] (V) {$v_j$};
 
 \plate {i} {(C)(A)(Vi)} {$I$};
-\plate  {j} {(E)(T)(V)} {$J$};
+\plate  {j} {(D)(V)} {$J$};
 
 \draw[->] (Y) -- (C);
 \draw[->] (Y) -- (A);
 \draw[->] (Y) -- (Vi);
 %\draw[->] (A) -- (Vi);
-\draw[->] (E) -- (A);
-\draw[->] (T) -- (A);
+\draw[->] (D) -- (A);
 %\draw[-] (Vi) -- (V);
 %\draw[-] (A) -- (V);
 %\draw[-] (C) -- (V);
@@ -184,8 +182,7 @@ to give a single distribution over the record values for $x$.
 \draw[->] (Vi) -- (V);
 \draw[->] (A) -- (V);
 \draw[->] (C) -- (V);
-\draw[->] (E) to [bend right = 25] (V);
-\draw[->] (T) -- (V);
+\draw[->] (D) -- (V);
 
 \end{tikzpicture}
 } %% end resize
