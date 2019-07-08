@@ -285,7 +285,7 @@ Let $\bh_i \in \R^d$ be a contextual embedding of the word $x_i$.
 We use attention weights over records to get a weighted representation
 of the records of the KB for each index $i$:
 \begin{align*}
-\bg_{r_j} &= [E(e_j), E(t_j), E(v_j)]\\
+\bg_{r_j} &= [E(d_j), E(v_j)]\\
 \alpha_j &\propto \exp(\bg_{r_j}^T W_\alpha \bh_i)
 \end{align*}
 The inference network is given by
