@@ -269,12 +269,12 @@ with respect to the parameters of both $p$ and $q$:
 \Es{q(z,a,m\mid v,x,d)}{\log \frac{p(v,z,a,m\mid x,d)}{q(z,a,m\mid v,x,d)}}
 \end{equation}
 
-We propose to parameterize $q(z,a,m\mid v,x,e,t)$ as follows.
+We propose to parameterize $q(z,a,m\mid v,x,d)$ as follows.
 We decompose 
 \begin{equation}
 \begin{aligned}
-q(z,a,m\mid v,x,e,t) &= q(z \mid a,v,x)q(a\mid v,x,e,t)q(m \mid v,x)\\
-&= \prod_i q(z_i \mid a,v,x)q(a_i \mid v,x,e,t)q(m_i \mid v,x)
+q(z,a,m\mid v,x,d) &= q(z \mid a,v,x)q(a\mid v,x,d)q(m \mid v,x)\\
+&= \prod_i q(z_i \mid a,v,x)q(a_i \mid v,x,d)q(m_i \mid v,x)
 \end{aligned}
 \end{equation}
 The conditional distributions of our inference network
