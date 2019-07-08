@@ -320,19 +320,19 @@ which entails training the generative model of text while approximating its
 posterior with the information extraction system.
 
 decompose the training of our extraction system $p(v\mid x)$ into two stages:
-In the first stage we train $p(z,a,m\mid x,e,t)$ to approximate the posterior
-of a conditional model of text given a complete KB $q(x,z,a,m \mid e,t,v)$.
+In the first stage we train $p(z,a,m\mid x,d)$ to approximate the posterior
+of a conditional model of text given a complete KB $q(x,z,a,m \mid v,d)$.
 This has the benefit of allowing us to exert control over where value mentions are detected
 through our design of the text model $q$.
 
 In the second stage, we have two choices:
-a) train $p(v \mid z,a,m,x,e,t)$ to approximate the posterior of a full generative model of text and
-the values of KB $q(x,v\mid e,t)$.
-b) train $p(v \mid z,a,m,x,e,t)$ using the following lower bound:
+a) train $p(v \mid z,a,m,x,d)$ to approximate the posterior of a full generative model of text and
+the values of KB $q(x,v\mid d)$.
+b) train $p(v \mid z,a,m,x,d)$ using the following lower bound:
 \begin{equation}
 \label{eqn:lowerbound2}
-\log p(v\mid x) \geq
-\Es{p(z,a,m\mid x,e,t)}{\log p(v\mid z,a,m, x,e,t)}
+\log p(v\mid x,d) \geq
+\Es{p(z,a,m\mid x,d)}{\log p(v\mid z,a,m, x,d)}
 \end{equation}
 Ideally the bound in Eqn.~\ref{eqn:lowerbound2}
 should not be looser than the one presented in Eqn.~\ref{eqn:lowerbound},
