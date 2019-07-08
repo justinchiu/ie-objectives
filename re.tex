@@ -26,6 +26,13 @@ either chooses a triple from a knowledge base to explain or chooses to explain n
 \end{abstract}
 
 \section{Problem Statement}
+NOTE on RE vs KBP: KBP focuses on modeling the full database, whereas
+in RE the emphasis is on explaining extractions.
+KBP usually has a more complicated model over the KB,
+while RE sometimes makes simplifying assumptions and could make a poor
+KBP system.
+Example: if triple double appears in text and someone scored < 10 PTS,
+then it's more likely they more likely had > 10 REB.
 
 In relation extraction the goal is to extract facts from a passage of text.
 Systems must convert facts expressed in natural language into a form
