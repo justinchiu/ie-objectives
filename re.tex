@@ -260,13 +260,13 @@ We therefore resort to approximate inference,
 specifically amortized variational inference.
 
 \subsection{Inference network}
-Our first approach is to introduce an inference network $q(z,a,m\mid v,x,e,t)$
+Our first approach is to introduce an inference network $q(z,a,m\mid v,x,d)$
 and optimize the following lower bound on the marginal likelihood
 with respect to the parameters of both $p$ and $q$:
 \begin{equation}
 \label{eqn:lowerbound}
 \log p(v\mid x) \geq
-\Es{q(z,a,m\mid v,x,e,t)}{\log \frac{p(v,z,a,m\mid x,e,t)}{q(z,a,m\mid v,x,e,t)}}
+\Es{q(z,a,m\mid v,x,d)}{\log \frac{p(v,z,a,m\mid x,d)}{q(z,a,m\mid v,x,d)}}
 \end{equation}
 
 We propose to parameterize $q(z,a,m\mid v,x,e,t)$ as follows.
