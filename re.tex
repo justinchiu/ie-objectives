@@ -33,6 +33,16 @@ while RE sometimes makes simplifying assumptions and could make a poor
 KBP system.
 Example: if triple double appears in text and someone scored < 10 PTS,
 then it's more likely they more likely had > 10 REB.
+The difference between RE and KBP is subtle. Both fall under
+information extraction, and the models may overlap in many ways.
+In fact, latent variable model approaches to RE are usually able to perform KBP as well.
+However, the focus is usually not on having good aggregate extraction metrics,
+but rather about identifying where facts are in text.
+This leads to simplifying assumptions in the model of the KB itself.
+On the other hand, KBP moves the difficulty from explaining extractions to
+faithfully modeling the KB.
+Typically this results in a challenging inference task, as the structure
+of the KB may be very complex.
 
 In relation extraction the goal is to extract facts from a passage of text.
 Systems must convert facts expressed in natural language into a form
