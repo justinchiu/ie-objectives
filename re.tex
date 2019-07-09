@@ -103,13 +103,7 @@ but a summary may discuss only a small salient subset of players and statistics.
 
 As our goal is to locate fact mentions, modeling just the KB $(d,v)$ given the text $x$
 is not sufficient.
-
-Since we only observe a text and associated KB, we must 
-We reduce the construction of $\Delta$ to predicting, for every $j\in 1,\ldots,J$,
-the value $v_j$ corresponding to row and column of our KB given by $s_j$.
-We cast relation extraction as KB completion, where we fill in the cells of a data table.
-
-We propose a model that first identifies value mentions at the word level,
+We therefore propose a model that first identifies value mentions at the word level,
 aligns those mentions to an entity and relation type in order to obtain a fact, 
 then aggregates word level decisions to resolve conflicts.
 In the following section we propose a model for the distribution over
