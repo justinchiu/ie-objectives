@@ -303,6 +303,7 @@ setting $m_i = 0$ at every index.
 We can avoid this by initializing $q(z)$ to ensure that for words $x \in \mcV$ 
 we have $q(z = x)$ is high, biasing the translation model towards transliteration
 at the start of training.
+\begin{comment}
 
 \subsection{Approximate the posterior of a generative model}
 Alternatively, we may introduce a generative model of text $q(x, v)$ 
@@ -344,6 +345,7 @@ are expressed in the text.
 We therefore perform extraction by using the marginal distributions
 $q(z),q(a),q(c)$ to value mentions as well as entities and types,
 giving us facts.
+\end{comment}
 
 \bibliography{bib}
 \bibliographystyle{acl_natbib}
