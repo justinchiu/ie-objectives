@@ -262,6 +262,7 @@ with respect to the parameters of both $p$ and $q$:
 We propose to parameterize $q(z,a,m\mid v,x,d)$ as follows.
 We decompose 
 \begin{equation}
+\label{eqn:elbo}
 \begin{aligned}
 q(z,a,m\mid v,x,d) &= q(z \mid a,v,x)q(a\mid v,x,d)q(m \mid v,x)\\
 &= \prod_i q(z_i \mid a,v,x)q(a_i \mid v,x,d)q(m_i \mid v,x)
@@ -293,6 +294,9 @@ The inference network is given by
     conditions on the alignments $a$ and ensures the chosen $z$ is consistent
     with the alignments. 
 \end{enumerate}
+
+We use the score function gradient estimator to perform gradient ascent on the objective
+in Equation~\ref{eqn:elbo}.
 
 One concern is that the model may learn to never rely on the text for extraction,
 setting $m_i = 0$ at every index.
