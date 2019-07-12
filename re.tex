@@ -316,7 +316,7 @@ Therefore we would ideally optimize the following objective
 \log p(v \mid x,D) = \log \sum_{z,a,m} p(v,z,a,m \mid x,D)
 \end{equation}
 However, maximizing $\log p(v \mid x,D)$ directly is very expensive for this model
-as the summation over $z,a,m$ is intractable;
+as the summation over variables $z,a,m$ is intractable;
 in particular,
 the summation over $z,a,m$ has computational complexity $O((|\mcV|\cdot J\cdot 2)^{I})$.
 
