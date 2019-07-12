@@ -361,7 +361,7 @@ The inference network is given by
 \item The alignment model $q(a_i \mid v,x,d)$
     uses the attention weights to parameterize the alignment
     $p(a_i \mid x) = \alpha_{a_i}$.
-\item The translation model $q(z_i \mid a,v,x) = \mathcal{1}(z_i = v_{a_i})$
+\item The translation model $q(z_i \mid a,v,x) = \mathbf{1}(z_i = v_{a_i})$
     conditions on the alignments $a$ and ensures the chosen $z$ is consistent
     with the alignments. 
 \end{enumerate}
