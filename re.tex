@@ -333,26 +333,17 @@ with respect to the parameters of both $p$ and $q$:
 \Es{q(z,a,m\mid v,x,d)}{\log \frac{p(v,z,a,m\mid x,d)}{q(z,a,m\mid v,x,d)}}
 \end{equation}
 
-We propose to parameterize $q(z,a,m\mid v,x,d)$ as follows.
-We decompose 
-\begin{equation}
-\label{eqn:elbo}
-\begin{aligned}
-q(z,a,m\mid v,x,d) &= q(z \mid a,v,x)q(a\mid v,x,d)q(m \mid v,x)\\
-&= \prod_i q(z_i \mid a,v,x)q(a_i \mid v,x,d)q(m_i \mid v,x)
-\end{aligned}
-\end{equation}
-The conditional distributions of our inference network
-are very similar to the relation extraction model,
-but they condition on the values $v$.
 
-Let $\bh_i \in \R^d$ be a contextual embedding of the word $x_i$.
-We use attention weights over records to get a weighted representation
-of the records of the KB for each index $i$:
+Recall that $\bh_i \in \R^d$ is a contextual embedding of the word $x_i$.
+We introduce the following attention weights over records
+in order to get a weighted representation
+of the KB for each index $i$:
 \begin{align*}
 \bg_{r_j} &= [E(d_j), E(v_j)]\\
 \alpha_j &\propto \exp(\bg_{r_j}^T W_\alpha \bh_i)
 \end{align*}
+
+We propose to parameterize $q(z,a,m\mid v,x,d)$ as follows:
 The inference network is given by
 \begin{enumerate}
 \item The value mention model $q(m_i \mid v,x)$ 
@@ -366,6 +357,15 @@ The inference network is given by
     conditions on the alignments $a$ and ensures the chosen $z$ is consistent
     with the alignments. 
 \end{enumerate}
+
+We decompose 
+\begin{equation}
+\label{eqn:elbo}
+\begin{aligned}
+q(z,a,m\mid v,x,d) &= q(z \mid a,v,x)q(a\mid v,x,d)q(m \mid v,x)\\
+&= \prod_i q(z_i \mid a,v,x)q(a_i \mid v,x,d)q(m_i \mid v,x)
+\end{aligned}
+\end{equation}
 
 We use the score function gradient estimator to perform gradient ascent on the objective
 in Equation~\ref{eqn:elbo} with respect to both $p$ and $q$.
