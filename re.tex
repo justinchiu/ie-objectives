@@ -351,7 +351,7 @@ We propose to parameterize the inference network $q(z,a,m\mid v,x,D)$ as follows
     \begin{equation}
     p(m_i \mid v,x) \propto
     \exp\left(V_m
-    \textrm{MLP}\left(\left[\sum_j \alpha_j \cdot \bg_j; \bh_i\right]\right)\right),
+    \textrm{MLP}\left(\left[\sum_j \alpha_j \cdot \bg_j; \bh_i\right]\right)\right)_{m_i},
     V_m \in \R^{2 \times d}
     \end{equation}
     where MLP is a neural network.
