@@ -215,7 +215,7 @@ $$p(m_i \mid x) \propto \exp(W_m\bh_i), W_m \in \R^{2 \times d}$$
 \item Alignment: We decompose the alignment distribution into a distribution over
 entities $p(\epsilon_i \mid x,d)$ and types $p(\tau_i \mid x,d)$.
 \begin{align*}
-p(a_i \mid x,d) &= p(\epsilon_i \mid x,d)p(\tau_i \mid x,d)\\
+p(a_i \mid x,d) &= 1(\epsilon_i = e_{a_i}, \tau_i = t_{a_i})p(\epsilon_i \mid x,d)p(\tau_i \mid x,d)\\
 p(\epsilon_i \mid x,d) &\propto \exp(E(e_{\epsilon_i})^T W_e \bh_i)\\
 p(\tau_i \mid x,d) &\propto \exp(E(\tau_{a_i})^T W_t \bh_i)
 \end{align*}
