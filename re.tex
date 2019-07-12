@@ -285,7 +285,7 @@ In order for a word $x_i$ to vote on a value $v_j$
 the word must be a mention such that $m_i = 1$,
 it must be aligned to the correct cell $a_i = j$,
 and its translation must match $z_i = v_j$.
-Once the votes are collected 
+Once the votes are collected,
 they are aggregated then normalized into a distribution.
 
 If no word votes for any values for cell $D_j$, i.e. there does not exist
@@ -308,7 +308,10 @@ p(v_j \mid z,a,m,d) &\propto \begin{cases}
 \section{Training and Inference}
 To train a latent variable model, we must marginalize over the unobserved RVs
 and maximize the likelihood of the observed.
-Ideally, we would optimize the following objective
+Although the latent variables $z,a,m$ are important, as they indicate
+where and what facts are contained in the text, they are not observed
+and must be marginalized over.
+Therefore we would ideally optimize the following objective
 \begin{equation}
 \log p(v \mid x,d) = \log \sum_{z,a,m} p(v,z,a,m \mid x,d)
 \end{equation}
