@@ -102,13 +102,13 @@ We first introduce the latent variables of our model.
 Consider the follow example:
 Let our KB consist of the data table
 $$
-D = \set{
-    (e_1 = \textrm{John Doe}, t_1 = \textrm{Points}),
-    (e_2 = \textrm{John Doe}, t_2 = \textrm{Rebounds}),
-    (e_3 = \textrm{John Doe}, t_3 = \textrm{First name}),
-    (e_4 = \textrm{John Doe}, t_4 = \textrm{Last name}),
+D = \begin{cases}
+    (e_1 = \textrm{John Doe}, t_1 = \textrm{Points}), \\
+    (e_2 = \textrm{John Doe}, t_2 = \textrm{Rebounds}), \\
+    (e_3 = \textrm{John Doe}, t_3 = \textrm{First name}),\\
+    (e_4 = \textrm{John Doe}, t_4 = \textrm{Last name}), \\
     \ldots
-}
+\end{cases}
 $$
 with associated values
 $ v = \set{ v_1 = 19, v_2 = 12, v_3 = \textrm{John}, v_4 = \textrm{Doe}, \ldots }$ 
