@@ -279,6 +279,9 @@ into a value.
 p(z_i \mid x) \propto \exp(W_z \bh_i), W_z \in \R^{|\mcV| \times d}
 \end{equation}
 \item Aggregation:
+We parameterize a distribution over the value $v_j$ by counting
+the number of word-level values $z_i$ 
+
 If there exists an index that is a mention and is also aligned to $r_j$
 we allow it to vote on the value $v_j$, otherwise we ignore the text
 and use a prior distribution over values
@@ -289,7 +292,7 @@ p(v_j \mid z,a,m,d) &\propto \begin{cases}
     %p(v_j \mid e_j,t_j), & \textrm{otherwise}
     \exp(E(v_j)^TW_v [E(d_j)]), & \textrm{otherwise}
 \end{cases}\\
-\psi(v_j, z_i, a_i, m_i,d) &= 1(v_j = z_i, a_i = j, m_i=1)%\\
+\psi(v_j, z_i, a_i, m_i,d) &= \mathbb{1}(v_j = z_i, a_i = j, m_i=1)%\\
 %p(v_j \mid e,t) & \propto \exp(E(v_j)^TW_v [E(e),E(t)])
 \end{align}
 \end{enumerate}
