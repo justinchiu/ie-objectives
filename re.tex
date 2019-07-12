@@ -338,10 +338,10 @@ Recall that $\bh_i \in \R^d$ is a contextual embedding of the word $x_i$.
 We introduce the following attention weights over records
 in order to get a weighted representation
 of the KB for each index $i$:
-\begin{align*}
+\begin{align}
 \bg_{r_j} &= [E(d_j), E(v_j)]\\
 \alpha_j &\propto \exp(\bg_{r_j}^T W_\alpha \bh_i)
-\end{align*}
+\end{align}
 
 We propose to parameterize $q(z,a,m\mid v,x,d)$ as follows:
 The inference network is given by
