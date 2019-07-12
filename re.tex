@@ -265,7 +265,7 @@ to vectors in $\R^{d}$.
 \item Identification: We use the contextual embedding to directly predict
 whether a word $x_i$ is part of a value mention.
 \begin{equation}
-p(m_i \mid x) \propto \exp(W_m\bh_i), W_m \in \R^{2 \times d}
+p(m_i \mid x) \propto \exp(W_m\bh_i)_{m_i}, W_m \in \R^{2 \times d}
 \end{equation}
 \item Alignment: We use a bilinear function of the cell embeddings and
 contextual embeddings to parameterize the alignment distribution.
@@ -276,7 +276,7 @@ with $W_d \in \R^{d \times d}$.
 \item Translation: We use the contextual embedding to translate a word
 into a value.
 \begin{equation}
-p(z_i \mid x) \propto \exp(W_z \bh_i), W_z \in \R^{|\mcV| \times d}
+p(z_i \mid x) \propto \exp(W_z \bh_i)_{z_i}, W_z \in \R^{|\mcV| \times d}
 \end{equation}
 \item Aggregation:
 We parameterize a distribution over the value $v_j$ of cell $D_j$
