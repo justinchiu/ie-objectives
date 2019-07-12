@@ -333,7 +333,6 @@ with respect to the parameters of both $p$ and $q$:
 \Es{q(z,a,m\mid v,x,D)}{\log \frac{p(v,z,a,m\mid x,D)}{q(z,a,m\mid v,x,D)}}
 \end{equation}
 
-
 Recall that $\bh_i \in \R^d$ is a contextual embedding of the word $x_i$.
 We introduce the following attention weights over records
 in order to get a weighted representation
@@ -373,7 +372,8 @@ q(z,a,m\mid v,x,d) &= q(z \mid a,v,x)q(a\mid v,x,d)q(m \mid v,x)\\
 \end{aligned}
 \end{equation}
 
-We use the score function gradient estimator to perform gradient ascent on the objective
+We use a Monte Carlo approximation of the score function gradient estimator
+to perform gradient ascent on the objective
 in Equation~\ref{eqn:elbo} with respect to both $p$ and $q$.
 We utilize a leave-one-out baseline for variance reduction.
 
