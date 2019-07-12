@@ -350,7 +350,7 @@ We propose to parameterize the inference network $q(z,a,m\mid v,x,d)$ as follows
     when detecting value mentions. 
     \begin{equation}
     p(m_i \mid v,x) =
-    W_m' \textrm{MLP}([\sum_j \alpha_j \cdot \bg_{r_j}, \bh_i]), W'_m \in \R^{2 \times d}
+    V_m \textrm{MLP}([\sum_j \alpha_j \cdot \bg_{r_j}, \bh_i]), V_m \in \R^{2 \times d}
     \end{equation}
     where MLP is a neural network.
 \item Alignment: The alignment model $q(a_i \mid v,x,d)$
