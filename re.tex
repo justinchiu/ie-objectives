@@ -305,6 +305,16 @@ setting $m_i = 0$ at every index.
 We can avoid this by initializing $q(z)$ to ensure that for words $x \in \mcV$ 
 we have $q(z = x)$ is high, biasing the translation model towards transliteration
 at the start of training.
+
+\section{Evaluation}
+As we assumed that the KB contained a superset of the facts contained in
+a sequence of text, we are interested in evaluating whether the model can discover
+and locate the subset of facts that are expressed in the text.
+
+We therefore perform extraction by using the marginal distributions
+$q(z),q(a),q(c)$ to value mentions as well as entities and types,
+giving us facts.
+
 \begin{comment}
 
 \subsection{Approximate the posterior of a generative model}
@@ -338,15 +348,6 @@ a good alignment model.
 
 How do we split the gradient over time?
 
-\section{Evaluation}
-Although we have a model over the values of all records,
-evaluation does not include the final distribution over all record values.
-As we assumed that the KB contained a superset of the facts contained in
-a sequence of text, we are evaluate whether the model can discover the subset of facts that 
-are expressed in the text.
-We therefore perform extraction by using the marginal distributions
-$q(z),q(a),q(c)$ to value mentions as well as entities and types,
-giving us facts.
 \end{comment}
 
 \bibliography{bib}
