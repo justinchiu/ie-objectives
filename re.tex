@@ -345,12 +345,13 @@ of the KB for each index $i$:
 
 We propose to parameterize the inference network $q(z,a,m\mid v,x,D)$ as follows:
 \begin{enumerate}
-\item Identification: Each distribution $q(m_i \mid v,x,D)$ 
-    has access to the values $v$ from the KB, which it conditions on
-    when detecting value mentions. 
+\item Identification: To predict whether $x_i$ is a mention,
+    the inference network uses a weighted representation of the KB
+    along with the contextual representation $\bh_iA.$
     \begin{equation}
-    p(m_i \mid v,x) =
-    V_m \textrm{MLP}\left(\left[\sum_j \alpha_j \cdot \bg_j; \bh_i\right]\right),
+    p(m_i \mid v,x) \propto
+    \exp\left(V_m
+    \textrm{MLP}\left(\left[\sum_j \alpha_j \cdot \bg_j; \bh_i\right]\right)\right),
     V_m \in \R^{2 \times d}
     \end{equation}
     where MLP is a neural network.
