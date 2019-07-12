@@ -300,7 +300,8 @@ The inference network is given by
 \end{enumerate}
 
 We use the score function gradient estimator to perform gradient ascent on the objective
-in Equation~\ref{eqn:elbo}.
+in Equation~\ref{eqn:elbo} with respect to both $p$ and $q$.
+We utilize a leave-one-out baseline for variance reduction.
 
 One concern is that the model may learn to never rely on the text for extraction,
 setting $m_i = 0$ at every index.
@@ -313,11 +314,12 @@ As we assumed that the KB contained a superset of the facts contained in
 a sequence of text, we are interested in evaluating whether the model can discover
 and locate the subset of facts that are expressed in the text.
 
-We evaluate first by outputting a
-
-We therefore perform extraction by using the marginal distributions
-$q(z),q(a),q(c)$ to value mentions as well as entities and types,
-giving us facts.
+We evaluate first by determining whether the model can identify which facts in a KB
+are expressed in text.
+Given a ground truth set of facts extracted by a human annotator,
+we compute the precision and recall of the extractions by the model.
+We perform extraction by finding $\arg\max_{z_i,a_i,m_i}q(z_i),q(a_i),q(m_i)$
+for each word $x_i$.
 
 
 \begin{comment}
