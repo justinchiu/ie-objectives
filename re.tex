@@ -339,7 +339,7 @@ We introduce the following attention weights over records
 in order to get a weighted representation
 of the KB for each index $i$:
 \begin{align}
-\bg_{r_j} &= [E(d_j), E(v_j)]\\
+\bg_j &= [E(d_j), E(v_j)]\\
 \alpha_j &\propto \exp(\bg_{r_j}^T W_\alpha \bh_i)
 \end{align}
 
@@ -350,7 +350,7 @@ We propose to parameterize the inference network $q(z,a,m\mid v,x,d)$ as follows
     when detecting value mentions. 
     \begin{equation}
     p(m_i \mid v,x) =
-    V_m \textrm{MLP}\left(\left[\sum_j \alpha_j \cdot \bg_{r_j}; \bh_i\right]\right),
+    V_m \textrm{MLP}\left(\left[\sum_j \alpha_j \cdot \bg_j; \bh_i\right]\right),
     V_m \in \R^{2 \times d}
     \end{equation}
     where MLP is a neural network.
