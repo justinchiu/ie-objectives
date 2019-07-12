@@ -82,17 +82,13 @@ $d$ defines a flattened representation of the rows and columns and
 $v$ gives the values of the cells.
 Our goal is to locate and extract facts from $x$.
 
-\begin{comment}
-(move somewhere else)
-We are primarily concerned with the scenario where we have an overcomplete KB schema with
-respect to a specific passage of text.
-This fits many scenarios in real world applications:
-we may have many entity and type pairs in our data table,
-but a summary may discuss only a small salient subset of players and statistics.
-\end{comment}
 
 Modeling only the KB $(d,v)$ given the text $x$
 is not sufficient, as our goal is to locate fact mentions.
+In fact, we assume the KB contains many more facts than those mentioned in the text.
+This fits many scenarios in real world applications:
+we may have many entity and type pairs in our data table,
+but a summary may discuss only a small, salient subset of players and statistics.
 We therefore propose a model that first identifies words as value mentions,
 aligns those mentions to an entity and relation type in order to obtain a fact, 
 and then aggregates word level decisions to resolve conflicts.
@@ -104,16 +100,17 @@ We define a graphical model that performs extraction with justification.
 \subsection{Notation}
 We first introduce the latent variables of our model.
 Consider the follow example:
+Let our KB consist of the data table
 $
 D = \set{
     (e_1 = \textrm{John Doe}, t_1 = \textrm{Points}),
     (e_2 = \textrm{John Doe}, t_2 = \textrm{Rebounds}),
     (e_3 = \textrm{John Doe}, t_3 = \textrm{First name}),
-    (e_3 = \textrm{John Doe}, t_3 = \textrm{Last name}),
+    (e_4 = \textrm{John Doe}, t_4 = \textrm{Last name}),
     \ldots
 }
 $
-with 
+with associated values
 $ v = \set{ v_1 = 19, v_2 = 12, v_3 = \textrm{John}, v_4 = \textrm{Doe}, \ldots }$ 
 aligned to the brief summary $x = \textrm{John Doe scored 19 points}$.
 \begin{enumerate}
