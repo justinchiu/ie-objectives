@@ -394,9 +394,9 @@ are expressed in text.
 Given a ground truth set of facts extracted by a human annotator,
 we compute the precision and recall of the extractions by the model.
 We perform extraction by finding
-$${\arg\max}_{z_i,a_i,m_i}q(z_i),q(a_i),q(m_i)$$
+$${\arg\max}_{z_i,a_i,m_i}q(z_i\mid x),q(a_i \mid x),q(m_i \mid x)$$
 for each word $x_i$.
-As we assumed 
+As we assumed  
 
 
 \begin{comment}
