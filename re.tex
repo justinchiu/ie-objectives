@@ -330,7 +330,7 @@ with respect to the parameters of both $p$ and $q$:
 \begin{equation}
 \label{eqn:lowerbound}
 \log p(v\mid x) \geq
-\Es{q(z,a,m\mid v,x,d)}{\log \frac{p(v,z,a,m\mid x,d)}{q(z,a,m\mid v,x,d)}}
+\Es{q(z,a,m\mid v,x,D)}{\log \frac{p(v,z,a,m\mid x,D)}{q(z,a,m\mid v,x,D)}}
 \end{equation}
 
 
@@ -339,13 +339,13 @@ We introduce the following attention weights over records
 in order to get a weighted representation
 of the KB for each index $i$:
 \begin{align}
-\bg_j &= [E(d_j), E(v_j)]\\
+\bg_j &= [E(D_j), E(v_j)]\\
 \alpha_j &\propto \exp(\bg_{r_j}^T W_\alpha \bh_i)
 \end{align}
 
-We propose to parameterize the inference network $q(z,a,m\mid v,x,d)$ as follows:
+We propose to parameterize the inference network $q(z,a,m\mid v,x,D)$ as follows:
 \begin{enumerate}
-\item Identification: Each distribution $q(m_i \mid v,x)$ 
+\item Identification: Each distribution $q(m_i \mid v,x,D)$ 
     has access to the values $v$ from the KB, which it conditions on
     when detecting value mentions. 
     \begin{equation}
