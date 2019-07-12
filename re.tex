@@ -264,7 +264,7 @@ and $E$ an embedding function that maps the cells of the data table $D$
 to vectors in $\R^{d}$.
 \begin{enumerate}
 \item Identification: We use the contextual embedding to directly predict
-whether a word is part of a value mention.
+whether a word $x_i$ is part of a value mention.
 $$p(m_i \mid x) \propto \exp(W_m\bh_i), W_m \in \R^{2 \times d}$$
 \item Alignment: We use a bilinear function of the cell embeddings and
 contextual embeddings to parameterize the alignment distribution.
