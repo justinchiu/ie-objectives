@@ -73,7 +73,7 @@ We focus on the domain of basketball summaries:
 given a written summary of a basketball game $x = x_1, \ldots, x_{I}$
 we model the aligned box score $\set{(e_j, t_j, v_j)}_{j=1}^J$
 consisting of entities $e_j$,
-relation types $t_j$, and all values $v_j$.
+relation types $t_j$, and all values $v_j \in \mcV$.
 The set of facts is our knowledge base (KB).
 Let $d = \set{(e_j, t_j)}_{j=1}^J$ and $v = \set{v_j}_{j=0}^J$.
 The KB $(d,v)$ can be viewed as a data table where
@@ -181,7 +181,11 @@ to give a single distribution over the record values for $x$.
 \end{center}
 \caption{Our model predicts word-level values and alignments
 then aggregates those choices over all indices $i$ to
-predict values at the KB level.
+make a single decision for each value.
+Each word has the following latent variables:
+the mention $m_i \in \set{0,1}$ indicates whether word $x_i$ is a value mention,
+the alignment $a_i$ gives what fact $x_i$ aligns to,
+and the value $z_i$ gives the canonical value that $x_i$ translates to.
 }
 \label{fig:infmodel}
 \end{figure}
@@ -288,9 +292,7 @@ The inference network is given by
     when detecting value mentions. 
     $$p(m_i \mid v,x) = W_m' \textrm{MLP}([\sum_j \alpha_j \cdot \bg_{r_j}, \bh_i]), W'_m \in \R^{2 \times d}$$
 \item The alignment model $q(a_i \mid v,x,d)$
-    uses a contextual representation of each $x_i$ and chooses a record.
-    In contrast to $p(a\mid x,d)$, this model has access to values as well.
-    We use the attention weights to parameterize the distribution
+    uses the attention weights to parameterize the alignment
     $p(a_i \mid x) = \alpha_{a_i}$.
 \item The translation model $q(z_i \mid a,v,x) = 1(z_i = v_{a_i})$
     conditions on the alignments $a$ and ensures the chosen $z$ is consistent
