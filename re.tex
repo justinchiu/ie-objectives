@@ -103,7 +103,7 @@ but a summary may discuss only a small salient subset of players and statistics.
 
 As our goal is to locate fact mentions, modeling just the KB $(d,v)$ given the text $x$
 is not sufficient.
-We therefore propose a model that first identifies value mentions at the word level,
+We therefore propose a model that first identifies words as value mentions,
 aligns those mentions to an entity and relation type in order to obtain a fact, 
 then aggregates word level decisions to resolve conflicts.
 %We choose to identify value mentions as the location of a fact as entity mentions
@@ -111,7 +111,7 @@ then aggregates word level decisions to resolve conflicts.
 
 \section{Model}
 We define a graphical model that performs extraction with justification. 
-The model first extracts information at the word level,
+The model first extracts information at each word,
 then aggregates its choices for each word into an extraction at the sequence level.
 
 The word level extraction process has three steps.
@@ -311,9 +311,12 @@ As we assumed that the KB contained a superset of the facts contained in
 a sequence of text, we are interested in evaluating whether the model can discover
 and locate the subset of facts that are expressed in the text.
 
+We evaluate first by outputting a
+
 We therefore perform extraction by using the marginal distributions
 $q(z),q(a),q(c)$ to value mentions as well as entities and types,
 giving us facts.
+
 
 \begin{comment}
 
