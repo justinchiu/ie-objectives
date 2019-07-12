@@ -343,17 +343,20 @@ of the KB for each index $i$:
 \alpha_j &\propto \exp(\bg_{r_j}^T W_\alpha \bh_i)
 \end{align}
 
-We propose to parameterize $q(z,a,m\mid v,x,d)$ as follows:
-The inference network is given by
+We propose to parameterize the inference network $q(z,a,m\mid v,x,d)$ as follows:
 \begin{enumerate}
-\item The value mention model $q(m_i \mid v,x)$ 
+\item Identification: Each distribution $q(m_i \mid v,x)$ 
     has access to the values $v$ from the KB, which it conditions on
     when detecting value mentions. 
-    $$p(m_i \mid v,x) = W_m' \textrm{MLP}([\sum_j \alpha_j \cdot \bg_{r_j}, \bh_i]), W'_m \in \R^{2 \times d}$$
-\item The alignment model $q(a_i \mid v,x,d)$
+    \begin{equation}
+    p(m_i \mid v,x) =
+    W_m' \textrm{MLP}([\sum_j \alpha_j \cdot \bg_{r_j}, \bh_i]), W'_m \in \R^{2 \times d}
+    \end{equation}
+    where MLP is a neural network.
+\item Alignment: The alignment model $q(a_i \mid v,x,d)$
     uses the attention weights to parameterize the alignment
     $p(a_i \mid x) = \alpha_{a_i}$.
-\item The translation model $q(z_i \mid a,v,x) = \mathbf{1}(z_i = v_{a_i})$
+\item Translation: $q(z_i \mid a,v,x) = \mathbf{1}(z_i = v_{a_i})$
     conditions on the alignments $a$ and ensures the chosen $z$ is consistent
     with the alignments. 
 \end{enumerate}
