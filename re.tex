@@ -191,6 +191,10 @@ to make a single choices for the values $v$ given the summary $x$.
     \begin{equation}
     p(v \mid z,a,m,d) = \prod_j p(v_j \mid z,a,m,D_j)
     \end{equation}
+    If any of the word-level choices disagree, for example if 
+    $z_1,a_1,m_1$ indicates that John scored 19 points,
+    but $z_2,a_2,m_2$ decides John scored 18, 
+    we must aggregate these choices into a single distribution over values.
 \end{enumerate}
 
 We assume each of the word-level choices in each of $z,a,m$ are made independently
