@@ -350,7 +350,7 @@ We propose to parameterize the inference network $q(z,a,m\mid v,x,d)$ as follows
     when detecting value mentions. 
     \begin{equation}
     p(m_i \mid v,x) =
-    V_m \textrm{MLP}\left(\left[\sum_j \alpha_j \cdot \bg_{r_j}, \bh_i\right]\right),
+    V_m \textrm{MLP}\left(\left[\sum_j \alpha_j \cdot \bg_{r_j}; \bh_i\right]\right),
     V_m \in \R^{2 \times d}
     \end{equation}
     where MLP is a neural network.
