@@ -13,16 +13,16 @@ Justin T. Chiu
 \maketitle
 
 \begin{abstract}
-Many recent relation extraction systems predict the relationship between
+Recent relation extraction systems predict the relationship between
 an entity and value given the positions of their mentions in the text.
-This requires requires words to be annotated as mentions.
-Human annotation at the word level does not scale as the size of the text
-and the number of labels increases, as annotators must read every word.
-Automatic annotation methods allow the annotation process to scale,
-but may introduce noise due to incorrect annotations.
+This requires words to be annotated as mentions.
+The cost of obtaining human annotations for each word scales
+linearly with the size of the text.
+Automatic annotation methods allow the annotation process to scale sublinearly
+in human effort, but may introduce noise due to incorrect annotations.
 In order to train a probabilistic information extraction model without mention
-annotations, we specify a model that, for each word,
-either chooses a triple from a knowledge base to explain or chooses to explain nothing.
+annotations, we specify a model that, identifies important words 
+and uses them to explain a triple from a knowledge base.
 \end{abstract}
 
 \section{Problem Statement}
@@ -46,15 +46,15 @@ Typically this results in a challenging inference task, as the structure
 of the KB may be very complex.
 \end{comment}
 
-In relation extraction the goal is to extract facts from a passage of text.
-Systems must convert facts expressed in natural language into a form
+Relation extraction aims to extract facts from a passage of text.
+Extraction systems convert facts expressed in natural language into a form
 amenable to computation.
-Facts consist of three components: entities, relation types, and values.
+Facts consist of three components: Entities, relation types, and values.
 %(Example would be fastest to clear up what a relation type is)
 The challenge is to not only extract facts from text, but also
 justify the extractions by determining where those facts are mentioned.
 
-A mention is a surface realization of an abstract object in text.
+A \textit{mention} is a surface realization of an abstract object in text.
 In relation extraction we justify extractions by identifying fact mentions.
 As text is noisy, the realization of a fact may be difficult to locate.
 We focus on locating fact mentions at the word level by identifying
@@ -68,28 +68,18 @@ entities and values are given as input features or that the locations of entitie
 are observed at training time.
 \end{comment}
 
-The problem description is as follows.
-We focus on the domain of basketball summaries:
-given a written summary of a basketball game $x = x_1, \ldots, x_{I}$
-we model the aligned box score $\set{(e_j, t_j, v_j)}_{j=1}^J$
+The problem description is as follows, focusing on the domain of basketball summaries:
+Given a written summary of a basketball game $x = x_1, \ldots, x_{I}$
+of length $I$,
+we model the aligned box score $\set{(e_j, t_j, v_j)}_{J=1}^J$
 consisting of entities $e_j$,
 relation types $t_j$, and all values $v_j \in \mcV$.
-The set of facts is our knowledge base (KB).
-Let $d = \set{(e_j, t_j)}_{j=1}^J$ and $v = \set{v_j}_{j=0}^J$.
-The KB $(d,v)$ can be viewed as a data table where
+The set of facts is our knowledge base (KB), which contains $J$ facts.
+
+Let $D = \set{(e_j, t_j)}_{j=1}^J$ and $v = \set{v_j}_{j=1}^J$.
+The KB $(D,v)$ can be viewed as a data table where
 $d$ defines a flattened representation of the rows and columns and
 $v$ gives the values of the cells.
-For example, we may have
-$
-d = \set{
-    (e_1 = \textrm{John}, t_1 = \textrm{Points}),
-    (e_2 = \textrm{John}, t_2 = \textrm{Rebounds}),
-    \ldots
-}
-$
-with 
-$ v = \set{ v_1 = 19, v_2 = 12, \ldots }$ 
-aligned to the brief summary $x = \textrm{John scored 19 points}$.
 Our goal is to locate and extract facts from $x$.
 
 \begin{comment}
@@ -101,18 +91,42 @@ we may have many entity and type pairs in our data table,
 but a summary may discuss only a small salient subset of players and statistics.
 \end{comment}
 
-As our goal is to locate fact mentions, modeling just the KB $(d,v)$ given the text $x$
-is not sufficient.
+Modeling only the KB $(d,v)$ given the text $x$
+is not sufficient, as our goal is to locate fact mentions.
 We therefore propose a model that first identifies words as value mentions,
 aligns those mentions to an entity and relation type in order to obtain a fact, 
-then aggregates word level decisions to resolve conflicts.
+and then aggregates word level decisions to resolve conflicts.
 %We choose to identify value mentions as the location of a fact as entity mentions
 %may be obscured through coreference and relation types may not be mentioned explicitly.
 
 \section{Model}
-We define a graphical model that performs extraction with justification. 
-The model first extracts information at each word,
-then aggregates its choices for each word into an extraction at the sequence level.
+We define a graphical model that performs extraction with justification.
+\subsection{Notation}
+We first introduce the latent variables of our model.
+Consider the follow example:
+$
+D = \set{
+    (e_1 = \textrm{John Doe}, t_1 = \textrm{Points}),
+    (e_2 = \textrm{John Doe}, t_2 = \textrm{Rebounds}),
+    (e_3 = \textrm{John Doe}, t_3 = \textrm{First name}),
+    (e_3 = \textrm{John Doe}, t_3 = \textrm{Last name}),
+    \ldots
+}
+$
+with 
+$ v = \set{ v_1 = 19, v_2 = 12, v_3 = \textrm{John}, v_4 = \textrm{Doe}, \ldots }$ 
+aligned to the brief summary $x = \textrm{John Doe scored 19 points}$.
+\begin{enumerate}
+\item $m = m_1, \ldots, m_I$ where each $m_i \in \set{0,1}$
+    indicates whether word $x_i$ is part of a value mention.
+    In our example, we have $m_1 = 1$ as $x_1 = \textrm{John}$
+    mentions the value $v_3$, the first name of the entity `John Doe'.
+\item $a = a_1, \ldots, a_I$ where each $a_i \in \set{1, \ldots, J}$
+    gives the index of the fact whose value word $x_i$ mentions.
+    
+\item $z = z_1, \ldots, z_I$
+\item $v = v_1, \ldots, z_J$
+\end{enumerate}
 
 The word level extraction process has three steps.
 For each index $i \in 1, \ldots, I$ we perform
