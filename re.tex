@@ -379,10 +379,9 @@ We utilize a leave-one-out baseline for variance reduction.
 
 One concern is that the model may learn to never rely on the text for extraction,
 setting $m_i = 0$ at every index.
-We can avoid this by initializing $p(z_i \mid x)$ to ensure that for words $x_i$
+We can avoid this by pretraining $p(z_i \mid x)$ to ensure that for words $x_i$
 where there exists a $z_i \in \mcV$ such that $x_i$ and $z_i$ are a lexical match
-we assign high probability to the transliteration $p(z_i = x_i \mid x)$
-via pretraining.
+we assign high probability to the transliteration $p(z_i = x_i \mid x)$.
 
 \section{Evaluation}
 We are interested in evaluating whether the model can discover
