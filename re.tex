@@ -367,8 +367,8 @@ The joint distribution of $z,a,m$ in the inference network is given by
 \begin{equation}
 \label{eqn:elbo}
 \begin{aligned}
-q(z,a,m\mid v,x,d) &= q(z \mid a,v,x)q(a\mid v,x,d)q(m \mid v,x)\\
-&= \prod_i q(z_i \mid a,v,x)q(a_i \mid v,x,d)q(m_i \mid v,x)
+p(z,a,m\mid v,x,d) &= p(z \mid a,v,x)p(a\mid v,x,d)p(m \mid v,x)\\
+&= \prod_i p(z_i \mid a,v,x)p(a_i \mid v,x,d)p(m_i \mid v,x)
 \end{aligned}
 \end{equation}
 
@@ -393,9 +393,14 @@ We evaluate by determining whether the model can identify which facts in a KB
 are expressed in text.
 Given a ground truth set of facts extracted by a human annotator,
 we compute the precision and recall of the extractions by the model.
+
 We perform extraction by finding
-$${\arg\max}_{z_i,a_i,m_i}q(z_i\mid x),q(a_i \mid x, D),q(m_i \mid x)$$
+$${\arg\max}_{z_i^*,a_i^*,m_i^*}p(z_i\mid x),p(a_i \mid x, D),p(m_i \mid x)$$
 for each word $x_i$.
+We obtain the fact $(e_j, t_j, v_j)$ at position $i$ if $m_i^*=1$,
+$a_i^* = j$ and $z_i^* = v_j$.
+
+%Alternatively, we could condition on an existing database
 %As we assumed a fully factored model over $z,a,m$ 
 
 \begin{comment}
@@ -433,7 +438,7 @@ How do we split the gradient over time?
 
 \end{comment}
 
-\bibliography{bib}
-\bibliographystyle{acl_natbib}
+%\bibliography{bib}
+%\bibliographystyle{acl_natbib}
 
 \end{document}
