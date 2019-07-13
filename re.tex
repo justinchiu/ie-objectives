@@ -125,16 +125,16 @@ We introduce the following latent variables:
 \begin{itemize}
 \item $m = m_1, \ldots, m_I$ where each $m_i \in \set{0,1}$
     indicates whether word $x_i$ is part of a value mention.
-    In our example, we have $m_4 = 1$ as $x_4 = \textrm{eight}$
-    mentions the value $v_1 = 8$.
+    In our example, the word $x_4 = \textrm{eight}$
+    mentions the value $v_1 = 8$, therefore $m_4 = 1$.
     Individual words may be part of a multiword value mention.
     We aim to identify at least one word in a multiword mention.
 \item $a = a_1, \ldots, a_I$ where each $a_i \in \set{1, \ldots, J}$
     gives the index of the cell of the data table $D_{a_i}$ whose
     value $v_{a_i}$ is mentioned at index $i$.
-    Again examining $x_4 = \textrm{eight}$, we would have 
-    $a_4 = 1$, as $x_4$ is aligned to the the cell $D_{1}$
-    whose value $v_1 = 8$ is mentioned.
+    The word $x_4 = \textrm{eight}$ discusses the points scored by John,
+    and is therefore aligned to the the cell $D_{1}$
+    with $a_4 = 1$.
 \item $z = z_1, \ldots, z_I$ where each $z_i \in \mcV$
     translates a value mention into a value.
     In the case of $x_4 = \textrm{eight}$, the mention must
