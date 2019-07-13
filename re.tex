@@ -390,6 +390,8 @@ and locate the subset of facts in a KB that are expressed in the text
 without observing the values of the KB.
 We compare the extractions of our model with a ground truth set of facts extracted by a human annotator,
 reporting the micro-averaged precision, recall, and F1 score.
+The grouth truth facts consist of entities, types, values, as well as the location of their
+value mention in text.
 
 We perform extraction by finding
 $${\arg\max}_{z_i^*,a_i^*,m_i^*}p(z_i\mid x),p(a_i \mid x, D),p(m_i \mid x)$$
