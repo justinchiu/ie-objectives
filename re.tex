@@ -399,7 +399,8 @@ $${\arg\max}_{z_i^*,a_i^*,m_i^*}p(z_i\mid x),p(a_i \mid x, D),p(m_i \mid x)$$
 for each word $x_i$.
 We obtain the fact $(e_j, t_j, v_j)$ at position $i$ if $m_i^*=1$,
 $a_i^* = j$ and $z_i^* = v_j$.
-
+The extraction is considered correct if the ground truth
+contains a fact with the same entity, type, value, and location.
 %Alternatively, we could condition on an existing database
 %As we assumed a fully factored model over $z,a,m$ 
 
