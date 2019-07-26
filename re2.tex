@@ -70,20 +70,15 @@ entities and values are given as input features or that the locations of entitie
 are observed at training time.
 \end{comment}
 
-The problem description is as follows, focusing on the domain of basketball summaries:
-Given a written summary of a basketball game $x = x_1, \ldots, x_{I}$
-of length $I$,
-we model the aligned box score $\set{(e_j, t_j, v_j)}_{j=1}^J$
+The problem description is as follows:
+Given a textual summary $x = x_1, \ldots, x_{I}$ of length $I$,
+we model the aligned knowledge base (KB) $\set{(e_j, t_j, v_j)}_{j=1}^J$
 consisting of entities $e_j$,
 relation types $t_j$, and all values $v_j \in \mcV$.
-The set of facts is our knowledge base (KB), which contains $J$ facts.
-
-Let $D = \set{(e_j, t_j)}_{j=1}^J$ and $v = \set{v_j}_{j=1}^J$.
-The KB $(D,v)$ can be viewed as a data table where
-$d$ defines a flattened representation of the rows and columns,
-the \textit{cells} of the table, and
-$v$ gives the \textit{values} of the cells.
-Our goal is to locate and extract facts from $x$.
+Let the data $D = \set{(e_j, t_j)}_{j=1}^J$ and values $v = \set{v_j}_{j=1}^J$.
+The KB $(D,v)$ contains $J$ facts.
+Our goal is to locate and extract facts from $x$ by modeling the values $v$
+given the text $x$ and the data $D$.
 
 
 Modeling only the KB $(d,v)$ given the text $x$
@@ -98,17 +93,14 @@ and then aggregates word-level decisions into a sequence-level decision to resol
 %We choose to identify value mentions as the location of a fact as entity mentions
 %may be obscured through coreference and relation types may not be mentioned explicitly.
 
-\section{Model}
-We define a graphical model that performs extraction with justification.
-\subsection{Notation}
 Consider the following example:
-Let our KB consist of the data table and values
+Let our KB consist of the data table and values,
 $$
 D = \left\{\begin{array}{c}
-    (e_1 = \textrm{John Doe}, t_1 = \textrm{Points}), \\
-    (e_2 = \textrm{John Doe}, t_2 = \textrm{Rebounds}), \\
-    (e_3 = \textrm{John Doe}, t_3 = \textrm{First name}),\\
-    (e_4 = \textrm{John Doe}, t_4 = \textrm{Last name}), \\
+    (e_1 = \texttt{John Doe}, t_1 = \texttt{Points}), \\
+    (e_2 = \texttt{John Doe}, t_2 = \texttt{Rebounds}), \\
+    (e_3 = \texttt{John Doe}, t_3 = \texttt{First name}),\\
+    (e_4 = \texttt{John Doe}, t_4 = \texttt{Last name}), \\
     \vdots
 \end{array}\right\},
 v = \left\{\begin{array}{c}
@@ -119,7 +111,7 @@ v_4 = \textrm{Doe},\\
 \vdots 
 \end{array}\right\}
 $$
-aligned to the summary $x = \textrm{John Doe scored eight points}$.
+aligned to the summary $x = \texttt{`John Doe scored eight points'}$.
 We introduce the following latent variables:
 \begin{itemize}
 \item $m = m_1, \ldots, m_I$ where each $m_i \in \set{0,1}$
