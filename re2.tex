@@ -54,6 +54,8 @@ Facts consist of three components: Entities, relation types, and values.
 The challenge is to not only extract facts from text, but also
 justify the extractions by determining where those facts are mentioned.
 
+\begin{comment}
+(Move or delete later)
 A \textit{mention} is a surface realization of an abstract object in text.
 In relation extraction we justify extractions by identifying fact mentions.
 As text is noisy, the realization of a fact may be difficult to locate.
@@ -62,6 +64,7 @@ individual words as value mentions, rather than entity or type mentions.
 We define a `word-level' decision, value, or process as pertaining to individual words,
 while `sequence-level' refers to a single decision, value, or process for a whole sequence.
 %(Why? Justify with generative model)
+\end{comment}
 
 \begin{comment}
 Note on related work:
@@ -72,20 +75,19 @@ are observed at training time.
 
 The problem description is as follows:
 Given a textual summary $x = x_1, \ldots, x_{I}$ of length $I$,
-we model the aligned knowledge base (KB) $\set{(e_j, t_j, v_j)}_{j=1}^J$
-consisting of entities $e_j$,
-relation types $t_j$, and all values $v_j \in \mcV$.
-Let the data $D = \set{(e_j, t_j)}_{j=1}^J$ and values $v = \set{v_j}_{j=1}^J$.
-The KB $(D,v)$ contains $J$ facts.
+we model the aligned knowledge base (KB) $\set{(k_j, v_j)}_{j=1}^J$
+consisting of keys $k = \set{(e_j, t_j)}_{j=1}^J$, 
+obtained by combining the entity $e_j$ and type $t_j$ in a fact,
+and values $v = \set{v_j}_{j=1}^J, v_j \in \mcV$.
+The KB $(k,v)$ contains $J$ facts, or $(k_j, v_j)$ pairs.
 Our goal is to locate and extract facts from $x$ by modeling the values $v$
-given the text $x$ and the data $D$.
+given the text $x$ and the keys $k$.
 
-
-Modeling only the KB $(d,v)$ given the text $x$
+Modeling only the KB $(k,v)$ given the text $x$
 is not sufficient, as our goal is to locate fact mentions.
-In fact, we assume the KB contains many more facts than those mentioned in the text.
+We assume the KB contains many more facts than those mentioned in the text.
 This fits many scenarios in real world applications:
-we may have many entity and type pairs in our data table,
+We may have many entity and type key pairs in our KB,
 but a summary may discuss only a small, salient subset of players and statistics.
 We therefore propose a model that first identifies words as value mentions,
 aligns those mentions to an entity and relation type in order to obtain a fact, 
@@ -97,46 +99,52 @@ Consider the following example:
 Let our KB consist of the data table and values,
 $$
 D = \left\{\begin{array}{c}
-    (e_1 = \texttt{John Doe}, t_1 = \texttt{Points}), \\
-    (e_2 = \texttt{John Doe}, t_2 = \texttt{Rebounds}), \\
-    (e_3 = \texttt{John Doe}, t_3 = \texttt{First name}),\\
-    (e_4 = \texttt{John Doe}, t_4 = \texttt{Last name}), \\
+    (e_1 = \textrm{John Doe}, t_1 = \textrm{POINTS}), \\
+    (e_2 = \textrm{John Doe}, t_2 = \textrm{REBOUNDS}), \\
+    (e_3 = \textrm{John Doe}, t_3 = \textrm{FIRST\_NAME}),\\
+    (e_4 = \textrm{John Doe}, t_4 = \textrm{LAST\_NAME}), \\
     \vdots
 \end{array}\right\},
 v = \left\{\begin{array}{c}
 v_1 = 8,\\
 v_2 = 12,\\
-v_3 = \textrm{John},\\
-v_4 = \textrm{Doe},\\
+v_3 = \texttt{`John'},\\
+v_4 = \texttt{`Doe'},\\
 \vdots 
 \end{array}\right\}
 $$
 aligned to the summary $x = \texttt{`John Doe scored eight points'}$.
-We introduce the following latent variables:
+(Give example values of RVs?)
+
+\subsection{Model}
+In order to perform extraction with justification we
+introduce the following latent variables:
 \begin{itemize}
 \item $m = m_1, \ldots, m_I$ where each $m_i \in \set{0,1}$
     indicates whether word $x_i$ is part of a value mention.
-    In our example, the word $x_4 = \textrm{eight}$
-    mentions the value $v_1 = 8$, therefore $m_4 = 1$.
-    Individual words may be part of a multiword value mention.
     We aim to identify at least one word in a multiword mention.
 \item $a = a_1, \ldots, a_I$ where each $a_i \in \set{1, \ldots, J}$
-    gives the index of the cell of the data table $D_{a_i}$ whose
+    gives the key $k_{a_i}$ whose
     value $v_{a_i}$ is mentioned at index $i$.
-    The word $x_4 = \textrm{eight}$ discusses the points scored by John,
-    and is therefore aligned to the the cell $D_{1}$
-    with $a_4 = 1$.
 \item $z = z_1, \ldots, z_I$ where each $z_i \in \mcV$
-    translates a value mention into a value.
-    In the case of $x_4 = \textrm{eight}$, the mention must
-    be translated to the value $z_4 = 8$.
-    This is the canonical representation of
-    a value as determined by the schema of the KB.
+    translates a value mention into the canonical representation of
+    the value as determined by the schema of the KB.
     For example, the KB may only store numbers in numerical form,
     as opposed to alphabetical.
 \end{itemize}
 
-\subsection{Model}
+We define the model by the following joint distribution over
+values and latent variables:
+\begin{equation}
+\label{eqn:prob}
+\begin{aligned}
+p(v,z,a,m\mid x,k)
+&= p(v\mid z,a,m,x,k)p(z\mid x)p(a\mid x,k)p(m\mid x)\\
+&= \left(\prod_{j=1}^J p(v_j\mid z,a,m,x,k)\right)
+\left(\prod_{i=1}^I p(z_i\mid x)p(a_i\mid x,k)p(m_i\mid x)\right)
+\end{aligned}
+\end{equation}
+
 We proceed to detail the model in two stages.
 We first give the word-level process, which makes a series of choices
 for each word $x_i$ in the text $x = x_1, \ldots, x_I$,
@@ -183,7 +191,7 @@ to make a single choices for the values $v$ given the summary $x$.
     Given the word-level values $z$, alignments $a$, mentions $m$,
     and data table $D$ we choose the sequence-level values $v_j$ independently from
     \begin{equation}
-    p(v \mid z,a,m,d) = \prod_j p(v_j \mid z,a,m,D_j)
+    p(v \mid z,a,m,d) = \prod_j p(v_j \mid z,a,m,k_j)
     \end{equation}
     If any of the word-level choices disagree, for example if 
     $z_1,a_1,m_1$ indicates that John scored 19 points,
@@ -192,17 +200,8 @@ to make a single choices for the values $v$ given the summary $x$.
 \end{enumerate}
 
 We assume each of the word-level choices in each of $z,a,m$ are made independently
-given the text $x$ and table cells $D$.
+given the text $x$ and keys $k$.
 This gives us the following factorization of the relation extraction system:
-\begin{equation}
-\label{eqn:prob}
-\begin{aligned}
-p(v,z,a,m\mid x,D)
-&= p(v\mid z,a,m,x,d)p(z\mid x)p(a\mid x,D)p(m\mid x)\\
-&= \left(\prod_{j=1}^J p(v_j\mid z,a,m,x,D)\right)
-\left(\prod_{i=1}^I p(z_i\mid x)p(a_i\mid x,D)p(m_i\mid x)\right)
-\end{aligned}
-\end{equation}
 
 \begin{figure}[h]
 \begin{center}
@@ -213,7 +212,7 @@ p(v,z,a,m\mid x,D)
 \node[latent, left=of A](Vi) {$z_i$};
 \node[latent, right=of A](C) {$m_i$};
 
-\node[obs, below=of A] (D) {$D_j$};
+\node[obs, below=of A] (D) {$k_j$};
 \node[obs, below=of Vi] (V) {$v_j$};
 
 \plate {i} {(C)(A)(Vi)} {$I$};
@@ -242,7 +241,7 @@ then aggregates those choices over all indices $i$ to
 make a single decision for each value.
 Each word has the following latent variables:
 the mention $m_i \in \set{0,1}$ indicates whether word $x_i$ is a value mention,
-the alignment $a_i$ gives the cell $D_{a_i}$ that $x_i$ aligns to,
+the alignment $a_i$ gives the cell $k_{a_i}$ that $x_i$ aligns to,
 and the value $z_i$ gives the canonical value that $x_i$ translates to.
 }
 \label{fig:infmodel}
@@ -253,7 +252,7 @@ We parameterize the conditional distributions for
 mention identification, alignment, translation, and aggregation below.
 
 Let $\bh_i \in \R^d$ be a contextual embedding of the word $x_i$,
-and $E$ an embedding function that maps the cells of the data table $D$
+and $E$ an embedding function that maps keys $k$
 to vectors in $\R^{d}$.
 \begin{enumerate}
 \item Identification: We use the contextual embedding to directly predict
@@ -264,7 +263,7 @@ p(m_i \mid x) \propto \exp(W_m\bh_i)_{m_i}, W_m \in \R^{2 \times d}
 \item Alignment: We use a bilinear function of the cell embeddings and
 contextual embeddings to parameterize the alignment distribution.
 \begin{equation}
-p(a_i \mid x,d) \propto \exp(E(D_{a_i})^T W_d \bh_i)\\
+p(a_i \mid x,d) \propto \exp(E(k_{a_i})^T W_d \bh_i)\\
 \end{equation}
 with $W_d \in \R^{d \times d}$.
 \item Translation: We use the contextual embedding to translate a word
@@ -273,7 +272,7 @@ into a value.
 p(z_i \mid x) \propto \exp(W_z \bh_i)_{z_i}, W_z \in \R^{|\mcV| \times d}
 \end{equation}
 \item Aggregation:
-We parameterize a distribution over the value $v_j$ of cell $D_j$
+We parameterize a distribution over the value $v_j$ of cell $k_j$
 by counting the `votes' of relevant word-level values.
 In order for a word $x_i$ to vote on a value $v_j$
 the word must be a mention such that $m_i = 1$,
@@ -282,19 +281,19 @@ and its translation must match $z_i = v_j$.
 Once the votes are collected,
 they are aggregated then normalized into a distribution.
 
-If no word votes for any values for cell $D_j$, i.e. there does not exist
+If no word votes for any values for key $k_j$, i.e. there does not exist
 a word $x_i$ such that $a_i = j$ and $m_i = 1$,
 we choose the value given only the cell
-$p(v_j \mid d_j) \propto \exp(E(v_j)^TW_v [E(D_j)])$.
+$p(v_j \mid k_j) \propto \exp(E(v_j)^TW_v [E(k_j)])$.
 
 Formally, the conditional distribution is given by
 \begin{align}
-p(v_j \mid z,a,m,d) &\propto \begin{cases}
-    \prod \exp(\psi(v_j, z_i,a_i,m_i,d)),  & \exists i, m_i = 1 \wedge a_i = j\\
+p(v_j \mid z,a,m,k) &\propto \begin{cases}
+    \prod \exp(\psi(v_j, z_i,a_i,m_i,k)),  & \exists i, m_i = 1 \wedge a_i = j\\
     %p(v_j \mid e_j,t_j), & \textrm{otherwise}
-    \exp(E(v_j)^TW_v [E(d_j)]), & \textrm{otherwise}
+    \exp(E(v_j)^TW_v [E(k_j)]), & \textrm{otherwise}
 \end{cases}\\
-\psi(v_j, z_i, a_i, m_i,d) &= \mathbf{1}(v_j = z_i, a_i = j, m_i=1)%\\
+\psi(v_j, z_i, a_i, m_i,k) &= \mathbf{1}(v_j = z_i, a_i = j, m_i=1)%\\
 %p(v_j \mid e,t) & \propto \exp(E(v_j)^TW_v [E(e),E(t)])
 \end{align}
 \end{enumerate}
@@ -317,14 +316,14 @@ the summation has computational complexity $O((|\mcV|\cdot J\cdot 2)^{I})$.
 We therefore resort to approximate inference,
 specifically amortized variational inference.
 
-\subsection{Inference network}
-We introduce an inference network $q(z,a,m\mid v,x,d)$
+\subsection{Inference Network}
+We introduce an inference network $q(z,a,m\mid v,x,k)$
 and optimize the following lower bound on the marginal likelihood
 with respect to the parameters of both $p$ and $q$:
 \begin{equation}
 \label{eqn:lowerbound}
 \log p(v\mid x) \geq
-\Es{q(z,a,m\mid v,x,D)}{\log \frac{p(v,z,a,m\mid x,D)}{q(z,a,m\mid v,x,D)}}
+\Es{q(z,a,m\mid v,x,k)}{\log \frac{p(v,z,a,m\mid x,k)}{q(z,a,m\mid v,x,k)}}
 \end{equation}
 
 Recall that $\bh_i \in \R^d$ is a contextual embedding of the word $x_i$.
@@ -332,11 +331,11 @@ We introduce the following attention weights over records
 in order to get a weighted representation
 of the KB for each index $i$:
 \begin{align}
-\bg_j &= [E(D_j); E(v_j)]\\
+\bg_j &= [E(k_j); E(v_j)]\\
 \alpha_j &\propto \exp(\bg_{r_j}^T W_\alpha \bh_i)
 \end{align}
 
-We propose to parameterize the inference network $q(z,a,m\mid v,x,D)$ as follows:
+We propose to parameterize the inference network $q(z,a,m\mid v,x,k)$ as follows:
 \begin{enumerate}
 \item Identification: To predict whether $x_i$ is a mention,
     the inference network uses a weighted representation of the KB
@@ -348,7 +347,7 @@ We propose to parameterize the inference network $q(z,a,m\mid v,x,D)$ as follows
     V_m \in \R^{2 \times d}
     \end{equation}
     where MLP is a neural network.
-\item Alignment: The alignment model $q(a_i \mid v,x,D)$
+\item Alignment: The alignment model $q(a_i \mid v,x,k)$
     uses the attention weights to parameterize the alignment
     $p(a_i \mid x) = \alpha_{a_i}$.
 \item Translation: The translation model
@@ -361,8 +360,8 @@ The joint distribution of $z,a,m$ in the inference network is given by
 \begin{equation}
 \label{eqn:elbo}
 \begin{aligned}
-p(z,a,m\mid v,x,D) &= p(z \mid a,v,x)p(a\mid v,x,D)p(m \mid v,x)\\
-&= \prod_i p(z_i \mid a,v,x)p(a_i \mid v,x,d)p(m_i \mid v,x)
+p(z,a,m\mid v,x,k) &= p(z \mid a,v,x)p(a\mid v,x,k)p(m \mid v,x)\\
+&= \prod_i p(z_i \mid a,v,x)p(a_i \mid v,x,k)p(m_i \mid v,x)
 \end{aligned}
 \end{equation}
 
