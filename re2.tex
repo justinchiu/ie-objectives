@@ -124,8 +124,7 @@ introduce the following latent variables:
     indicates whether word $x_i$ is part of a value mention.
     We aim to identify at least one word in a multiword mention.
 \item $a = a_1, \ldots, a_I$ where each $a_i \in \set{1, \ldots, J}$
-    gives the key $k_{a_i}$ whose
-    value $v_{a_i}$ is mentioned at index $i$.
+    indicates that key $k_{a_i}$ is mentioned at index $i$.
 \item $z = z_1, \ldots, z_I$ where each $z_i \in \mcV$
     translates a value mention into the canonical representation of
     the value as determined by the schema of the KB.
@@ -133,75 +132,39 @@ introduce the following latent variables:
     as opposed to alphabetical.
 \end{itemize}
 
-We define the model by the following joint distribution over
-values and latent variables:
+Our model specifies the joint distribution over the values and latent variables
+given the text and keys:
 \begin{equation}
 \label{eqn:prob}
 \begin{aligned}
 p(v,z,a,m\mid x,k)
-&= p(v\mid z,a,m,x,k)p(z\mid x)p(a\mid x,k)p(m\mid x)\\
-&= \left(\prod_{j=1}^J p(v_j\mid z,a,m,x,k)\right)
-\left(\prod_{i=1}^I p(z_i\mid x)p(a_i\mid x,k)p(m_i\mid x)\right)
+%&= p(v\mid z,a,m,x,k)p(z\mid x)p(a\mid x,k)p(m\mid x)\\
+&= p(v\mid z,a,m,x,k)p(z,a,m\mid x,k)\\
+&= \underbrace{\left(\prod_{j=1}^J p(v_j\mid z,a,m,x,k)\right)}_{\textrm{Aggregation}}
+\underbrace{\left(\prod_{i=1}^I p(z_i\mid x)p(a_i\mid x,k)p(m_i\mid x)\right)}_{\textrm{Extraction}}
 \end{aligned}
 \end{equation}
 
-We proceed to detail the model in two stages.
-We first give the word-level process, which makes a series of choices
-for each word $x_i$ in the text $x = x_1, \ldots, x_I$,
-then the sequence-level process which aggregates all of the
-word-level decisions.
+The extraction model has three components.
+The model must identify whether word $x_i$ is a mention using the \textit{identification} model
+$p(m_i \mid x)$,
+align word $x_i$ to a key $k_{a_i}$ via the \textit{alignment} model $p(a_i \mid x, k)$,
+and translate the word $x_i$ into a value $z_i$ with the
+\textit{translation} model $p(z_i \mid x)$.
 
-The word-level process has three steps.
-For each index in time $i \in 1, \ldots, I$ we perform
-\begin{enumerate}
-\item Value mention identification: Given a sequence of words $x$,
-    we independently choose whether each word is a value mention with
-    \begin{equation}
-    p(m \mid x) = \prod_i p(m_i \mid x)
-    \end{equation}
-\item Alignment: Each word $x_i$ is independently aligned to a 
-    record in the knowledge base with
-    \begin{equation}
-    p(a \mid x,D) = \prod_i p(a_i \mid x,D)
-    \end{equation}
-    We align the word $x_i$ by choosing the cell whose value
-    generates the possible value mention at index $i$.
-    In particular, $a_i = j$ denotes the alignment to the cell $d_{j}$.
-    We assume that each value mention aligns to a single record.
-    Although we align every word to a cell, words that are not
-    chosen to be mentions, i.e. $x_i$ such that $m_i = 0$,
-    will be ignored.
-    \item Translation: All words are translated
-    into a value from the KB schema with
-    \begin{equation}
-    p(z \mid x) = \prod_i p(z_i \mid x)
-    \end{equation}
-    with $z_i \in \mcV$.
-    We would like this to capture synonyms of 
-    values not captured by the limited schema of the KB.
-    Although every word is translated to a value, we ignore
-    those that are not chosen as value mentions.
-\end{enumerate}
+This model assumes that each word $x_i$ can explain at most one fact in the KB.
+Additionally, we make the simplifying assumption
+that a word's translation is unambiguous.
+This allows us to make all choices independently
+for each word given the text $x$ and keys $k$.
+%We relax this assumption in the next model.
 
-Finally, we aggregate the word-level choices at the sequence level in order
-to make a single choices for the values $v$ given the summary $x$.
-\begin{enumerate}
-\setcounter{enumi}{3}
-\item Aggregation:
-    Given the word-level values $z$, alignments $a$, mentions $m$,
-    and data table $D$ we choose the sequence-level values $v_j$ independently from
-    \begin{equation}
-    p(v \mid z,a,m,d) = \prod_j p(v_j \mid z,a,m,k_j)
-    \end{equation}
-    If any of the word-level choices disagree, for example if 
-    $z_1,a_1,m_1$ indicates that John scored 19 points,
-    but $z_2,a_2,m_2$ indicates John scored 18, 
-    we must aggregate these choices into a single distribution over values.
-\end{enumerate}
+It is possible for there to be conflicts in the word-level extraction model if 
+two words are mentions with the same alignment but different values.
+The aggregation model $p(v_j \mid z,a,m,x,k)$ is necessary to resolve these conflicts,
+and uses the per-word extractions to predict the values of the KB.
 
-We assume each of the word-level choices in each of $z,a,m$ are made independently
-given the text $x$ and keys $k$.
-This gives us the following factorization of the relation extraction system:
+We give the parameterizations of all conditional distributions in the following section.
 
 \begin{figure}[h]
 \begin{center}
@@ -212,11 +175,13 @@ This gives us the following factorization of the relation extraction system:
 \node[latent, left=of A](Vi) {$z_i$};
 \node[latent, right=of A](C) {$m_i$};
 
-\node[obs, below=of A] (D) {$k_j$};
-\node[obs, below=of Vi] (V) {$v_j$};
+%\node[obs, below=of A] (D) {$k_j$};
+%\node[obs, below=of Vi] (V) {$v_j$};
+\node[obs, below=of A] (D) {$k$};
+\node[obs, below=of Vi] (V) {$v$};
 
 \plate {i} {(C)(A)(Vi)} {$I$};
-\plate  {j} {(D)(V)} {$J$};
+%\plate  {j} {(D)(V)} {$J$};
 
 \draw[->] (Y) -- (C);
 \draw[->] (Y) -- (A);
@@ -252,10 +217,9 @@ We parameterize the conditional distributions for
 mention identification, alignment, translation, and aggregation below.
 
 Let $\bh_i \in \R^d$ be a contextual embedding of the word $x_i$,
-and $E$ an embedding function that maps keys $k$
-to vectors in $\R^{d}$.
+and $E$ an embedding function that maps keys $k$ to vectors in $\R^{d}$.
 \begin{enumerate}
-\item Identification: We use the contextual embedding to directly predict
+\item Identification: We use the contextual embedding to  predict
 whether a word $x_i$ is part of a value mention.
 \begin{equation}
 p(m_i \mid x) \propto \exp(W_m\bh_i)_{m_i}, W_m \in \R^{2 \times d}
@@ -263,9 +227,9 @@ p(m_i \mid x) \propto \exp(W_m\bh_i)_{m_i}, W_m \in \R^{2 \times d}
 \item Alignment: We use a bilinear function of the cell embeddings and
 contextual embeddings to parameterize the alignment distribution.
 \begin{equation}
-p(a_i \mid x,d) \propto \exp(E(k_{a_i})^T W_d \bh_i)\\
+p(a_i \mid x,k) \propto \exp(E(k_{a_i})^T W_a \bh_i)\\
 \end{equation}
-with $W_d \in \R^{d \times d}$.
+with $W_a \in \R^{d \times d}$.
 \item Translation: We use the contextual embedding to translate a word
 into a value.
 \begin{equation}
