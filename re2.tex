@@ -53,6 +53,9 @@ Facts consist of three components: Entities, relation types, and values.
 %(Example would be fastest to clear up what a relation type is)
 The challenge is to not only extract facts from text, but also
 justify the extractions by determining where those facts are mentioned.
+In order to justify the extraction, we locate the fact's \textit{trigger},
+which clearly expresses its occurrence.
+We make the assumption that a fact's trigger is its value mention.
 
 \begin{comment}
 (Move or delete later)
@@ -99,10 +102,10 @@ Consider the following example:
 Let our KB consist of the data table and values,
 $$
 D = \left\{\begin{array}{c}
-    (e_1 = \textrm{John Doe}, t_1 = \textrm{POINTS}), \\
-    (e_2 = \textrm{John Doe}, t_2 = \textrm{REBOUNDS}), \\
-    (e_3 = \textrm{John Doe}, t_3 = \textrm{FIRST\_NAME}),\\
-    (e_4 = \textrm{John Doe}, t_4 = \textrm{LAST\_NAME}), \\
+    k_1 = (e_1 = \textrm{John Doe}, t_1 = \textrm{POINTS}), \\
+    k_2 = (e_2 = \textrm{John Doe}, t_2 = \textrm{REBOUNDS}), \\
+    k_3 = (e_3 = \textrm{John Doe}, t_3 = \textrm{FIRST\_NAME}),\\
+    k_4 = (e_4 = \textrm{John Doe}, t_4 = \textrm{LAST\_NAME}), \\
     \vdots
 \end{array}\right\},
 v = \left\{\begin{array}{c}
@@ -114,7 +117,8 @@ v_4 = \texttt{`Doe'},\\
 \end{array}\right\}
 $$
 aligned to the summary $x = \texttt{`John Doe scored eight points'}$.
-(Give example values of RVs?)
+As an example extraction, we identify the value mention
+\texttt{`eight'} as the trigger for the fact mention $(k_1, v_1)$.
 
 \subsection{Model}
 In order to perform extraction with justification we
@@ -154,7 +158,7 @@ and translate the word $x_i$ into a value $z_i$ with the
 
 This model assumes that each word $x_i$ can explain at most one fact in the KB.
 Additionally, we make the simplifying assumption
-that a word's translation is unambiguous.
+that a value mention's translation is unambiguous.
 This allows us to make all choices independently
 for each word given the text $x$ and keys $k$.
 %We relax this assumption in the next model.
