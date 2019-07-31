@@ -297,10 +297,13 @@ and we extend the embedding function $E$ to embed not only keys but also values.
 We introduce the following attention weights over records
 in order to get a weighted representation
 of the KB for each index $i$:
-\begin{align}
+\begin{equation}
+\label{eqn:attn}
+\begin{aligned}
 \bg_j &= [E(k_j); E(v_j)]\\
 \alpha_j &\propto \exp(\bg_{r_j}^T W_\alpha \bh_i)
-\end{align}
+\end{aligned}
+\end{equation}
 
 We propose to parameterize the inference network $q(z,a,m\mid v,x,k)$ as follows:
 \begin{enumerate}
@@ -315,7 +318,7 @@ We propose to parameterize the inference network $q(z,a,m\mid v,x,k)$ as follows
     \end{equation}
     where MLP is a neural network.
 \item Alignment: The alignment model $q(a_i \mid v,x,k)$
-    uses the attention weights to parameterize the alignment
+    uses the attention weights in Eqn.~\ref{eqn:attn} to parameterize the alignment
     $p(a_i \mid x) = \alpha_{a_i}$.
 \item Translation: The translation model
     $q(z_i \mid a_i,v,x) = \mathbf{1}(z_i = v_{a_i})$
