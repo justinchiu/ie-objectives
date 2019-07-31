@@ -148,8 +148,8 @@ p(v,z,a,m\mid x,k)
 &= p(v\mid z,a,m,x,k)p(z,a,m\mid x,k)\\
 &= \underbrace{\left(\prod_{j=1}^J p(v_j\mid z,a,m,x,k)\right)}_{\textrm{Aggregation}}
     \underbrace{\left(\prod_{i=1}^I
-        \underbrace{p(z_i\mid x)}_{\textrm{Translation}}
-        \underbrace{p(a_i\mid x,k)}_{\textrm{Alignment}}
+        \underbrace{p(z_i\mid m_i,x)}_{\textrm{Translation}}
+        \underbrace{p(a_i\mid m_i,x,k)}_{\textrm{Alignment}}
         \underbrace{p(m_i\mid x)}_{\textrm{Identification}}
     \right)}_{\textrm{Extraction}}
 \end{aligned}
