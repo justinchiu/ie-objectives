@@ -138,8 +138,8 @@ introduce the following latent variables:
     as opposed to alphabetical.
 \end{itemize}
 
-Our model specifies the joint distribution over the values and latent variables
-given the text and keys:
+Our model specifies the joint distribution over the values $v$ and latent variables $z,a,m$
+given the text $x$ and keys $k$:
 \begin{equation}
 \label{eqn:prob}
 \begin{aligned}
@@ -148,8 +148,8 @@ p(v,z,a,m\mid x,k)
 &= p(v\mid z,a,m,x,k)p(z,a,m\mid x,k)\\
 &= \underbrace{\left(\prod_{j=1}^J p(v_j\mid z,a,m,x,k)\right)}_{\textrm{Aggregation}}
     \underbrace{\left(\prod_{i=1}^I
-        \underbrace{p(z_i\mid m_i,x)}_{\textrm{Translation}}
-        \underbrace{p(a_i\mid m_i,x,k)}_{\textrm{Alignment}}
+        \underbrace{p(z_i\mid x)}_{\textrm{Translation}}
+        \underbrace{p(a_i\mid x,k)}_{\textrm{Alignment}}
         \underbrace{p(m_i\mid x)}_{\textrm{Identification}}
     \right)}_{\textrm{Extraction}}
 \end{aligned}
@@ -158,21 +158,21 @@ p(v,z,a,m\mid x,k)
 The extraction model has three components.
 The model must identify whether word $x_i$
 is a mention using the \textit{identification} model $p(m_i \mid x)$,
-align word $x_i$ to a key $k_{a_i}$ via the \textit{alignment} model $p(a_i \mid m_i,x, k)$,
+align word $x_i$ to a key $k_{a_i}$ via the \textit{alignment} model $p(a_i \mid x, k)$,
 and translate the word $x_i$ into a value $z_i$ with the
-\textit{translation} model $p(z_i \mid m_i,x)$.
+\textit{translation} model $p(z_i \mid x)$.
 
 This model assumes that each word $x_i$ can explain at most one fact in the KB.
 Additionally, we make the simplifying assumption
-that a value mention's translation is unambiguous.
-This allows us to make all choices independently
+that a value mention's translation is unambiguous and independent from the alignment to a key.
+This limits the expressivity of the model, but allows us to make all choices independently
 for each word given the text $x$ and keys $k$.
 %We relax this assumption in the next model.
 
 It is possible for there to be conflicts in the word-level extraction model if 
 two words are mentions with the same alignment but different values.
 The aggregation model $p(v_j \mid z,a,m,x,k)$ is necessary to resolve these conflicts,
-and uses the per-word extractions to predict the values of the KB.
+and uses the per-word latent variables $z,a,m$ to predict the values of the KB.
 
 We give the parameterizations of all conditional distributions in the following section.
 
@@ -181,32 +181,34 @@ We give the parameterizations of all conditional distributions in the following 
 \resizebox {.35\columnwidth} {!} {
 \begin{tikzpicture}
 \node[obs] (Y) {$x$};
-\node[latent, below=of Y](A) {$a_i$};
-\node[latent, left=of A](Vi) {$z_i$};
-\node[latent, right=of A](C) {$m_i$};
+\node[latent, below=of Y](Ai) {$a_i$};
+\node[latent, left=of Ai](Zi) {$z_i$};
+\node[latent, right=of Ai](Mi) {$m_i$};
 
 %\node[obs, below=of A] (D) {$k_j$};
 %\node[obs, below=of Vi] (V) {$v_j$};
-\node[obs, below=of A] (D) {$k$};
-\node[obs, below=of Vi] (V) {$v$};
+\node[obs, below=of Ai] (K) {$k$};
+\node[obs, below=of Zi] (V) {$v$};
 
-\plate {i} {(C)(A)(Vi)} {$I$};
+\plate {i} {(Zi)(Ai)(Mi)} {$I$};
 %\plate  {j} {(D)(V)} {$J$};
 
-\draw[->] (Y) -- (C);
-\draw[->] (Y) -- (A);
-\draw[->] (Y) -- (Vi);
+\draw[->] (Y) -- (Mi);
+\draw[->] (Y) -- (Ai);
+\draw[->] (Y) -- (Zi);
 %\draw[->] (A) -- (Vi);
-\draw[->] (D) -- (A);
+\draw[->] (Mi) to [bend left = 25] (Zi);
+\draw[->] (Mi) to [bend left = 25] (Ai);
+\draw[->] (K) -- (Ai);
 %\draw[-] (Vi) -- (V);
 %\draw[-] (A) -- (V);
 %\draw[-] (C) -- (V);
 %\draw[-] (E) to [bend right = 25] (V);
 %\draw[-] (T) -- (V);
-\draw[->] (Vi) -- (V);
-\draw[->] (C) -- (V);
-\draw[->] (A) -- (V);
-\draw[->] (D) -- (V);
+\draw[->] (Zi) -- (V);
+\draw[->] (Ai) -- (V);
+\draw[->] (Mi) -- (V);
+\draw[->] (K) -- (V);
 
 \end{tikzpicture}
 } %% end resize
@@ -236,14 +238,24 @@ p(m_i \mid x) \propto \exp(W_m\bh_i)_{m_i}, W_m \in \R^{2 \times d}
 \end{equation}
 \item Alignment: We use a bilinear function of the cell embeddings and
 contextual embeddings to parameterize the alignment distribution.
+If a word is chosen not to be a mention such that $m_i=0$,
+we align $a_i = \texttt{None}$ to a none alignment.
 \begin{equation}
-p(a_i \mid m_i=1,x,k) \propto \exp(E(k_{a_i})^T W_a \bh_i)\\
+\begin{aligned}
+p(a_i \mid m_i=1,x,k) &\propto \exp(E(k_{a_i})^T W_a \bh_i)\\
+p(a_i=\texttt{None} \mid m_i=0,x,k) &= 1
+\end{aligned}
 \end{equation}
 with $W_a \in \R^{d \times d}$.
 \item Translation: We use the contextual embedding to translate a word
 into a value. 
+If a word is chosen not to be a mention such that $m_i=0$,
+we set $z_i$ to a none token.
 \begin{equation}
-p(z_i \mid m_i=1,x) \propto \exp(W_z \bh_i)_{z_i}, W_z \in \R^{|\mcV| \times d}
+\begin{aligned}
+p(z_i \mid m_i=1, x) &\propto \exp(W_z \bh_i)_{z_i}, W_z \in \R^{|\mcV| \times d}\\
+p(z_i = \texttt{None} \mid m_i=0, x) &= 1
+\end{aligned}
 \end{equation}
 \item Aggregation:
 We choose the value associated with a particular key in the KB
@@ -255,7 +267,7 @@ choose the value given only the key.
 Formally, the conditional distribution is given by
 \begin{align}
 p(v_j \mid z,a,m,k) &\propto \begin{cases}
-    \prod_{i: m_i = 1 \wedge a_i = j}
+    \prod_{i}
         \exp(\psi(v_j, z_i,a_i,m_i)),  & \exists i, m_i = 1 \wedge a_i = j\\
     %p(v_j \mid e_j,t_j), & \textrm{otherwise}
     \exp(E(v_j)^TW_v [E(k_j)]), & \textrm{otherwise}
