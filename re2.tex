@@ -337,7 +337,7 @@ in Equation~\ref{eqn:elbo} with respect to both $p$ and $q$.
 We utilize a leave-one-out baseline for variance reduction.
 
 One concern is that the model may learn to never rely on the text for extraction,
-setting $m_i = 0$ at every index.
+setting $m_i = 0$ for every word $x_i$.
 We can avoid this by pretraining $p(z_i \mid x)$ to ensure that for words $x_i$
 where there exists a $z_i \in \mcV$ such that $x_i$ and $z_i$ are a lexical match
 we assign high probability to the transliteration $p(z_i = x_i \mid x)$.
@@ -352,7 +352,7 @@ The grouth truth facts consist of entities, types, values, as well as the locati
 value mention in text.
 
 We perform extraction by finding
-$${\arg\max}_{z_i^*,a_i^*,m_i^*}p(z_i\mid x),p(a_i \mid x, D),p(m_i \mid x)$$
+$${\arg\max}_{z_i,a_i,m_i}p(z_i\mid x),p(a_i \mid x, k),p(m_i \mid x)$$
 for each word $x_i$.
 We obtain the fact $(e_j, t_j, v_j)$ at position $i$ if $m_i^*=1$,
 $a_i^* = j$ and $z_i^* = v_j$.
@@ -384,7 +384,7 @@ the values of KB $q(x,v\mid d)$.
 b) train $p(v \mid z,a,m,x,d)$ using the following lower bound:
 \begin{equation}
 \label{eqn:lowerbound2}
-\log p(v\mid x,d) \geq
+\log p(v\mid x,k) \geq
 \Es{p(z,a,m\mid x,d)}{\log p(v\mid z,a,m, x,d)}
 \end{equation}
 Ideally the bound in Eqn.~\ref{eqn:lowerbound2}
