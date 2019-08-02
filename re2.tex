@@ -324,9 +324,8 @@ We propose to parameterize the inference network $q(z,a,m\mid v,x,k)$ as follows
     \textrm{MLP}\left(\left[\sum_j \alpha_j \cdot \bg_j; \bh_i\right]\right)\right)_{m_i}
     \end{equation}
     where MLP is a neural network and $V_m \in \R^{2 \times d}$.
-\item Alignment: The alignment model $q(a_i \mid v,x,k)$
-    uses the attention weights in Eqn.~\ref{eqn:attn}:
-    $p(a_i \mid x) = \alpha_{a_i}$.
+\item Alignment: The alignment model uses the attention weights in Eqn.~\ref{eqn:attn}:
+    $q(a_i \mid v,x,k) = \alpha_{a_i}$.
 \item Translation: The translation model
     $q(z_i \mid a_i,v,x) = \mathbf{1}(z_i = v_{a_i})$
     conditions on the alignment $a_i$ and ensures the chosen $z$ is consistent
