@@ -13,13 +13,6 @@ Justin T. Chiu
 \maketitle
 
 \begin{abstract}
-Recent relation extraction systems predict the relationship between
-an entity and value given the positions of their mentions in the text.
-This requires words to be annotated as mentions.
-The cost of obtaining human annotations for each word scales
-linearly with the size of the text.
-Automatic annotation methods allow the annotation process to scale sublinearly
-in human effort, but may introduce noise due to incorrect annotations.
 In order to train a probabilistic information extraction model without mention
 annotations, we specify a model that, identifies important words 
 and uses them to explain a triple from a knowledge base.
@@ -158,16 +151,13 @@ given the text $x$ and keys $k$:
 The extraction model has three components.
 The model must identify whether word $x_i$
 is a mention using the \textit{identification} model $p(m_i \mid x)$,
-align word $x_i$ to a key $k_{a_i}$ via the \textit{alignment} model $p(a_i \mid x, k)$,
+align word $x_i$ to a key $k_{a_i}$ via the \textit{alignment} model $p(a_i \mid m_i, x, k)$,
 and translate the word $x_i$ into a value $z_i$ with the
-\textit{translation} model $p(z_i \mid x)$.
+\textit{translation} model $p(z_i \mid m_i, x)$.
 
 This model assumes that each word $x_i$ can explain at most one fact in the KB.
 Additionally, we make the simplifying assumption
 that a value mention's translation is unambiguous and independent from the alignment to a key.
-This limits the expressivity of the model, but allows us to make all choices independently
-for each word given the text $x$ and keys $k$.
-%We relax this assumption in the next model.
 
 It is possible for there to be conflicts in the word-level extraction model if 
 two words are mentions with the same alignment but different values.
@@ -225,21 +215,19 @@ and the value $z_i$ gives the canonical value that $x_i$ translates to.
 \end{figure}
 
 \subsection{Parameterization}
-We parameterize the conditional distributions for
-mention identification, alignment, translation, and aggregation below.
-
 Let $\bh_i \in \R^d$ be a contextual embedding of the word $x_i$,
 and $E$ an embedding function that maps keys $k$ to vectors in $\R^{d}$.
 \begin{enumerate}
 \item Identification: We use the contextual embedding to  predict
 whether a word $x_i$ is part of a value mention.
 \begin{equation}
-p(m_i \mid x) \propto \exp(W_m\bh_i)_{m_i}, W_m \in \R^{2 \times d}
+p(m_i \mid x) \propto \exp(W_m\bh_i)_{m_i},
 \end{equation}
+with $W_m \in \R^{2 \times d}$.
 \item Alignment: We use a bilinear function of the cell embeddings and
 contextual embeddings to parameterize the alignment distribution.
 If a word is chosen not to be a mention such that $m_i=0$,
-we align $a_i = \texttt{None}$ to a none alignment.
+we align $a_i = \texttt{None}$.
 \begin{equation}
 \begin{aligned}
 p(a_i \mid m_i=1,x,k) &\propto \exp(E(k_{a_i})^T W_a \bh_i)\\
@@ -250,19 +238,19 @@ with $W_a \in \R^{d \times d}$.
 \item Translation: We use the contextual embedding to translate a word
 into a value. 
 If a word is chosen not to be a mention such that $m_i=0$,
-we set $z_i$ to a none token.
+we set $z_i = \texttt{None}$.
 \begin{equation}
 \begin{aligned}
-p(z_i \mid m_i=1, x) &\propto \exp(W_z \bh_i)_{z_i}, W_z \in \R^{|\mcV| \times d}\\
+p(z_i \mid m_i=1, x) &\propto \exp(W_z \bh_i)_{z_i}\\
 p(z_i = \texttt{None} \mid m_i=0, x) &= 1
 \end{aligned}
 \end{equation}
+with $W_z \in \R^{|\mcV| \times d}$.
 \item Aggregation:
 We choose the value associated with a particular key in the KB
 by first using the translated values of any mentions aligned to the
 corresponding key.
-If no mention is aligned to the key, we instead ignore the text and 
-choose the value given only the key.
+If no mention is aligned to the key, we choose the value given only the key.
 
 Formally, the conditional distribution is given by
 \begin{align}
@@ -291,7 +279,7 @@ Therefore we would ideally optimize the following objective
 However, maximizing $\log p(v \mid x,k)$ directly is very expensive 
 as the summation over variables $z,a,m$ is intractable;
 in particular,
-the summation has computational complexity $O((|\mcV|\cdot J\cdot 2)^{I})$.
+the summation has computational complexity $O((|\mcV|\cdot J)^{I})$.
 
 We therefore resort to approximate inference,
 specifically amortized variational inference.
@@ -304,6 +292,15 @@ with respect to the parameters of both $p$ and $q$:
 \label{eqn:lowerbound}
 \log p(v\mid x) \geq
 \Es{q(z,a,m\mid v,x,k)}{\log \frac{p(v,z,a,m\mid x,k)}{q(z,a,m\mid v,x,k)}}
+\end{equation}
+
+The joint distribution of $q(z,a,m)$ in the inference network is given by
+\begin{equation}
+\label{eqn:elbo}
+\begin{aligned}
+q(z,a,m\mid v,x,k) &= q(z \mid a,v,x)q(a\mid v,x,k)q(m \mid v,x)\\
+&= \prod_i q(z_i \mid a,v,x)q(a_i \mid v,x,k)q(m_i \mid v,x)
+\end{aligned}
 \end{equation}
 
 We use the same contextual embedding $\bh_i \in \R^d$ of the word $x_i$
@@ -328,10 +325,9 @@ We propose to parameterize the inference network $q(z,a,m\mid v,x,k)$ as follows
     \begin{equation}
     p(m_i \mid v,x) \propto
     \exp\left(V_m
-    \textrm{MLP}\left(\left[\sum_j \alpha_j \cdot \bg_j; \bh_i\right]\right)\right)_{m_i},
-    V_m \in \R^{2 \times d}
+    \textrm{MLP}\left(\left[\sum_j \alpha_j \cdot \bg_j; \bh_i\right]\right)\right)_{m_i}
     \end{equation}
-    where MLP is a neural network.
+    where MLP is a neural network and $V_m \in \R^{2 \times d}$.
 \item Alignment: The alignment model $q(a_i \mid v,x,k)$
     uses the attention weights in Eqn.~\ref{eqn:attn} to parameterize the alignment
     $p(a_i \mid x) = \alpha_{a_i}$.
@@ -341,25 +337,13 @@ We propose to parameterize the inference network $q(z,a,m\mid v,x,k)$ as follows
     with the alignment. 
 \end{enumerate}
 
-The joint distribution of $z,a,m$ in the inference network is given by
-\begin{equation}
-\label{eqn:elbo}
-\begin{aligned}
-p(z,a,m\mid v,x,k) &= p(z \mid a,v,x)p(a\mid v,x,k)p(m \mid v,x)\\
-&= \prod_i p(z_i \mid a,v,x)p(a_i \mid v,x,k)p(m_i \mid v,x)
-\end{aligned}
-\end{equation}
-
-We use the score function gradient estimator
-to perform gradient ascent on the objective
-in Equation~\ref{eqn:elbo} with respect to both $p$ and $q$.
+We optimize the objective in Eqn.~\ref{eqn:elbo}
+with respect to both the extraction model $p$ and the inference network $q$
+via gradient ascent using the score function gradient estimator.
 We utilize a leave-one-out baseline for variance reduction.
 
-One concern is that the model may learn to never rely on the text for extraction,
-setting $m_i = 0$ for every word $x_i$.
-We can avoid this by pretraining $p(z_i \mid x)$ to ensure that for words $x_i$
-where there exists a $z_i \in \mcV$ such that $x_i$ and $z_i$ are a lexical match
-we assign high probability to the transliteration $p(z_i = x_i \mid x)$.
+As our model is highly unidentifiable,
+we bias our network by pretraining $p(z_i \mid x)$ on lexical match.
 
 \section{Evaluation}
 We are interested in evaluating whether the model can discover
@@ -371,10 +355,9 @@ The grouth truth facts consist of entities, types, values, as well as the locati
 value mention in text.
 
 We perform extraction by finding
-$${\arg\max}_{z_i,a_i,m_i}p(z_i\mid x),p(a_i \mid x, k),p(m_i \mid x)$$
-for each word $x_i$.
-We obtain the fact $(e_j, t_j, v_j)$ at position $i$ if $m_i^*=1$,
-$a_i^* = j$ and $z_i^* = v_j$.
+$${\arg\max}_{z,a,m} p(z,a,m\mid x,k$$
+We obtain the fact $(e_j, t_j, v_j)$ at position $i$ if $m_i=1$,
+$a_i = j$ and $z_i = v_j$.
 The extraction is considered correct if the ground truth
 contains a fact with the same entity, type, value, and location.
 %Alternatively, we could condition on an existing database
