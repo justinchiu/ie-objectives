@@ -337,7 +337,8 @@ with respect to both the extraction model $p$ and the inference network $q$
 via gradient ascent using the score function gradient estimator.
 We utilize a leave-one-out baseline for variance reduction.
 
-(Under consideration)
+(Under consideration, could possibly remove this by parameterizing translation
+model using local features such as embedding or conv)
 As our model is highly unidentifiable,
 we bias our extraction model by pretraining $p(z_i \mid x)$ on lexical match.
 
