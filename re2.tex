@@ -295,8 +295,7 @@ The joint distribution of $q(z,a,m)$ in the inference network is given by
 \begin{equation}
 \label{eqn:elbo}
 \begin{aligned}
-q(z,a,m\mid v,x,k) &= q(z \mid a,v,x)q(a\mid v,x,k)q(m \mid v,x)\\
-&= \prod_i q(z_i \mid a,v,x)q(a_i \mid v,x,k)q(m_i \mid v,x)
+q(z,a,m\mid v,x,k) &= \prod_i q(z_i \mid a,v,x)q(a_i \mid v,x,k)q(m_i \mid v,x)
 \end{aligned}
 \end{equation}
 
