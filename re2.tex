@@ -13,9 +13,7 @@ Justin T. Chiu
 \maketitle
 
 \begin{abstract}
-In order to train a probabilistic information extraction model without mention
-annotations, we specify a model that, identifies important words 
-and uses them to explain a triple from a knowledge base.
+TODO
 \end{abstract}
 
 \section{Problem Statement}
@@ -43,12 +41,12 @@ Relation extraction aims to extract facts from a passage of text.
 Extraction systems convert facts expressed in natural language into a form
 amenable to computation.
 Facts consist of three components: Entities, relation types, and values.
+We refer to entity and relation type tuples as keys.
 %(Example would be fastest to clear up what a relation type is)
 The challenge is to not only extract facts from text, but also
 justify the extractions by determining where those facts are mentioned.
 In order to justify the extraction, we locate the fact's \textit{trigger},
 which clearly expresses its occurrence.
-We make the assumption that a fact's trigger is its value mention.
 
 \begin{comment}
 (Move or delete later)
@@ -75,10 +73,14 @@ we model the aligned knowledge base (KB) $\set{(k_j, v_j)}_{j=1}^J$
 consisting of keys $k = \set{(e_j, t_j)}_{j=1}^J$, 
 obtained by combining the entity $e_j$ and type $t_j$ in a fact,
 and values $v = \set{v_j}_{j=1}^J, v_j \in \mcV$.
-The KB $(k,v)$ contains $J$ facts, or $(k_j, v_j)$ pairs.
+The KB $(k,v)$ contains $J$ facts.
+
 Our goal is to locate and extract facts from $x$ by modeling the values $v$
 given the text $x$ and the keys $k$.
+We assume that a fact's trigger is its value mention.
+This limits us to extracting facts in the KB explicitly expressed in the text.
 
+\begin{comment}
 Modeling only the KB $(k,v)$ given the text $x$
 is not sufficient, as our goal is to locate fact mentions.
 We assume the KB contains many more facts than those mentioned in the text.
@@ -90,11 +92,12 @@ aligns those mentions to an entity and relation type in order to obtain a fact,
 and then aggregates word-level decisions into a sequence-level decision to resolve conflicts.
 %We choose to identify value mentions as the location of a fact as entity mentions
 %may be obscured through coreference and relation types may not be mentioned explicitly.
+\end{comment}
 
 Consider the following example:
-Let our KB consist of the data table and values,
+Let our KB consist of information about a basketball game,
 $$
-D = \left\{\begin{array}{c}
+k = \left\{\begin{array}{c}
     k_1 = (e_1 = \textrm{John Doe}, t_1 = \textrm{POINTS}), \\
     k_2 = (e_2 = \textrm{John Doe}, t_2 = \textrm{REBOUNDS}), \\
     k_3 = (e_3 = \textrm{John Doe}, t_3 = \textrm{FIRST\_NAME}),\\
@@ -121,9 +124,9 @@ introduce the following latent variables:
 \item $m = m_1, \ldots, m_I$ where each $m_i \in \set{0,1}$
     indicates whether word $x_i$ is part of a value mention.
     We aim to identify at least one word in a multiword mention.
-\item $a = a_1, \ldots, a_I$ where each $a_i \in \set{1, \ldots, J}$
-    indicates that word $x_i$ mentions the fact with key $k_{a_i}$.
-\item $z = z_1, \ldots, z_I$ where each $z_i \in \mcV$
+\item $a = a_1, \ldots, a_I$ where each $a_i \in \set{1, \ldots, J} \cup \set{\texttt{None}}$
+    indicates that word $x_i$ mentions the fact $(k_{a_i}, v_{a_i})$.
+\item $z = z_1, \ldots, z_I$ where each $z_i \in \mcV\cup \set{\texttt{None}}$
     translates the value mention containing word $x_i$
     into the canonical representation of
     the value as determined by the schema of the KB.
@@ -162,7 +165,7 @@ that a value mention's translation is unambiguous and independent from the align
 It is possible for there to be conflicts in the word-level extraction model if 
 two words are mentions with the same alignment but different values.
 The aggregation model $p(v_j \mid z,a,m,x,k)$ is necessary to resolve these conflicts,
-and uses the per-word latent variables $z,a,m$ to predict the values of the KB.
+and uses the per-word latent variables $z_i,a_i,m_i$ to predict the values of the KB.
 
 We give the parameterizations of all conditional distributions in the following section.
 
@@ -226,8 +229,7 @@ p(m_i \mid x) \propto \exp(W_m\bh_i)_{m_i},
 with $W_m \in \R^{2 \times d}$.
 \item Alignment: We use a bilinear function of the cell embeddings and
 contextual embeddings to parameterize the alignment distribution.
-If a word is chosen not to be a mention such that $m_i=0$,
-we align $a_i = \texttt{None}$.
+We align $a_i = \texttt{None}$ if a word is not a mention.
 \begin{equation}
 \begin{aligned}
 p(a_i \mid m_i=1,x,k) &\propto \exp(E(k_{a_i})^T W_a \bh_i)\\
@@ -267,12 +269,8 @@ with $W_v \in \R^{d\times d}$.
 \end{enumerate}
 
 \section{Training and Inference}
-To train a latent variable model, we must marginalize over the unobserved RVs
-and maximize the likelihood of the observed.
-Although the latent variables $z,a,m$ are important, as they indicate
-where and what facts are contained in the text, they are not observed
-and must be marginalized over.
-Therefore we would ideally optimize the following objective
+We would like to optimize the marginal likelihood of the values $v$ given the 
+text $x$ and keys $k$:
 \begin{equation}
 \log p(v \mid x,k) = \log \sum_{z,a,m} p(v,z,a,m \mid x,k)
 \end{equation}
@@ -280,7 +278,6 @@ However, maximizing $\log p(v \mid x,k)$ directly is very expensive
 as the summation over variables $z,a,m$ is intractable;
 in particular,
 the summation has computational complexity $O((|\mcV|\cdot J)^{I})$.
-
 We therefore resort to approximate inference,
 specifically amortized variational inference.
 
@@ -313,7 +310,7 @@ of the KB for each index $i$:
 \label{eqn:attn}
 \begin{aligned}
 \bg_j &= [E(k_j); E(v_j)]\\
-\alpha_j &\propto \exp(\bg_{r_j}^T W_\alpha \bh_i)
+\alpha_j &\propto \exp(\bg_{j}^T W_\alpha \bh_i)
 \end{aligned}
 \end{equation}
 
@@ -329,7 +326,7 @@ We propose to parameterize the inference network $q(z,a,m\mid v,x,k)$ as follows
     \end{equation}
     where MLP is a neural network and $V_m \in \R^{2 \times d}$.
 \item Alignment: The alignment model $q(a_i \mid v,x,k)$
-    uses the attention weights in Eqn.~\ref{eqn:attn} to parameterize the alignment
+    uses the attention weights in Eqn.~\ref{eqn:attn}:
     $p(a_i \mid x) = \alpha_{a_i}$.
 \item Translation: The translation model
     $q(z_i \mid a_i,v,x) = \mathbf{1}(z_i = v_{a_i})$
@@ -342,24 +339,26 @@ with respect to both the extraction model $p$ and the inference network $q$
 via gradient ascent using the score function gradient estimator.
 We utilize a leave-one-out baseline for variance reduction.
 
+(Under consideration)
 As our model is highly unidentifiable,
-we bias our network by pretraining $p(z_i \mid x)$ on lexical match.
+we bias our extraction model by pretraining $p(z_i \mid x)$ on lexical match.
 
 \section{Evaluation}
 We are interested in evaluating whether the model can discover
 and locate the subset of facts in a KB that are expressed in the text
 without observing the values of the KB.
-We compare the extractions of our model with a ground truth set of facts extracted by a human annotator,
+We compare the extractions of our model with a ground truth set of facts,
 reporting the micro-averaged precision, recall, and F1 score.
-The grouth truth facts consist of entities, types, values, as well as the location of their
-value mention in text.
+The grouth truth facts consist of entities, types, values.
+%We also consider as well as the location of their value mention in text.
 
 We perform extraction by finding
-$${\arg\max}_{z,a,m} p(z,a,m\mid x,k$$
-We obtain the fact $(e_j, t_j, v_j)$ at position $i$ if $m_i=1$,
+$${\arg\max}_{z,a,m} p(z,a,m\mid x,k).$$
+We obtain the fact $(k_j, v_j)$ at position $i$ if $m_i=1$,
 $a_i = j$ and $z_i = v_j$.
-The extraction is considered correct if the ground truth
-contains a fact with the same entity, type, value, and location.
+% Can also use approximate posterior
+%The extraction is considered correct if the ground truth
+%contains a fact with the same entity, type, value, and location.
 %Alternatively, we could condition on an existing database
 %As we assumed a fully factored model over $z,a,m$ 
 
