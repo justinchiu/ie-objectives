@@ -45,8 +45,11 @@ We refer to entity and relation type tuples as keys.
 %(Example would be fastest to clear up what a relation type is)
 The challenge is to not only extract facts from text, but also
 justify the extractions by determining where those facts are mentioned.
+
 In order to justify the extraction, we locate the fact's \textit{trigger},
 which clearly expresses its occurrence.
+We assume that a fact's trigger is its value mention.
+This limits us to extracting facts in the KB explicitly expressed in the text.
 
 \begin{comment}
 (Move or delete later)
@@ -70,15 +73,13 @@ are observed at training time.
 The problem description is as follows:
 Given a textual summary $x = x_1, \ldots, x_{I}$ of length $I$,
 we model the aligned knowledge base (KB) $\set{(k_j, v_j)}_{j=1}^J$
-consisting of keys $k = \set{(e_j, t_j)}_{j=1}^J$, 
-obtained by combining the entity $e_j$ and type $t_j$ in a fact,
+consisting of entity $e_j$ and type $t_j$ tuples
+which we refer to as keys $k = \set{(e_j, t_j)}_{j=1}^J$,
 and values $v = \set{v_j}_{j=1}^J, v_j \in \mcV$.
 The KB $(k,v)$ contains $J$ facts.
 
 Our goal is to locate and extract facts from $x$ by modeling the values $v$
 given the text $x$ and the keys $k$.
-We assume that a fact's trigger is its value mention.
-This limits us to extracting facts in the KB explicitly expressed in the text.
 
 \begin{comment}
 Modeling only the KB $(k,v)$ given the text $x$
@@ -142,7 +143,7 @@ given the text $x$ and keys $k$:
 &p(v,z,a,m\mid x,k)\\
 %&= p(v\mid z,a,m,x,k)p(z\mid x)p(a\mid x,k)p(m\mid x)\\
 &= p(v\mid z,a,m,x,k)p(z,a,m\mid x,k)\\
-&= \underbrace{\left(\prod_{j=1}^J p(v_j\mid z,a,m,x,k)\right)}_{\textrm{Aggregation}}
+&= \left(\prod_{j=1}^J \underbrace{p(v_j\mid z,a,m,x,k)}_{\textrm{Aggregation}}\right)
     \underbrace{\left(\prod_{i=1}^I
         \underbrace{p(z_i\mid m_i,x)}_{\textrm{Translation}}
         \underbrace{p(a_i\mid m_i,x,k)}_{\textrm{Alignment}}
@@ -287,31 +288,34 @@ and optimize the following lower bound on the marginal likelihood
 with respect to the parameters of both $p$ and $q$:
 \begin{equation}
 \label{eqn:lowerbound}
-\log p(v\mid x) \geq
+\log p(v\mid x,k) \geq
 \Es{q(z,a,m\mid v,x,k)}{\log \frac{p(v,z,a,m\mid x,k)}{q(z,a,m\mid v,x,k)}}
 \end{equation}
 
-The joint distribution of $q(z,a,m)$ in the inference network is given by
+The joint distribution of $q(z,a,m\mid v,x,k)$ in the inference network is given by
 \begin{equation}
 \label{eqn:elbo}
 \begin{aligned}
-q(z,a,m\mid v,x,k) &= \prod_i q(z_i \mid a,v,x)q(a_i \mid v,x,k)q(m_i \mid v,x)
+q(z,a,m\mid v,x,k) &= \prod_i
+    \underbrace{q(z_i \mid a,v,x)}_{\textrm{Translation}}
+    \underbrace{q(a_i \mid v,x,k)}_{\textrm{Alignment}}
+    \underbrace{q(m_i \mid v,x)}_{\textrm{Identification}}
 \end{aligned}
 \end{equation}
 
-We use the same contextual embedding $\bh_i \in \R^d$ of the word $x_i$
-from the extraction system,
-and we extend the embedding function $E$ to embed not only keys but also values.
+In the inference network,
+we use the contextual embedding $\bh_i \in \R^d$ of the word $x_i$
+and extend the embedding function $E$ to embed not only keys but also values in $\R^d$.
 We introduce the following attention weights over records
-in order to get a weighted representation
-of the KB for each index $i$:
+in order to get a weighted representation of the KB for each word $x_i$:
 \begin{equation}
 \label{eqn:attn}
 \begin{aligned}
 \bg_j &= [E(k_j); E(v_j)]\\
-\alpha_j &\propto \exp(\bg_{j}^T W_\alpha \bh_i)
+\alpha_{ij} &\propto \exp(\bg_{j}^T W_\alpha \bh_i)
 \end{aligned}
 \end{equation}
+with $W_\alpha \in \R^{2d \times d}$.
 
 We propose to parameterize the inference network $q(z,a,m\mid v,x,k)$ as follows:
 \begin{enumerate}
@@ -321,14 +325,14 @@ We propose to parameterize the inference network $q(z,a,m\mid v,x,k)$ as follows
     \begin{equation}
     p(m_i \mid v,x) \propto
     \exp\left(V_m
-    \textrm{MLP}\left(\left[\sum_j \alpha_j \cdot \bg_j; \bh_i\right]\right)\right)_{m_i}
+    \textrm{MLP}\left(\left[\sum_j \alpha_{ij} \cdot \bg_j; \bh_i\right]\right)\right)_{m_i}
     \end{equation}
     where MLP is a neural network and $V_m \in \R^{2 \times d}$.
 \item Alignment: The alignment model uses the attention weights in Eqn.~\ref{eqn:attn}:
-    $q(a_i \mid v,x,k) = \alpha_{a_i}$.
+    $q(a_i = j \mid v,x,k) = \alpha_{ij}$.
 \item Translation: The translation model
     $q(z_i \mid a_i,v,x) = \mathbf{1}(z_i = v_{a_i})$
-    conditions on the alignment $a_i$ and ensures the chosen $z$ is consistent
+    conditions on the alignment $a_i$ and ensures the translated value $z_i$ is consistent
     with the alignment. 
 \end{enumerate}
 
@@ -338,7 +342,8 @@ via gradient ascent using the score function gradient estimator.
 We utilize a leave-one-out baseline for variance reduction.
 
 (Under consideration, could hopefully remove pretraining by parameterizing translation
-model using local features such as embedding or conv)
+model using local features such as embedding or conv, but previous
+experiments on this front were negative)
 As our model is highly unidentifiable,
 we bias our extraction model by pretraining $p(z_i \mid x)$ on lexical match.
 
@@ -353,7 +358,7 @@ The grouth truth facts consist of entities, types, values.
 
 We perform extraction by finding
 $${\arg\max}_{z,a,m} p(z,a,m\mid x,k).$$
-We obtain the fact $(k_j, v_j)$ at position $i$ if $m_i=1$,
+We obtain the fact $(k_j, v_j)$ at word $x_i$ if $m_i=1$,
 $a_i = j$ and $z_i = v_j$.
 % Can also use approximate posterior
 %The extraction is considered correct if the ground truth
