@@ -37,10 +37,25 @@ Typically this results in a challenging inference task, as the structure
 of the KB may be very complex.
 \end{comment}
 
-Relation extraction aims to extract facts from a passage of text.
-Extraction systems convert facts expressed in natural language into a form
-amenable to computation.
-Facts consist of three components: Entities, relation types, and values.
+Relation extraction is the task of jointly locating and converting information
+conveyed in natural language into a form amenable to computation.
+In particular, we must extract information into 
+triples consisting of entities, relation types, and values.
+
+We focus on extraction systems that 
+Systems that are not required to justify their extractions may make
+global decisions from local features. 
+Our goal is to separate local extractions from global ones,
+while ensuring that the local extractions are justified. 
+
+
+Previous work used annotated entity and value positions during training
+and possibly testing as well.
+The reliance on annotated positions is undesirable as the annotator must
+consider every word, which scales linearly in the size of the corpus.
+The challenge lies 
+
+
 We refer to entity and relation type tuples as keys.
 %(Example would be fastest to clear up what a relation type is)
 The challenge is to not only extract facts from text, but also
