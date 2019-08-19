@@ -37,25 +37,26 @@ Typically this results in a challenging inference task, as the structure
 of the KB may be very complex.
 \end{comment}
 
-Relation extraction is the task of jointly locating and converting information
-conveyed in natural language into a structured representation.
+Knowledge base population (KBP) is the task of converting information
+conveyed in natural language into a structured representation,
+such as a knowledge base (KB) consisting of keys and values.
 By removing the noise inherent in natural language,
-extraction systems produce information in a representation that is amenable to computation.
-We focus on representations that can be decomposed into keys and values.
+KBP systems produce information in a representation that is amenable to computation.
 
-We produce an extraction system that justifies its decisions.
-We use these justifications or `rationales' to bias the model away from
-relying on spurious correlations that may hurt generalization.
+We extend the population task to both filling in the values of a KB
+as well as providing a justification or `rationale' for the values.
+We use these rationales to bias the model away from
+relying on spurious correlations that may hurt generalization,
+and provide human-checkable predictions.
 %( garbage collection )
 
-However, deciding what constitutes a rationale and obtaining supervision for that definition is expensive.
-For every corresponding definition of a rationale, supervision must be 
-obtained by having annotators consider many examples.
-This prevents one from iterating quickly in the space of rationale definitions.
-We therefore limit our attention to models that are able to produce rationales without supervision,
-or with very limited supervision.
-
-
+However, deciding what constitutes a rationale and
+obtaining supervision for that specific definition is expensive.
+For every definition, supervision must be 
+obtained by having annotators consider many KB and text pairs.
+This prevents one from iterating quickly in the space of rationale designs.
+We therefore propose a definition of a rationale
+and accompanying model that is able to produce rationales without supervision.
 
 \begin{comment}
 (Move or delete later)
@@ -77,15 +78,11 @@ are observed at training time.
 \end{comment}
 
 The problem description is as follows:
-Given a textual summary $x = x_1, \ldots, x_{I}$ of length $I$,
-we model the aligned knowledge base (KB) $\set{(k_j, v_j)}_{j=1}^J$
-consisting of entity $e_j$ and type $t_j$ tuples
-which we refer to as keys $k = \set{(e_j, t_j)}_{j=1}^J$,
-and values $v = \set{v_j}_{j=1}^J, v_j \in \mcV$.
-The KB $(k,v)$ contains $J$ facts.
-
-Our goal is to locate and extract facts from $x$ by modeling the values $v$
-given the text $x$ and the keys $k$.
+Given a text $x = x_1, \ldots, x_{I}$ of length $I$
+and the keys of an aligned KB $k = \set{k_j}_{j=1}^J$,
+we model the values $v = \set{v_j}_{j=1}^J$.
+Each $(k_j,v_j)$ pair is referred to as a record.
+We must additionally produce a rationale for each record.
 
 \begin{comment}
 Modeling only the KB $(k,v)$ given the text $x$
@@ -120,20 +117,32 @@ v = \left\{\begin{array}{c}
 \end{array}\right\}
 $$
 aligned to the summary $x = \texttt{`John Doe scored eight points'}$.
-As an example extraction, we identify the value mention
-\texttt{`eight'} as the trigger for the fact $(k_1, v_1)$.
-The fact $(k_2,v_2)$ is not expressed in the text.
+We identify the value mention
+\texttt{`eight'} as the mention of the record $(k_1, v_1)$.
+The record $(k_2,v_2)$ is not mentioned in the text.
 
 \subsection{Model}
-In order to perform extraction with justification we
-introduce the following latent variables:
+We choose our definition of a rationale:
+A value for a specific key must be accompanied by the position
+of its mention in the text.
+Additionally, a value not supported by a value mention in the text
+must also be made explicit.
+
+To satisfy this definition of a rationale, we model the values in the KB
+with an extract-then-aggregate process.
+Our model first makes extractions for each word, then aggregates the word-level choices
+in order to resolve possible conflicts.
+
+For every word in the text, the word-level extraction model chooses whether that word is a value mention,
+what key the value mention aligns to, and finally what value the mention corresponds to.
+We introduce the following latent variables in the extraction model:
 \begin{itemize}
 \item $m = m_1, \ldots, m_I$ where each $m_i \in \set{0,1}$
     indicates whether word $x_i$ is part of a value mention.
     We aim to identify at least one word in a multiword mention.
 \item $a = a_1, \ldots, a_I$ where each
     $a_i \in \set{1, \ldots, J} \cup \set{\texttt{None}}$
-    indicates that word $x_i$ mentions the fact $(k_{a_i}, v_{a_i})$.
+    indicates that word $x_i$ mentions the record $(k_{a_i}, v_{a_i})$.
 \item $z = z_1, \ldots, z_I$ where each $z_i \in \mcV\cup \set{\texttt{None}}$
     translates the value mention containing word $x_i$
     into the canonical representation of
@@ -142,7 +151,7 @@ introduce the following latent variables:
     as opposed to alphabetical.
 \end{itemize}
 
-Our model specifies the joint distribution over the values $v$ and latent variables $z,a,m$
+Our extract-then-aggregate model specifies the joint distribution over the values $v$ and latent variables $z,a,m$
 given the text $x$ and keys $k$:
 \begin{equation}
 \label{eqn:prob}
@@ -166,7 +175,7 @@ align word $x_i$ to a key $k_{a_i}$ via the \textit{alignment} model $p(a_i \mid
 and translate the word $x_i$ into a value $z_i$ with the
 \textit{translation} model $p(z_i \mid m_i, x)$.
 
-This model assumes that each word $x_i$ can explain at most one fact in the KB.
+This model assumes that each word $x_i$ can explain at most one record in the KB.
 Additionally, we make the simplifying assumption
 that a value mention's translation is unambiguous and independent from the alignment to a key.
 
@@ -219,7 +228,7 @@ then aggregates those choices over all indices $i$ to
 make a single decision for each value.
 Each word has the following latent variables:
 the mention $m_i \in \set{0,1}$ indicates whether word $x_i$ is a value mention,
-the alignment $a_i$ gives the cell $k_{a_i}$ that $x_i$ aligns to,
+the alignment $a_i$ gives the key $k_{a_i}$ that $x_i$ aligns to,
 and the value $z_i$ gives the canonical value that $x_i$ translates to.
 }
 \label{fig:infmodel}
@@ -356,16 +365,15 @@ we bias our extraction model by pretraining $p(z_i \mid x)$ on lexical match.
 
 \section{Evaluation}
 We evaluate whether the model can discover
-and locate the subset of facts in a KB that are expressed in the text
+and locate the subset of records in a KB that are expressed in the text
 without observing the values of the KB.
-We compare the extractions of our model with a ground truth set of facts,
+We compare the extractions of our model with a ground truth set of records,
 reporting the micro-averaged precision, recall, and F1 score.
-The grouth truth facts consist of entities, types, values.
 %We also consider as well as the location of their value mention in text.
 
 We perform extraction by finding
 $${\arg\max}_{z,a,m} p(z,a,m\mid x,k).$$
-We obtain the fact $(k_j, v_j)$ at word $x_i$ if $m_i=1$,
+We obtain the record $(k_j, v_j)$ at word $x_i$ if $m_i=1$,
 $a_i = j$ and $z_i = v_j$.
 % Can also use approximate posterior
 %The extraction is considered correct if the ground truth
