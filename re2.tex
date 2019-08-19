@@ -38,33 +38,24 @@ of the KB may be very complex.
 \end{comment}
 
 Relation extraction is the task of jointly locating and converting information
-conveyed in natural language into a form amenable to computation.
-In particular, we must extract information into 
-triples consisting of entities, relation types, and values.
+conveyed in natural language into a structured representation.
+By removing the noise inherent in natural language,
+extraction systems produce information in a representation that is amenable to computation.
+We focus on representations that can be decomposed into keys and values.
 
-We focus on extraction systems that 
-Systems that are not required to justify their extractions may make
-global decisions from local features. 
-Our goal is to separate local extractions from global ones,
-while ensuring that the local extractions are justified. 
+We produce an extraction system that justifies its decisions.
+We use these justifications or `rationales' to bias the model away from
+relying on spurious correlations that may hurt generalization.
+%( garbage collection )
+
+However, deciding what constitutes a rationale and obtaining supervision for that definition is expensive.
+For every corresponding definition of a rationale, supervision must be 
+obtained by having annotators consider many examples.
+This prevents one from iterating quickly in the space of rationale definitions.
+We therefore limit our attention to models that are able to produce rationales without supervision,
+or with very limited supervision.
 
 
-Previous work used annotated entity and value positions during training
-and possibly testing as well.
-The reliance on annotated positions is undesirable as the annotator must
-consider every word, which scales linearly in the size of the corpus.
-The challenge lies 
-
-
-We refer to entity and relation type tuples as keys.
-%(Example would be fastest to clear up what a relation type is)
-The challenge is to not only extract facts from text, but also
-justify the extractions by determining where those facts are mentioned.
-
-In order to justify the extraction, we locate the fact's \textit{trigger},
-which clearly expresses its occurrence.
-We assume that a fact's trigger is its value mention.
-This limits us to extracting facts in the KB explicitly expressed in the text.
 
 \begin{comment}
 (Move or delete later)
